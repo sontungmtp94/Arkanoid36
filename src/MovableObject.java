@@ -17,10 +17,6 @@ public abstract class MovableObject extends GameObject {
         this.dy = 0;
     }
 
-    /** Cập nhật vị trí. */
-    @Override
-    public void update() {}
-
     // Các getter và setter
 
     public double getDx() {
