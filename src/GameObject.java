@@ -12,10 +12,10 @@ public abstract class GameObject {
     /**
      * Constructor cho GameObject với vị trí và kích thước.
      *
-     * @param x: Tọa độ x, Chiều ngang từ Trái sang Phải
-     * @param y: Tọa độ y, Chiều dọc từ Trên xuống Dưới
-     * @param width: Chiều rộng
-     * @param height: Chiều cao
+     * @param x      Tọa độ x, Chiều ngang từ Trái sang Phải
+     * @param y      Tọa độ y, Chiều dọc từ Trên xuống Dưới
+     * @param width  Chiều rộng
+     * @param height Chiều cao
      */
     public GameObject(int x, int y, int width, int height) {
         this.x = x;
@@ -27,7 +27,7 @@ public abstract class GameObject {
     /**
      * Render đối tượng lên màn hình.
      *
-     * @param g: Dùng để render
+     * @param g Dùng để render
      */
     public abstract void render(Graphics2D g);
 
@@ -47,6 +47,7 @@ public abstract class GameObject {
     }
 
     // Các getter và setter
+
     public int getX() {
         return x;
     }
