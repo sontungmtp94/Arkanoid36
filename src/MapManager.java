@@ -69,7 +69,7 @@ public class MapManager {
         }
         addMap(2, map2);
 
-        // Map 3: Hình chữ nhật gạch
+        // Map 3: Map 5x10 gạch
         ArrayList<Brick> map3 = new ArrayList<>();
         for (int row = 0; row < 5; row++) {
             for (int col = 0; col < 10; col++) {
