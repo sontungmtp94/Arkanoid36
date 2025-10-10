@@ -57,15 +57,15 @@ public class MapManager {
         // Map 1: Dòng gạch đơn giản
         ArrayList<Brick> map1 = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
-            map1.add(new Brick(50 + i * (w + 5), 50, w, h, Color.RED, 1, "normal"));
+            map1.add(new Brick(50 + i * (w + 5), 50, w, h, "normal", 1, Color.RED));
         }
         addMap(1, map1);
 
         // Map 2: 2 hàng gạch
         ArrayList<Brick> map2 = new ArrayList<>();
         for (int col = 0; col < 10; col++) {
-            map2.add(new Brick(50 + col * (w + 5), 50, w, h, Color.BLUE, 1, "normal"));
-            map2.add(new Brick(50 + col * (w + 5), 50 + (h + 5), w, h, Color.GREEN, 1, "normal"));
+            map2.add(new Brick(50 + col * (w + 5), 50, w, h, "normal", 1, Color.BLUE));
+            map2.add(new Brick(50 + col * (w + 5), 50 + (h + 5), w, h, "normal", 1, Color.GREEN));
         }
         addMap(2, map2);
 
@@ -73,7 +73,7 @@ public class MapManager {
         ArrayList<Brick> map3 = new ArrayList<>();
         for (int row = 0; row < 5; row++) {
             for (int col = 0; col < 10; col++) {
-                map3.add(new Brick(40 + col * (w + 5), 50 + row * (h + 5), w, h, Color.BLUE, 1, "normal"));
+                map3.add(new Brick(40 + col * (w + 5), 50 + row * (h + 5), w, h, "normal", 1, Color.BLUE));
             }
         }
         addMap(3, map3);
