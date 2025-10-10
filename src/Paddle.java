@@ -1,8 +1,16 @@
 import java.awt.*;
 
+/**
+ * Lớp Paddle đại diện cho thanh trượt, được người chơi điều khiển để đỡ bóng.
+ * Thanh trượt có tốc độ ban đầu cố định.
+ * Thanh trượt có thể đi sang hai bên trái/phải và phải dừng lại khi chạm biên.
+ */
 public class Paddle extends MovableObject {
     /** Màu sắc Paddle. */
     private Color color;
+
+    /** Tốc độ mặc định ban đầu. */
+    private int speed = 8;
 
     /**
      * Constructor cho Paddle.
@@ -19,17 +27,25 @@ public class Paddle extends MovableObject {
     }
 
     /** Di chuyển sang trái. */
-    public void moveLeft() {}
+    public void moveLeft() {
+        setDx(-speed);
+    }
 
     /** Di chuyển sang phải. */
-    public void moveRight() {}
+    public void moveRight() {
+        setDx(speed);
+    }
 
     /** Dừng di chuyển. */
-    public void stop() {}
+    public void stop() {
+        setDx(0);
+    }
 
-    /** Cập nhật vị trí. */
+    /** Cập nhật vị trí của Paddle khi di chuyển. */
     @Override
-    public void update() {}
+    public void update() {
+        setX((int) (getX() + getDx()));
+    }
 
     /**
      * Render Paddle lên màn hình.
@@ -37,7 +53,10 @@ public class Paddle extends MovableObject {
      * @param g Dùng để render
      */
     @Override
-    public void render(Graphics2D g) {}
+    public void render(Graphics2D g) {
+        g.setColor(color);
+        g.fillRect(getX(), getY(), getWidth(), getHeight());
+    }
 
     // Các getter và setter
 
@@ -47,5 +66,9 @@ public class Paddle extends MovableObject {
 
     public void setColor(Color color) {
         this.color = color;
+    }
+
+    public int getSpeed() {
+        return speed;
     }
 }
