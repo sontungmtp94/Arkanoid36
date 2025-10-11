@@ -10,7 +10,10 @@ public class Paddle extends MovableObject {
     private Color color;
 
     /** Tốc độ mặc định ban đầu. */
-    private int speed = 8;
+    private final int DEFAULT_SPEED = 8;
+
+    /** Tốc độ hiện tại. */
+    private int speed = DEFAULT_SPEED;
 
     /**
      * Constructor cho Paddle.
@@ -45,6 +48,13 @@ public class Paddle extends MovableObject {
     @Override
     public void update() {
         setX((int) (getX() + getDx()));
+
+        // Giữ Paddle luôn trong biên
+        if (getX() < 0) {
+            setX(0);
+        } else if (getX() + getWidth() > ArkanoidGame.WIDTH) {
+            setX(ArkanoidGame.WIDTH - getWidth());
+        }
     }
 
     /**
@@ -54,7 +64,7 @@ public class Paddle extends MovableObject {
      */
     @Override
     public void render(Graphics2D g) {
-        g.setColor(color);
+        g.setColor(getColor());
         g.fillRect(getX(), getY(), getWidth(), getHeight());
     }
 
@@ -68,7 +78,15 @@ public class Paddle extends MovableObject {
         this.color = color;
     }
 
+    public int getDefaultSpeed() {
+        return DEFAULT_SPEED;
+    }
+
     public int getSpeed() {
         return speed;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
     }
 }
