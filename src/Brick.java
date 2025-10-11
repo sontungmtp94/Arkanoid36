@@ -1,28 +1,31 @@
 import java.awt.*;
 
+/**
+ * Lớp Brick đại diện cho gạch.
+ * Gạch có nhiều loại BrickType,ứng với màu săc và độ bền mặc định khác nhau.
+ * Gạch bị phá hủy khi hết độ bền.
+ */
 public class Brick  extends GameObject {
     /** Loại Brick. */
-    private String type;
+    private final BrickType type;
 
     /** Độ bền Brick. */
     private int hitPoints;
 
-    /** Màu sắc Brick. */
-    private Color color;
-
     /**
      * Constructor cho Brick.
      *
-     * @param x      Tọa độ x (ngang)
-     * @param y      Tọa độ y (dọc)
-     * @param width  Chiều rộng
-     * @param height Chiều cao
+     * @param x         Tọa độ x (ngang)
+     * @param y         Tọa độ y (dọc)
+     * @param width     Chiều rộng
+     * @param height    Chiều cao
+     * @param type      Loại gạch
      */
-    public Brick(int x, int y, int width, int height, String type, int hitPoints, Color color) {
+    public Brick(int x, int y, int width, int height,
+                 BrickType type) {
         super(x, y, width, height);
         this.type = type;
-        this.hitPoints = hitPoints;
-        this.color = color;
+        this.hitPoints = type.getHitPoints();
     }
 
     /** Cập nhật trạng thái của Brick. */
@@ -35,7 +38,10 @@ public class Brick  extends GameObject {
      * @param damage: Lượng sát thương của Ball gây ra.
      */
     public void takeHits(int damage) {
-         hitPoints -= damage;
+         setHitPoints(hitPoints -= damage);
+         if (hitPoints < 0) {
+             setHitPoints(0);
+         }
     }
 
     /**
@@ -47,21 +53,22 @@ public class Brick  extends GameObject {
         return hitPoints <= 0;
     }
 
-
     /** Render Brick lên màn hình.
      *
      * @param g Dùng để render
      */
     @Override
-    public void render(Graphics2D g) {}
-    // Các getter và setter
+    public void render(Graphics2D g) {
+        if (isDestroyed()) return;
 
-    public String getType() {
-        return type;
+        g.setColor(type.getColor());
+        g.fillRect(getX(), getY(), getWidth(), getHeight());
     }
 
-    public void setType(String type) {
-        this.type = type;
+    // Các getter và setter
+
+    public BrickType getType() {
+        return type;
     }
 
     public int getHitPoints() {
@@ -70,13 +77,5 @@ public class Brick  extends GameObject {
 
     public void setHitPoints(int hitPoints) {
         this.hitPoints = hitPoints;
-    }
-
-    public Color getColor() {
-        return color;
-    }
-
-    public void setColor(Color color) {
-        this.color = color;
     }
 }
