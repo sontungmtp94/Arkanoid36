@@ -5,11 +5,11 @@ import java.awt.*;
  * Gạch có nhiều loại BrickType,ứng với màu săc và độ bền mặc định khác nhau.
  * Gạch bị phá hủy khi hết độ bền.
  */
-public class Brick  extends GameObject {
+public class Brick extends GameObject {
     /** Loại Brick. */
     private final BrickType type;
 
-    /** Độ bền Brick. */
+    /** Độ bền Brick trong game. */
     private int hitPoints;
 
     /**
@@ -59,7 +59,9 @@ public class Brick  extends GameObject {
      */
     @Override
     public void render(Graphics2D g) {
-        if (isDestroyed()) return;
+        if (isDestroyed()) {
+            return;
+        }
 
         g.setColor(type.getColor());
         g.fillRect(getX(), getY(), getWidth(), getHeight());

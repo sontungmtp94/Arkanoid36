@@ -6,14 +6,14 @@ import java.awt.*;
  * Thanh trượt có thể đi sang hai bên trái/phải và phải dừng lại khi chạm biên.
  */
 public class Paddle extends MovableObject {
-    /** Màu sắc Paddle. */
-    private Color color;
-
     /** Tốc độ mặc định ban đầu. */
-    private final int DEFAULT_SPEED = 8;
+    private final double DEFAULT_SPEED = 8.0;
 
     /** Tốc độ hiện tại. */
-    private int speed = DEFAULT_SPEED;
+    private double speed = DEFAULT_SPEED;
+
+    /** Màu sắc Paddle. */
+    private Color color;
 
     /**
      * Constructor cho Paddle.
@@ -69,6 +69,17 @@ public class Paddle extends MovableObject {
     }
 
     // Các getter và setter
+    public double getDefaultSpeed() {
+        return DEFAULT_SPEED;
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
+    }
 
     public Color getColor() {
         return color;
@@ -76,17 +87,5 @@ public class Paddle extends MovableObject {
 
     public void setColor(Color color) {
         this.color = color;
-    }
-
-    public int getDefaultSpeed() {
-        return DEFAULT_SPEED;
-    }
-
-    public int getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(int speed) {
-        this.speed = speed;
     }
 }
