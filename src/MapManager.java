@@ -64,7 +64,7 @@ public class MapManager {
         ArrayList<Brick> map = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 15; j++) {
-                Brick t = new Brick(40 + spaceX * j, 40 + spaceY * i, WIDTH, HEIGHT, "normal", 1, Color.BLUE);
+                Brick t = new Brick(40 + spaceX * j, 40 + spaceY * i, WIDTH, HEIGHT, BrickType.NORMAL);
                 map.add(t);
             }
         }
@@ -78,7 +78,7 @@ public class MapManager {
         ArrayList<Brick> map = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
             for(int j = i; j < 15 - i; j++) {
-                Brick t = new Brick(40 + spaceX * j, 40 + spaceY * i, WIDTH, HEIGHT, "normal", 1, Color.MAGENTA);
+                Brick t = new Brick(40 + spaceX * j, 40 + spaceY * i, WIDTH, HEIGHT, BrickType.NORMAL);
                 map.add(t);
             }
         }
@@ -93,7 +93,7 @@ public class MapManager {
         for (int i = 0; i < 8; i++) {
             for(int j = 0; j < 15; j++) {
                 if (j % 2 == 0) {
-                    Brick t = new Brick(40 + spaceX * j, 40 + spaceY * i, WIDTH, HEIGHT, "normal", 1, Color.RED);
+                    Brick t = new Brick(40 + spaceX * j, 40 + spaceY * i, WIDTH, HEIGHT, BrickType.NORMAL);
                     map.add(t);
                 }
             }
@@ -110,14 +110,14 @@ public class MapManager {
             if (i < 2 || i > 3) {
                 for (int j = 0; j < 15; j++) {
                     if (j < 5 || j > 9) {
-                        Brick t = new Brick(40 + spaceX * j, 40 + spaceY * i, WIDTH, HEIGHT, "normal", 1, Color.YELLOW);
+                        Brick t = new Brick(40 + spaceX * j, 40 + spaceY * i, WIDTH, HEIGHT, BrickType.NORMAL);
                         map.add(t);
                     }
                 }
             } else {
                 for (int j = 0; j < 15; j++) {
                     if (j >= 5 && j <= 9) {
-                        Brick t = new Brick(40 + spaceX * j, 40 + spaceY * i, WIDTH, HEIGHT, "normal", 1, Color.YELLOW);
+                        Brick t = new Brick(40 + spaceX * j, 40 + spaceY * i, WIDTH, HEIGHT, BrickType.NORMAL);
                         map.add(t);
                     }
                 }
