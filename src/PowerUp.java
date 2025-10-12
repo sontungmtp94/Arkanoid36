@@ -41,8 +41,8 @@ public class PowerUp extends MovableObject {
                 GameManager.score += 50;
                 break;
             case 1:
-                if (GameManager.paddle.width < 230) {
-                    GameManager.paddle.width += 50;
+                if (GameManager.paddle.getWidth() < 230) {
+                    GameManager.paddle.setWidth(GameManager.paddle.getWidth() + 50);
                 }
                 break;
             case 2:
