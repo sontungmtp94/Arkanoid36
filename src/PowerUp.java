@@ -5,8 +5,8 @@ public class PowerUp extends MovableObject {
 
     public PowerUp(int x, int y, int w, int h, int id) {
         super(x, y, w, h);
-        this.dx = 0;
-        this.dy = 5;
+        setDx(0);
+        setDy(5);
         this.id = id;
     }
     public int getId() {
@@ -18,26 +18,27 @@ public class PowerUp extends MovableObject {
     }
 
     public boolean alive() {
-        return this.y < 1200 ? true : false;
+        return getY() < 1200 ? true : false;
     }
 
     @Override
     public void update() {
-        move();
+        setX(getX() + (int)getDx());
+        setY(getY() + (int)getDy());
     }
 
     @Override
     public void render(Graphics2D g) {
         if (alive()) {
             g.setColor(Color.GREEN);
-            g.fillOval(x, y, width, height);
+            g.fillOval(getX(), getY(), getWidth(), getHeight());
         }
     }
 
     public void applyEffect(int id) {
         switch (id) {
             case 0:
-                GameManager.point += 50;
+                GameManager.score += 50;
                 break;
             case 1:
                 if (GameManager.paddle.width < 230) {
