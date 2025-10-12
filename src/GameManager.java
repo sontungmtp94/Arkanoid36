@@ -9,12 +9,12 @@ import java.util.ArrayList;
  */
 public class GameManager extends JPanel implements ActionListener {
 
-    private Paddle paddle;                 // Thanh đỡ
-    private Ball ball;                     // Quả bóng
+    protected static Paddle paddle;                 // Thanh đỡ
+    protected static Ball ball;                     // Quả bóng
     private ArrayList<Brick> bricks;       // Gạch
     private Timer timer;                   // Bộ đếm
     private MapManager mapManger;          // Quản lý bản đồ
-    private int score, lives, highScore;   // Điểm, mạng, điểm cao
+    protected static int score, lives, highScore;   // Điểm, mạng, điểm cao
     private boolean running, leftPressed, rightPressed; // Trạng thái game và phím
     private JButton btnRestart, btnMainMenu;            // Nút giao diện
     private ScreenSwitcher screenSwitcher;              // Chuyển đổi màn hình
