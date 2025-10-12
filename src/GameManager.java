@@ -7,7 +7,7 @@ import java.util.ArrayList;
  * Quản lý toàn bộ logic, hiển thị và vòng lặp chính của game Arkanoid.
  * Kế thừa JPanel, triển khai ActionListener và KeyListener.
  */
-public class GameManager extends JPanel implements ActionListener, KeyListener {
+public class GameManager extends JPanel implements ActionListener {
 
     private Paddle paddle;                 // Thanh đỡ
     private Ball ball;                     // Quả bóng
@@ -18,6 +18,7 @@ public class GameManager extends JPanel implements ActionListener, KeyListener {
     private boolean running, leftPressed, rightPressed; // Trạng thái game và phím
     private JButton btnRestart, btnMainMenu;            // Nút giao diện
     private ScreenSwitcher screenSwitcher;              // Chuyển đổi màn hình
+    private KeyManager keyManager;                // Quản lý phím
 
     protected static final int PANEL_WIDTH = 800;
     protected static final int PANEL_HEIGHT = 600;
@@ -32,13 +33,12 @@ public class GameManager extends JPanel implements ActionListener, KeyListener {
         this.screenSwitcher = switcher;
         setPreferredSize(new Dimension(width, height));
         setFocusable(true);
-        addKeyListener(this);
+        addKeyListener(keyManager);
         initGameObjects();
     }
 
     /** Khởi tạo paddle, bóng, gạch,... */
     public void initGameObjects() {
-
     }
 
     /** Tạo các nút Game Over. */
@@ -78,20 +78,4 @@ public class GameManager extends JPanel implements ActionListener, KeyListener {
     public void actionPerformed(ActionEvent e) {
 
     }
-
-    /** Xử lý khi nhấn phím. */
-    @Override
-    public void keyPressed(KeyEvent e) {
-
-    }
-
-    /** Xử lý khi nhả phím. */
-    @Override
-    public void keyReleased(KeyEvent e) {
-
-    }
-
-    /** Tạm thời chưa dùng đến */
-    @Override
-    public void keyTyped(KeyEvent e) { }
 }
