@@ -57,6 +57,20 @@ public class Paddle extends MovableObject {
         }
     }
 
+
+    /**
+     * Đưa paddle về vị trí ban đầu.
+     *
+     * @param newX Tọa độ x mới
+     * @param newY Tọa độ y mới
+     */
+
+    public void resetPosition(int newX, int newY) {
+        setX(newX);
+        setY(newY);
+    }
+
+
     /**
      * Render Paddle lên màn hình.
      *
