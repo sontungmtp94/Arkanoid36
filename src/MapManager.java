@@ -13,6 +13,10 @@ public class MapManager {
     // map để lưu trữ gạch
     private Map<Integer, ArrayList<Brick>> maps;
 
+    //thông số cố định của điểm bắt đầu vẽ gạch.
+    private int startX = 40;
+    private int startY = 40;
+
     // thông số cố định của gạch.
     private final int WIDTH = 70;
     private final int HEIGHT = 40;
@@ -55,6 +59,7 @@ public class MapManager {
         map2();
         map3();
         map4();
+        map5();
     }
 
     /**
@@ -64,7 +69,7 @@ public class MapManager {
         ArrayList<Brick> map = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 15; j++) {
-                Brick t = new Brick(40 + spaceX * j, 40 + spaceY * i, WIDTH, HEIGHT, BrickType.NORMAL);
+                Brick t = new Brick(startX + spaceX * j, 40 + spaceY * i, WIDTH, HEIGHT, BrickType.NORMAL);
                 map.add(t);
             }
         }
@@ -78,7 +83,7 @@ public class MapManager {
         ArrayList<Brick> map = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
             for(int j = i; j < 15 - i; j++) {
-                Brick t = new Brick(40 + spaceX * j, 40 + spaceY * i, WIDTH, HEIGHT, BrickType.NORMAL);
+                Brick t = new Brick(startX + spaceX * j, startY + spaceY * i, WIDTH, HEIGHT, BrickType.NORMAL);
                 map.add(t);
             }
         }
@@ -93,7 +98,7 @@ public class MapManager {
         for (int i = 0; i < 8; i++) {
             for(int j = 0; j < 15; j++) {
                 if (j % 2 == 0) {
-                    Brick t = new Brick(40 + spaceX * j, 40 + spaceY * i, WIDTH, HEIGHT, BrickType.NORMAL);
+                    Brick t = new Brick(startX + spaceX * j, startY + spaceY * i, WIDTH, HEIGHT, BrickType.NORMAL);
                     map.add(t);
                 }
             }
@@ -110,19 +115,32 @@ public class MapManager {
             if (i < 2 || i > 3) {
                 for (int j = 0; j < 15; j++) {
                     if (j < 5 || j > 9) {
-                        Brick t = new Brick(40 + spaceX * j, 40 + spaceY * i, WIDTH, HEIGHT, BrickType.NORMAL);
+                        Brick t = new Brick(startX + spaceX * j, startY + spaceY * i, WIDTH, HEIGHT, BrickType.NORMAL);
                         map.add(t);
                     }
                 }
             } else {
                 for (int j = 0; j < 15; j++) {
                     if (j >= 5 && j <= 9) {
-                        Brick t = new Brick(40 + spaceX * j, 40 + spaceY * i, WIDTH, HEIGHT, BrickType.NORMAL);
+                        Brick t = new Brick(startX + spaceX * j, startY + spaceY * i, WIDTH, HEIGHT, BrickType.NORMAL);
                         map.add(t);
                     }
                 }
             }
         }
         addMap(4, map);
+    }
+
+    public void map5() {
+        ArrayList<Brick> map = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 15; j++) {
+                if((i % 2 == 0 && j % 2 == 0) || (i % 2 != 0 && j % 2 != 0)) {
+                    Brick t = new Brick(startX + spaceX * j, startY + spaceY * i, WIDTH, HEIGHT, BrickType.NORMAL);
+                    map.add(t);
+                }
+            }
+        }
+        addMap(5, map);
     }
 }
