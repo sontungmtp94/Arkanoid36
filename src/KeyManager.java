@@ -2,7 +2,7 @@ import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class KeyManager extends JPanel implements KeyListener {
+public class KeyManager implements KeyListener {
 
     private boolean leftPressed;
     private boolean rightPressed;
@@ -32,9 +32,6 @@ public class KeyManager extends JPanel implements KeyListener {
         }
         if (key == KeyEvent.VK_RIGHT) {
             rightPressed = false;
-        }
-        if (key == KeyEvent.VK_ESCAPE) {
-            pausePressed = !pausePressed;
         }
     }
 
