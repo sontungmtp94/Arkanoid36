@@ -12,11 +12,10 @@ public class Ball extends MovableObject {
     private static final int LAUNCH_DELAY_TIME = 60; // 1s trong 60 fps.
 
     /** Tốc độ mặc định ban đầu của Ball theo 2 chiều. */
-    private final double DEFAULT_SPEED = 5.0;
+    private final double DEFAULT_SPEED = 6.0;
 
     /** Góc phản xạ khi va chạm từ 60 độ (tại biên) đến 0 độ (tại tâm). */
     private final double MAX_REFLECT_ANGLE = Math.toRadians(60);
-
 
     private int delayTimer = LAUNCH_DELAY_TIME;
 
@@ -72,8 +71,8 @@ public class Ball extends MovableObject {
         }
 
         // Cập nhật vị trí khi di chuyển
-        setX((int) (getX() + getDx()));
-        setY((int) (getY() + getDy()));
+        setX(getX() + (int)getDx());
+        setY(getY() + (int)getDy());
 
         // Va chạm với trần và 2 bên biên cửa sổ.
         if (getY() <= 0) {
@@ -122,7 +121,7 @@ public class Ball extends MovableObject {
             // Giữ nguyên độ lớn vận tốc và đổi hướng theo góc phản xạ.
             double speed = Math.sqrt(getDx() * getDx() + getDy() * getDy());
             setDx(speed * Math.sin(reflectAngle));
-            setDy(-speed * Math.sin(reflectAngle));
+            setDy(-speed * Math.cos(reflectAngle));
         }
 
         // Va chạm với Brick.
