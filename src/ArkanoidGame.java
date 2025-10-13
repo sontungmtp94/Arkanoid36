@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * Lớp ArkanoidGame là lớp chính của trò chơi, kế thừa JFrame
@@ -58,7 +59,13 @@ public class ArkanoidGame extends JFrame implements ScreenSwitcher {
 
         // Tạo GameManager (màn chơi chính)
         currentPanel = new GameManager(WIDTH, HEIGHT, this);
+        currentPanel.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        getContentPane().add(currentPanel);
+        pack();
+
         add(currentPanel);
+
+
 
         // Đảm bảo focus để nhận bàn phím
         currentPanel.requestFocusInWindow();
