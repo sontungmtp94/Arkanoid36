@@ -18,7 +18,8 @@ public class GameManager extends JPanel implements ActionListener {
     private boolean running; // Trạng thái game và phím
     private ScreenSwitcher screenSwitcher;              // Chuyển đổi màn hình
     private KeyManager keyManager;                // Quản lý phím
-
+    private JLabel gameOver = new JLabel("Game Over!");
+    private JLabel restart = new JLabel("Press R to restart.");
     protected static final int PANEL_WIDTH = 1200;
     protected static final int PANEL_HEIGHT = 675;
 
@@ -39,6 +40,7 @@ public class GameManager extends JPanel implements ActionListener {
         highScore = 0;
 
         running = true;
+
     }
 
     /**
@@ -50,30 +52,39 @@ public class GameManager extends JPanel implements ActionListener {
 
     public GameManager(int width, int height, ScreenSwitcher switcher) {
         this.screenSwitcher = switcher;
+
         setPreferredSize(new Dimension(width, height));
+
         setFocusable(true);
+
         keyManager = new KeyManager();
+
         addKeyListener(keyManager);
+
         initGameObjects();
+
         timer = new Timer(1000/60, this);
         timer.start();
-    }
 
-//    /** Tạo các nút Game Over. */
-//    public JPanel createGameOverButtons() {
-//    }
-//
-//    /** Hiển thị nút Game Over. */
-//    public void showGameOverButtons(JPanel gameOverPanel) {
-//    }
-//
-//    /** Xóa nút Game Over khỏi màn hình. */
-//    public void removeGameOverButtons() {
-//    }
-//
-//    /** Định dạng JButton. */
-//    public void styleButton(JButton b) {
-//    }
+        setLayout(null);
+
+
+        gameOver.setFont(new Font("Arial", Font.BOLD, 72));
+        gameOver.setForeground(Color.RED);
+        gameOver.setHorizontalAlignment(SwingConstants.CENTER);
+        gameOver.setBounds(0, PANEL_HEIGHT / 2 - 120, PANEL_WIDTH, 100); // căn giữa hoàn hảo
+        add(gameOver);
+        gameOver.setVisible(false);
+
+
+        restart.setFont(new Font("Arial", Font.PLAIN, 30));
+        restart.setForeground(Color.DARK_GRAY);
+        restart.setHorizontalAlignment(SwingConstants.CENTER);
+        restart.setBounds(0, PANEL_HEIGHT / 2 - 30, PANEL_WIDTH, 60); // nằm ngay dưới "Game Over"
+        add(restart);
+        restart.setVisible(false);
+
+    }
 
     /** Cập nhật logic trò chơi mỗi khung hình. */
     public void updateGame() {
@@ -83,7 +94,24 @@ public class GameManager extends JPanel implements ActionListener {
             if(!keyManager.isLeftPressed() && !keyManager.isRightPressed()) paddle.stop();
             ball.update();
             paddle.update();
+            if (ball.outOfBottom()) {
+                lives--;
+                ball.resetPosition((PANEL_WIDTH - 150) / 2, PANEL_HEIGHT - 30);
+                paddle.resetPosition((PANEL_WIDTH - 150) / 2, PANEL_HEIGHT - 50);
+            }
+            if(lives == 0) {
+                running = false;
+                gameOver.setVisible(true);
+                restart.setVisible(true);
+            }
         }
+        if (keyManager.isRestartPressed() && lives == 0) {
+            initGameObjects();
+            gameOver.setVisible(false);
+            restart.setVisible(false);
+        }
+
+
     }
 
     /** Vẽ trò chơi lên màn hình. */
@@ -101,7 +129,7 @@ public class GameManager extends JPanel implements ActionListener {
         g2d.setColor(Color.BLACK);
         g2d.setFont(new Font("Arial", Font.PLAIN, 20));
         g2d.drawString("Score: " + score, 20, 30);
-        g2d.drawString("Lives: " + lives, 20, 60);
+        g2d.drawString("Lives: " + lives, 100, 30);
         g2d.drawString("High Score: " + highScore, PANEL_WIDTH - 150, 30);
 
 
@@ -110,7 +138,7 @@ public class GameManager extends JPanel implements ActionListener {
     /** Xử lý vòng lặp game. */
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (running) updateGame();
+        updateGame();
         repaint();
     }
 }
