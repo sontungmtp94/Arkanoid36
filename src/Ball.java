@@ -156,6 +156,22 @@ public class Ball extends MovableObject {
     }
 
     /**
+     * Đưa bóng về vị trí ban đầu.
+     *
+     * @param newX Tọa độ x mới
+     * @param newY Tọa độ y mới
+     */
+    public void resetPosition(int newX, int newY) {
+        setX(newX);
+        setY(newY);
+        setVelocity(0, 0);
+        moving = false;
+        delayTimer = LAUNCH_DELAY_TIME; // Reset thời gian chờ
+    }
+
+
+
+    /**
      * Render Ball lên màn hình.
      *
      * @param g Dùng để render
