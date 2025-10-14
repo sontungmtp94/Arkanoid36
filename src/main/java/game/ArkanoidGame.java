@@ -6,8 +6,8 @@ import view.MainMenu;
 import controller.GameManager;
 
 /**
- * Lớp game.ArkanoidGame là lớp chính của trò chơi, kế thừa JFrame
- * và triển khai (implements) giao diện game.ScreenSwitcher.
+ * Lớp ArkanoidGame là lớp chính của trò chơi, kế thừa JFrame
+ * và triển khai (implements) giao diện ScreenSwitcher.
  * Nhiệm vụ:
  *  - Quản lý cửa sổ chính của game.
  *  - Chuyển đổi giữa các màn hình như Menu và Game.
@@ -18,7 +18,7 @@ public class ArkanoidGame extends JFrame implements ScreenSwitcher {
     protected static final int WIDTH = 1200;
 
     /** Chiều cao cửa sổ game. */
-    protected static final int HEIGHT = 800;
+    protected static final int HEIGHT = 650;
 
     /** Thành phần giao diện hiện tại đang hiển thị (view.MainMenu, GamePanel, ...). */
     private JPanel currentPanel;
@@ -69,8 +69,6 @@ public class ArkanoidGame extends JFrame implements ScreenSwitcher {
 
         add(currentPanel);
 
-
-
         // Đảm bảo focus để nhận bàn phím
         currentPanel.requestFocusInWindow();
 
@@ -80,7 +78,7 @@ public class ArkanoidGame extends JFrame implements ScreenSwitcher {
 
     /**
      * Phương thức main() là điểm bắt đầu của chương trình.
-     * Tạo một đối tượng game.ArkanoidGame để khởi động ứng dụng.
+     * Tạo một đối tượng ArkanoidGame để khởi động ứng dụng.
      */
     public static void main(String[] args) {
         new ArkanoidGame();
@@ -88,12 +86,11 @@ public class ArkanoidGame extends JFrame implements ScreenSwitcher {
 
     // Các getter và setter
 
+    public static int getGameWidth() {
+        return WIDTH;
+    }
 
     public static int getGameHeight() {
         return HEIGHT;
-    }
-
-    public static int getGameWidth() {
-        return WIDTH;
     }
 }
