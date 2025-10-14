@@ -1,3 +1,10 @@
+package controller;
+
+import game.ScreenSwitcher;
+import model.ball.Ball;
+import model.brick.Brick;
+import model.paddle.Paddle;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -21,11 +28,11 @@ public class GameManager extends JPanel implements ActionListener {
     private JLabel gameOver = new JLabel("Game Over!");
     private JLabel restart = new JLabel("Press R to restart.");
     protected static final int PANEL_WIDTH = 1200;
-    protected static final int PANEL_HEIGHT = 675;
+    protected static final int PANEL_HEIGHT = 800;
 
     /** Khởi tạo paddle, bóng, gạch,... */
     public void initGameObjects() {
-        paddle = new Paddle((PANEL_WIDTH - 150) / 2, PANEL_HEIGHT - 50, 150, 20, Color.MAGENTA);
+        paddle = new Paddle((PANEL_WIDTH - 150) / 2, PANEL_HEIGHT - 100, 150, 20, Color.MAGENTA);
         ball = new Ball(PANEL_WIDTH / 2, PANEL_HEIGHT / 2, 15, 15, 1, Color.BLACK);
 
         mapManger = new MapManager();
@@ -44,7 +51,7 @@ public class GameManager extends JPanel implements ActionListener {
     }
 
     /**
-     * Khởi tạo GameManager.
+     * Khởi tạo controller.GameManager.
      * @param width  chiều rộng khung
      * @param height chiều cao khung
      * @param switcher đối tượng điều khiển chuyển màn
@@ -96,8 +103,8 @@ public class GameManager extends JPanel implements ActionListener {
             paddle.update();
             if (ball.outOfBottom()) {
                 lives--;
-                ball.resetPosition((PANEL_WIDTH - 150) / 2, PANEL_HEIGHT - 30);
-                paddle.resetPosition((PANEL_WIDTH - 150) / 2, PANEL_HEIGHT - 50);
+                paddle.resetPosition((PANEL_WIDTH - 150) / 2, PANEL_HEIGHT - 100);
+                ball.resetPosition();
             }
             if(lives == 0) {
                 running = false;
@@ -140,5 +147,31 @@ public class GameManager extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         updateGame();
         repaint();
+    }
+
+    // Các getter và setter
+
+    public static int getLives() {
+        return lives;
+    }
+
+    public static void setLives(int lives) {
+        GameManager.lives = lives;
+    }
+
+    public static int getScore() {
+        return score;
+    }
+
+    public static void setScore(int score) {
+        GameManager.score = score;
+    }
+
+    public static Paddle getPaddle() {
+        return paddle;
+    }
+
+    public static void setPaddle(Paddle paddle) {
+        GameManager.paddle = paddle;
     }
 }

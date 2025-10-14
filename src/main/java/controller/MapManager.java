@@ -1,12 +1,16 @@
-import java.awt.*;
+package controller;
+
+import model.brick.Brick;
+import model.brick.BrickType;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * MapManager - Quản lý nhiều bản đồ (map) trong game Arkanoid.
+ * controller.MapManager - Quản lý nhiều bản đồ (map) trong game Arkanoid.
  * Mỗi map được định danh bằng một ID (số nguyên).
- * Một map chứa danh sách các viên gạch (Brick).
+ * Một map chứa danh sách các viên gạch (model.brick.Brick).
  */
 public class MapManager {
 
@@ -22,7 +26,7 @@ public class MapManager {
     private int spaceY = HEIGHT + 5;
 
     /**
-     * Constructor - khởi tạo MapManager.
+     * Constructor - khởi tạo controller.MapManager.
      */
     public MapManager() {
         maps = new HashMap<>();

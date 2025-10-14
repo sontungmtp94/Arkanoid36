@@ -1,3 +1,7 @@
+package view;
+
+import game.ScreenSwitcher;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;

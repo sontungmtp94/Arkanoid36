@@ -1,7 +1,12 @@
+package model.paddle;
+
+import game.ArkanoidGame;
+import model.base.*;
+
 import java.awt.*;
 
 /**
- * Lớp Paddle đại diện cho thanh trượt, được người chơi điều khiển để đỡ bóng.
+ * Lớp model.paddle.Paddle đại diện cho thanh trượt, được người chơi điều khiển để đỡ bóng.
  * Thanh trượt có tốc độ ban đầu cố định.
  * Thanh trượt có thể đi sang hai bên trái/phải và phải dừng lại khi chạm biên.
  */
@@ -12,11 +17,11 @@ public class Paddle extends MovableObject {
     /** Tốc độ hiện tại. */
     private double speed = DEFAULT_SPEED;
 
-    /** Màu sắc Paddle. */
+    /** Màu sắc model.paddle.Paddle. */
     private Color color;
 
     /**
-     * Constructor cho Paddle.
+     * Constructor cho model.paddle.Paddle.
      *
      * @param x      Tọa độ x (ngang)
      * @param y      Tọa độ y (dọc)
@@ -44,16 +49,16 @@ public class Paddle extends MovableObject {
         setDx(0);
     }
 
-    /** Cập nhật vị trí của Paddle khi di chuyển. */
+    /** Cập nhật vị trí của model.paddle.Paddle khi di chuyển. */
     @Override
     public void update() {
         setX((int) (getX() + getDx()));
 
-        // Giữ Paddle luôn trong biên
+        // Giữ model.paddle.Paddle luôn trong biên
         if (getX() < 0) {
             setX(0);
-        } else if (getX() + getWidth() > ArkanoidGame.WIDTH) {
-            setX(ArkanoidGame.WIDTH - getWidth());
+        } else if (getX() + getWidth() > ArkanoidGame.getGameWidth()) {
+            setX(ArkanoidGame.getGameWidth() - getWidth());
         }
     }
 
@@ -72,7 +77,7 @@ public class Paddle extends MovableObject {
 
 
     /**
-     * Render Paddle lên màn hình.
+     * Render model.paddle.Paddle lên màn hình.
      *
      * @param g Dùng để render
      */

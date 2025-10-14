@@ -1,8 +1,15 @@
+package model.ball;
+
+import game.ArkanoidGame;
+import model.brick.*;
+import model.paddle.*;
+import model.base.*;
+
 import java.awt.*;
 import java.util.ArrayList;
 
 /**
- * Lớp Ball đại diện cho bóng.
+ * Lớp model.ball.Ball đại diện cho bóng.
  * Bóng nảy khi va chạm với thanh trượt, gạch, trần và 2 bên biên cửa sổ.
  * Bóng gây sát thương cho gạch.
  */
@@ -11,7 +18,7 @@ public class Ball extends MovableObject {
     /** Thời gian delay trước khi bóng tự bay lên khi bắt đầu chơi. */
     private static final int LAUNCH_DELAY_TIME = 60; // 1s trong 60 fps.
 
-    /** Tốc độ mặc định ban đầu của Ball theo 2 chiều. */
+    /** Tốc độ mặc định ban đầu của model.ball.Ball theo 2 chiều. */
     private final double DEFAULT_SPEED = 6.0;
 
     /** Góc phản xạ khi va chạm từ 60 độ (tại biên) đến 0 độ (tại tâm). */
@@ -19,21 +26,21 @@ public class Ball extends MovableObject {
 
     private int delayTimer = LAUNCH_DELAY_TIME;
 
-    /** Lượng sát thương của Ball. */
+    /** Lượng sát thương của model.ball.Ball. */
     private int damage;
 
     /** Trạng thái bóng đang chờ (bắt dầu chơi) / đang di chuyển */
     private boolean moving = false;
 
-    /** Màu sắc Ball. */
+    /** Màu sắc model.ball.Ball. */
     private Color color;
 
-    /** Paddle và các Brick mà Ball có thể va chạm. */
+    /** model.paddle.Paddle và các model.brick.Brick mà model.ball.Ball có thể va chạm. */
     private Paddle paddle;
     private ArrayList<Brick> bricks;
 
     /**
-     * Constructor cho Ball.
+     * Constructor cho model.ball.Ball.
      *
      * @param x      Tọa độ x (ngang)
      * @param y      Tọa độ y (dọc)
@@ -50,19 +57,19 @@ public class Ball extends MovableObject {
         setVelocity(0, 0);
     }
 
-    /** Cập nhật vị trí Ball. */
+    /** Cập nhật vị trí model.ball.Ball. */
     @Override
     public void update() {
-        // Giai đoạn ban đầu, hết thời gian delay thì Ball bắt đầu di chuyển.
+        // Giai đoạn ban đầu, hết thời gian delay thì model.ball.Ball bắt đầu di chuyển.
         if (!moving) {
             if (delayTimer > 0) {
                 delayTimer--;
 
-                // Đặt Ball căn giữa bên trên Paddle.
+                // Đặt model.ball.Ball căn giữa bên trên model.paddle.Paddle.
                 setX(paddle.getX() + paddle.getWidth() / 2 - getWidth() / 2);
                 setY(paddle.getY() - getHeight());
             } else {
-                // Ball bắt đầu bay lên theo một trong 2 hướng ngẫu nhiên.
+                // model.ball.Ball bắt đầu bay lên theo một trong 2 hướng ngẫu nhiên.
                 moving = true;
                 int direction = Math.random() > 0.5 ? 1 : -1;
                 setVelocity(DEFAULT_SPEED * direction, -DEFAULT_SPEED);
@@ -79,16 +86,16 @@ public class Ball extends MovableObject {
             setDy(-getDy());
         }
 
-        if (getX() <= 0 || getX() + getWidth() >= ArkanoidGame.WIDTH) {
+        if (getX() <= 0 || getX() + getWidth() >= ArkanoidGame.getGameWidth()) {
             setDx(-getDx());
         }
 
-        // Va chạm với Paddle.
+        // Va chạm với model.paddle.Paddle.
         if (paddle != null && getBounds().intersects(paddle.getBounds())) {
             bounce(paddle);
         }
 
-        // Va chạm với Brick.
+        // Va chạm với model.brick.Brick.
         if (bricks != null) {
             for (Brick brick : bricks) {
                 if (!brick.isDestroyed()
@@ -102,20 +109,20 @@ public class Ball extends MovableObject {
     }
 
     /**
-     * Xử lí Ball nảy ra sau khi va chạm với GameObject khác (Paddle và Brick).
+     * Xử lí model.ball.Ball nảy ra sau khi va chạm với model.base.GameObject khác (model.paddle.Paddle và model.brick.Brick).
      *
      * @param other Đối tượng va chạm
      */
     public void bounce(GameObject other) {
-        // Va chạm với Paddle.
+        // Va chạm với model.paddle.Paddle.
         if (other instanceof Paddle p) {
-            // Tính tỉ lệ điểm va chạm so với chiều rộng Paddle.
+            // Tính tỉ lệ điểm va chạm so với chiều rộng model.paddle.Paddle.
             double ballCenterX = getX() + getWidth() / 2.0;
             double paddleCenterX = p.getX() + p.getWidth() / 2.0;
             double collideRatioX = (ballCenterX - paddleCenterX)
                                    / (p.getWidth() / 2.0);
 
-            // Tạo độ cong ảo của Paddle khi Ball va chạm với Paddle.
+            // Tạo độ cong ảo của model.paddle.Paddle khi model.ball.Ball va chạm với model.paddle.Paddle.
             double reflectAngle = collideRatioX * MAX_REFLECT_ANGLE;
 
             // Giữ nguyên độ lớn vận tốc và đổi hướng theo góc phản xạ.
@@ -124,7 +131,7 @@ public class Ball extends MovableObject {
             setDy(-speed * Math.cos(reflectAngle));
         }
 
-        // Va chạm với Brick.
+        // Va chạm với model.brick.Brick.
         else if (other instanceof Brick br) {
             Rectangle ballRect = getBounds();
             Rectangle brickRect = br.getBounds();
@@ -146,24 +153,22 @@ public class Ball extends MovableObject {
     }
 
     /**
-     * Kiểm tra Ball rơi xuống đáy.
+     * Kiểm tra model.ball.Ball rơi xuống đáy.
      *
-     * @return true khi tọa độ y của Ball lớn hơn chiều cao cửa sổ game,
+     * @return true khi tọa độ y của model.ball.Ball lớn hơn chiều cao cửa sổ game,
      *         false nếu ngược lại.
      */
     public boolean outOfBottom() {
-        return getY() > ArkanoidGame.HEIGHT;
+        return getY() > ArkanoidGame.getGameHeight();
     }
 
     /**
      * Đưa bóng về vị trí ban đầu.
      *
-     * @param newX Tọa độ x mới
-     * @param newY Tọa độ y mới
      */
-    public void resetPosition(int newX, int newY) {
-        setX(newX);
-        setY(newY);
+    public void resetPosition() {
+        setX(paddle.getX() + paddle.getWidth() / 2 - getWidth() / 2);
+        setY(paddle.getY() - getHeight());
         setVelocity(0, 0);
         moving = false;
         delayTimer = LAUNCH_DELAY_TIME; // Reset thời gian chờ
@@ -172,7 +177,7 @@ public class Ball extends MovableObject {
 
 
     /**
-     * Render Ball lên màn hình.
+     * Render model.ball.Ball lên màn hình.
      *
      * @param g Dùng để render
      */
