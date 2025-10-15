@@ -1,7 +1,9 @@
+package model.brick;
+
 import java.awt.*;
 
 /**
- * BrickType đại diện cho các loại Brick.
+ * model.brick.BrickType đại diện cho các loại model.brick.Brick.
  * Mỗi loại có màu sắc và độ bền mặc định khác nhau.
  */
 public enum BrickType {

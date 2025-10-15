@@ -1,10 +1,12 @@
+package model.base;
+
 public abstract class MovableObject extends GameObject {
     /** Vận tốc theo 2 trục x, y. */
     private double dx;
     private double dy;
 
     /**
-     * Constructor cho MovableObject với vị trí, kích thước và tốc độ.
+     * Constructor cho model.base.MovableObject với vị trí, kích thước và tốc độ.
      *
      * @param x      Tọa độ x (ngang)
      * @param y      Tọa độ y (dọc)

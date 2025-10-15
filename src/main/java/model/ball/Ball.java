@@ -1,3 +1,10 @@
+package model.ball;
+
+import game.ArkanoidGame;
+import model.brick.*;
+import model.paddle.*;
+import model.base.*;
+
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -12,7 +19,7 @@ public class Ball extends MovableObject {
     private static final int LAUNCH_DELAY_TIME = 60; // 1s trong 60 fps.
 
     /** Tốc độ mặc định ban đầu của Ball theo 2 chiều. */
-    private final double DEFAULT_SPEED = 6.0;
+    private final double DEFAULT_SPEED = 5.0;
 
     /** Góc phản xạ khi va chạm từ 60 độ (tại biên) đến 0 độ (tại tâm). */
     private final double MAX_REFLECT_ANGLE = Math.toRadians(60);
@@ -58,7 +65,7 @@ public class Ball extends MovableObject {
             if (delayTimer > 0) {
                 delayTimer--;
 
-                // Đặt Ball căn giữa bên trên Paddle.
+                // Đặt model.ball.Ball căn giữa bên trên Paddle.
                 setX(paddle.getX() + paddle.getWidth() / 2 - getWidth() / 2);
                 setY(paddle.getY() - getHeight());
             } else {
@@ -71,15 +78,24 @@ public class Ball extends MovableObject {
         }
 
         // Cập nhật vị trí khi di chuyển
-        setX(getX() + (int)getDx());
-        setY(getY() + (int)getDy());
+        setX(getX() + (int) getDx());
+        setY(getY() + (int) getDy());
 
-        // Va chạm với trần và 2 bên biên cửa sổ.
+        // Va chạm với trần.
         if (getY() <= 0) {
+            // Đẩy xuống dưới trần để tránh kẹt.
+            setY(0);
             setDy(-getDy());
         }
 
-        if (getX() <= 0 || getX() + getWidth() >= ArkanoidGame.WIDTH) {
+        // Va chạm 2 biên cửa sổ.
+        if (getX() <= 0) {
+            // Ball vào biên trái, đẩy ra ngoài để tránh kẹt.
+            setX(0);
+            setDx(-getDx());
+        } else if (getX() + getWidth() >= ArkanoidGame.getGameWidth()) {
+            // Ball vào biên phải, đẩy ra ngoài để tránh kẹt.
+            setX(ArkanoidGame.getGameWidth() - getWidth());
             setDx(-getDx());
         }
 
@@ -102,31 +118,75 @@ public class Ball extends MovableObject {
     }
 
     /**
-     * Xử lí Ball nảy ra sau khi va chạm với GameObject khác (Paddle và Brick).
+     * Xử lí Ball nảy ra sau khi va chạm với Paddle và Brick.
      *
      * @param other Đối tượng va chạm
      */
     public void bounce(GameObject other) {
+        Rectangle ballRect = getBounds();
         // Va chạm với Paddle.
         if (other instanceof Paddle p) {
-            // Tính tỉ lệ điểm va chạm so với chiều rộng Paddle.
-            double ballCenterX = getX() + getWidth() / 2.0;
-            double paddleCenterX = p.getX() + p.getWidth() / 2.0;
-            double collideRatioX = (ballCenterX - paddleCenterX)
-                                   / (p.getWidth() / 2.0);
+            Rectangle paddleRect = p.getBounds();
 
-            // Tạo độ cong ảo của Paddle khi Ball va chạm với Paddle.
-            double reflectAngle = collideRatioX * MAX_REFLECT_ANGLE;
+            // Tính phần chồng lấn nhau để xác định hướng va chạm.
+            double overlapX = Math.min(ballRect.getMaxX(), paddleRect.getMaxX())
+                              - Math.max(ballRect.getMinX(), paddleRect.getMinX());
+            double overlapY = Math.min(ballRect.getMaxY(), paddleRect.getMaxY())
+                              - Math.max(ballRect.getMinY(), paddleRect.getMinY());
 
-            // Giữ nguyên độ lớn vận tốc và đổi hướng theo góc phản xạ.
-            double speed = Math.sqrt(getDx() * getDx() + getDy() * getDy());
-            setDx(speed * Math.sin(reflectAngle));
-            setDy(-speed * Math.cos(reflectAngle));
+            // Va vào cạnh bên của Paddle.
+            if (overlapX < overlapY) {
+                // Đẩy ra khỏi 2 mép Paddle để tránh kẹt.
+                if (ballRect.getCenterX() < paddleRect.getCenterX()) {
+                    // Đẩy sang trái.
+                    setX((int) (paddleRect.getX() - getWidth()));
+                } else {
+                    // Đẩy sang phải.
+                    setX((int) (paddleRect.getX() + paddleRect.getWidth()));
+                }
+
+                setDx(-getDx()); // Ball bật ngược
+            }
+
+            // Va vào mặt trên của Paddle.
+            else if (overlapX > overlapY) {
+                // Đẩy lên trên mặt Paddle để tránh kẹt.
+                setY((int) paddleRect.getY() - getHeight());
+
+                // Tính tỉ lệ điểm va chạm của Ball so với chiều rộng Paddle.
+                double ballContactX;
+                if (getX() + getWidth() / 2.0 < p.getX()) {
+                    // Tâm Ball nằm ngoài mép trái Paddle, lấy mép phải của Ball.
+                    ballContactX = getX() + getWidth();
+                } else if (getX() + getWidth() / 2.0 > p.getX() + p.getWidth()) {
+                    // Tâm Ball nằm ngoài mép phải Paddle, lấy mép trái của Ball.
+                    ballContactX = getX();
+                } else {
+                    // Tâm Ball nằm trên mặt Paddle, lấy luôn tâm.
+                    ballContactX = getX() + getWidth() / 2.0;
+                }
+                double paddleCenterX = p.getX() + p.getWidth() / 2.0;
+                double collideRatioX = (ballContactX - paddleCenterX)
+                                       / (p.getWidth() / 2.0);
+                collideRatioX = Math.max(-1, Math.min(collideRatioX, 1));
+
+                // Tạo độ cong ảo của Paddle khi Ball va chạm với Paddle.
+                double reflectAngle = collideRatioX * MAX_REFLECT_ANGLE;
+
+                // Giữ nguyên độ lớn vận tốc và đổi hướng theo góc phản xạ.
+                double speed = Math.sqrt(getDx() * getDx() + getDy() * getDy());
+                setDx(speed * Math.sin(reflectAngle));
+                setDy(-speed * Math.cos(reflectAngle));
+            }
+
+            // Va vào đúng góc.
+            else {
+                setVelocity(-getDx(), -getDy());
+            }
         }
 
         // Va chạm với Brick.
         else if (other instanceof Brick br) {
-            Rectangle ballRect = getBounds();
             Rectangle brickRect = br.getBounds();
 
             // Tính phần chồng lấn nhau để xác định hướng va chạm.
@@ -135,12 +195,28 @@ public class Ball extends MovableObject {
             double overlapY = Math.min(ballRect.getMaxY(), brickRect.getMaxY())
                             - Math.max(ballRect.getMinY(), brickRect.getMinY());
 
+            // Va vào 2 cạnh bên của Brick.
             if (overlapX < overlapY) {
-                setDx(-getDx()); // Nảy ngang vì va cạnh bên của gạch.
-            } else if (overlapX > overlapY) {
-                setDy(-getDy()); // Nảy dọc vì va cạnh trên/dưới của gạch.
-            } else {
-                setVelocity(-getDx(), -getDy()); // Nảy ngược lại vì va vào góc.
+                // Đẩy ra khỏi 2 mép Brick để tránh kẹt.
+                if (ballRect.getCenterX() < brickRect.getCenterX()) {
+                    // Đẩy sang trái.
+                    setX((int) (brickRect.getX() - getWidth()));
+                } else {
+                    // Đẩy sang phải.
+                    setX((int) (brickRect.getX() + brickRect.getWidth()));
+                }
+
+                setDx(-getDx()); // Ball bật ngược
+            }
+
+            // Va vào cạnh trên/dưới của Brick.
+            else if (overlapX > overlapY) {
+                setDy(-getDy());
+            }
+
+            // Va vào góc.
+            else {
+                setVelocity(-getDx(), -getDy());
             }
         }
     }
@@ -152,24 +228,19 @@ public class Ball extends MovableObject {
      *         false nếu ngược lại.
      */
     public boolean outOfBottom() {
-        return getY() > ArkanoidGame.HEIGHT;
+        return getY() >= ArkanoidGame.getGameHeight();
     }
 
     /**
-     * Đưa bóng về vị trí ban đầu.
-     *
-     * @param newX Tọa độ x mới
-     * @param newY Tọa độ y mới
+     * Reset Ball về vị trí ban đầu.
      */
-    public void resetPosition(int newX, int newY) {
-        setX(newX);
-        setY(newY);
+    public void resetPosition() {
+        setX(paddle.getX() + paddle.getWidth() / 2 - getWidth() / 2);
+        setY(paddle.getY() - getHeight());
         setVelocity(0, 0);
         moving = false;
         delayTimer = LAUNCH_DELAY_TIME; // Reset thời gian chờ
     }
-
-
 
     /**
      * Render Ball lên màn hình.
@@ -183,6 +254,18 @@ public class Ball extends MovableObject {
     }
 
     // Các getter và setter
+
+    public static int getLaunchDelayTime() {
+        return LAUNCH_DELAY_TIME;
+    }
+
+    public double getDefaultSpeed() {
+        return DEFAULT_SPEED;
+    }
+
+    public double getMaxReflectAngle() {
+        return MAX_REFLECT_ANGLE;
+    }
 
     public int getDelayTimer() {
         return delayTimer;

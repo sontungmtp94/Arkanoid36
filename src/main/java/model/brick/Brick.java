@@ -1,19 +1,23 @@
+package model.brick;
+
+import model.base.GameObject;
 import java.awt.*;
 
+
 /**
- * Lớp Brick đại diện cho gạch.
- * Gạch có nhiều loại BrickType,ứng với màu săc và độ bền mặc định khác nhau.
+ * Lớp model.brick.Brick đại diện cho gạch.
+ * Gạch có nhiều loại model.brick.BrickType,ứng với màu săc và độ bền mặc định khác nhau.
  * Gạch bị phá hủy khi hết độ bền.
  */
 public class Brick extends GameObject {
-    /** Loại Brick. */
+    /** Loại model.brick.Brick. */
     private final BrickType type;
 
-    /** Độ bền Brick trong game. */
+    /** Độ bền model.brick.Brick trong game. */
     private int hitPoints;
 
     /**
-     * Constructor cho Brick.
+     * Constructor cho model.brick.Brick.
      *
      * @param x         Tọa độ x (ngang)
      * @param y         Tọa độ y (dọc)
@@ -28,14 +32,14 @@ public class Brick extends GameObject {
         this.hitPoints = type.getHitPoints();
     }
 
-    /** Cập nhật trạng thái của Brick. */
+    /** Cập nhật trạng thái của model.brick.Brick. */
     @Override
     public void update() {}
 
     /**
-     * Giảm độ bền Brick khi Ball đánh trúng.
+     * Giảm độ bền model.brick.Brick khi model.ball.Ball đánh trúng.
      *
-     * @param damage: Lượng sát thương của Ball gây ra.
+     * @param damage: Lượng sát thương của model.ball.Ball gây ra.
      */
     public void takeHits(int damage) {
          setHitPoints(hitPoints -= damage);
@@ -45,7 +49,7 @@ public class Brick extends GameObject {
     }
 
     /**
-     * Kiểm tra xem Brick đã bị phá chưa.
+     * Kiểm tra xem model.brick.Brick đã bị phá chưa.
      *
      * @return true nếu hitPoints <= 0, false nếu ngược lại.
      */
@@ -53,7 +57,7 @@ public class Brick extends GameObject {
         return hitPoints <= 0;
     }
 
-    /** Render Brick lên màn hình.
+    /** Render model.brick.Brick lên màn hình.
      *
      * @param g Dùng để render
      */

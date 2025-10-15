@@ -1,4 +1,8 @@
+package model.powerup;
+
 import java.awt.*;
+import model.base.MovableObject;
+import controller.GameManager;
 
 public class PowerUp extends MovableObject {
     private int id;
@@ -38,15 +42,15 @@ public class PowerUp extends MovableObject {
     public void applyEffect(int id) {
         switch (id) {
             case 0:
-                GameManager.score += 50;
+                GameManager.setScore(GameManager.getScore() + 50);
                 break;
             case 1:
-                if (GameManager.paddle.getWidth() < 230) {
-                    GameManager.paddle.setWidth(GameManager.paddle.getWidth() + 50);
+                if (GameManager.getPaddle().getWidth() < 230) {
+                    GameManager.getPaddle().setWidth(GameManager.getPaddle().getWidth() + 50);
                 }
                 break;
             case 2:
-                if (GameManager.lives < 5) GameManager.lives ++;
+                if (GameManager.getLives() < 5) GameManager.setLives(GameManager.getLives() + 1);
                 break;
             default:
                 break;

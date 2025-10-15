@@ -1,5 +1,9 @@
+package game;
+
 import javax.swing.*;
 import java.awt.*;
+import view.MainMenu;
+import controller.GameManager;
 
 /**
  * Lớp ArkanoidGame là lớp chính của trò chơi, kế thừa JFrame
@@ -14,9 +18,9 @@ public class ArkanoidGame extends JFrame implements ScreenSwitcher {
     protected static final int WIDTH = 1200;
 
     /** Chiều cao cửa sổ game. */
-    protected static final int HEIGHT = 675;
+    protected static final int HEIGHT = 650;
 
-    /** Thành phần giao diện hiện tại đang hiển thị (MainMenu, GamePanel, ...). */
+    /** Thành phần giao diện hiện tại đang hiển thị (view.MainMenu, GamePanel, ...). */
     private JPanel currentPanel;
 
     /**
@@ -41,7 +45,7 @@ public class ArkanoidGame extends JFrame implements ScreenSwitcher {
         if (currentPanel != null) {
             remove(currentPanel);
         }
-        currentPanel = new MainMenu(this); // Truyền this để MainMenu có thể gọi lại showGame()
+        currentPanel = new MainMenu(this); // Truyền this để view.MainMenu có thể gọi lại showGame()
         add(currentPanel);
         revalidate();
         repaint();
@@ -57,15 +61,13 @@ public class ArkanoidGame extends JFrame implements ScreenSwitcher {
             remove(currentPanel);
         }
 
-        // Tạo GameManager (màn chơi chính)
+        // Tạo controller.GameManager (màn chơi chính)
         currentPanel = new GameManager(WIDTH, HEIGHT, this);
         currentPanel.setPreferredSize(new Dimension(WIDTH, HEIGHT));
         getContentPane().add(currentPanel);
         pack();
 
         add(currentPanel);
-
-
 
         // Đảm bảo focus để nhận bàn phím
         currentPanel.requestFocusInWindow();
@@ -80,5 +82,15 @@ public class ArkanoidGame extends JFrame implements ScreenSwitcher {
      */
     public static void main(String[] args) {
         new ArkanoidGame();
+    }
+
+    // Các getter và setter
+
+    public static int getGameWidth() {
+        return WIDTH;
+    }
+
+    public static int getGameHeight() {
+        return HEIGHT;
     }
 }

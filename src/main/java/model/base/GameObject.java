@@ -1,3 +1,5 @@
+package model.base;
+
 import java.awt.*;
 
 public abstract class GameObject {
@@ -5,12 +7,12 @@ public abstract class GameObject {
     private int x;
     private int y;
 
-    /** Kích thước của GameObject. */
+    /** Kích thước của model.base.GameObject. */
     private int width;
     private int height;
 
     /**
-     * Constructor cho GameObject với vị trí và kích thước.
+     * Constructor cho model.base.GameObject với vị trí và kích thước.
      *
      * @param x      Tọa độ x, Chiều ngang từ Trái sang Phải
      * @param y      Tọa độ y, Chiều dọc từ Trên xuống Dưới
