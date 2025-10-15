@@ -64,6 +64,7 @@ public class MapManager {
         map3();
         map4();
         map5();
+        map6();
     }
 
     /**
@@ -146,5 +147,12 @@ public class MapManager {
             }
         }
         addMap(5, map);
+    }
+
+    public void map6() {
+        ArrayList<Brick> map = new ArrayList<>();
+        Brick t = new Brick(startX + 120, startY + 120, WIDTH * 5, HEIGHT * 5, BrickType.NORMAL);
+        map.add(t);
+        addMap(6, map);
     }
 }
