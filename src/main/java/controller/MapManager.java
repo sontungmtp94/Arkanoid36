@@ -3,9 +3,12 @@ package controller;
 import model.brick.Brick;
 import model.brick.BrickType;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 /**
  * controller.MapManager - Quản lý nhiều bản đồ (map) trong game Arkanoid.
@@ -72,11 +75,23 @@ public class MapManager {
      */
     public void map1() {
         ArrayList<Brick> map = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 15; j++) {
-                Brick t = new Brick(startX + spaceX * j, 40 + spaceY * i, WIDTH, HEIGHT, BrickType.NORMAL);
-                map.add(t);
+        String path = "src/main/resources/map/Map1.txt";
+
+        try(Scanner sc = new Scanner(new File(path))) {
+            int row = 0;
+            while(sc.hasNextLine()) {
+                String line = sc.nextLine().trim();
+                String[] tokens = line.split("\\s+");
+                for(int i = 0; i < tokens.length; i++) {
+                    if (tokens[i].equals("1")) {
+                        Brick t = new Brick(startX + spaceX * i, startY + spaceY * row, WIDTH, HEIGHT, BrickType.NORMAL);
+                        map.add(t);
+                    }
+                }
+                row++;
             }
+        } catch (IOException e) {
+            System.err.println("Không thể đọc file Map1.txt: " + e.getMessage());
         }
         addMap(1, map);
     }
@@ -86,27 +101,49 @@ public class MapManager {
      */
     public void map2() {
         ArrayList<Brick> map = new ArrayList<>();
-        for (int i = 0; i < 8; i++) {
-            for(int j = i; j < 15 - i; j++) {
-                Brick t = new Brick(startX + spaceX * j, startY + spaceY * i, WIDTH, HEIGHT, BrickType.NORMAL);
-                map.add(t);
+        String path = "src/main/resources/map/Map2.txt";
+
+        try(Scanner sc = new Scanner(new File(path))) {
+            int row = 0;
+            while(sc.hasNextLine()) {
+                String line = sc.nextLine().trim();
+                String[] tokens = line.split("\\s+");
+                for(int i = 0; i < tokens.length; i++) {
+                    if (tokens[i].equals("1")) {
+                        Brick t = new Brick(startX + spaceX * i, startY + spaceY * row, WIDTH, HEIGHT, BrickType.NORMAL);
+                        map.add(t);
+                    }
+                }
+                row++;
             }
+        } catch (IOException e) {
+            System.err.println("Không thể đọc file Map1.txt: " + e.getMessage());
         }
         addMap(2, map);
     }
 
     /**
-     * Map 3: 8 cột gạch cách nhau 1 khoảng, mỗi cột 8 khối.
+     * Map 3: 8 cột gạch cách nhau 1 khoảng, mỗi cột 6 khối.
      */
     public void map3() {
         ArrayList<Brick> map = new ArrayList<>();
-        for (int i = 0; i < 8; i++) {
-            for(int j = 0; j < 15; j++) {
-                if (j % 2 == 0) {
-                    Brick t = new Brick(startX + spaceX * j, startY + spaceY * i, WIDTH, HEIGHT, BrickType.NORMAL);
-                    map.add(t);
+        String path = "src/main/resources/map/Map3.txt";
+
+        try(Scanner sc = new Scanner(new File(path))) {
+            int row = 0;
+            while(sc.hasNextLine()) {
+                String line = sc.nextLine().trim();
+                String[] tokens = line.split("\\s+");
+                for(int i = 0; i < tokens.length; i++) {
+                    if (tokens[i].equals("1")) {
+                        Brick t = new Brick(startX + spaceX * i, startY + spaceY * row, WIDTH, HEIGHT, BrickType.NORMAL);
+                        map.add(t);
+                    }
                 }
+                row++;
             }
+        } catch (IOException e) {
+            System.err.println("Không thể đọc file Map1.txt: " + e.getMessage());
         }
         addMap(3, map);
     }
@@ -116,35 +153,46 @@ public class MapManager {
      */
     public void map4() {
         ArrayList<Brick> map = new ArrayList<>();
-        for (int i = 0; i < 6; i++) {
-            if (i < 2 || i > 3) {
-                for (int j = 0; j < 15; j++) {
-                    if (j < 5 || j > 9) {
-                        Brick t = new Brick(startX + spaceX * j, startY + spaceY * i, WIDTH, HEIGHT, BrickType.NORMAL);
+        String path = "src/main/resources/map/Map4.txt";
+
+        try(Scanner sc = new Scanner(new File(path))) {
+            int row = 0;
+            while(sc.hasNextLine()) {
+                String line = sc.nextLine().trim();
+                String[] tokens = line.split("\\s+");
+                for(int i = 0; i < tokens.length; i++) {
+                    if (tokens[i].equals("1")) {
+                        Brick t = new Brick(startX + spaceX * i, startY + spaceY * row, WIDTH, HEIGHT, BrickType.NORMAL);
                         map.add(t);
                     }
                 }
-            } else {
-                for (int j = 0; j < 15; j++) {
-                    if (j >= 5 && j <= 9) {
-                        Brick t = new Brick(startX + spaceX * j, startY + spaceY * i, WIDTH, HEIGHT, BrickType.NORMAL);
-                        map.add(t);
-                    }
-                }
+                row++;
             }
+        } catch (IOException e) {
+            System.err.println("Không thể đọc file Map1.txt: " + e.getMessage());
         }
         addMap(4, map);
     }
 
     public void map5() {
         ArrayList<Brick> map = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 15; j++) {
-                if((i % 2 == 0 && j % 2 == 0) || (i % 2 != 0 && j % 2 != 0)) {
-                    Brick t = new Brick(startX + spaceX * j, startY + spaceY * i, WIDTH, HEIGHT, BrickType.NORMAL);
-                    map.add(t);
+        String path = "src/main/resources/map/Map5.txt";
+
+        try(Scanner sc = new Scanner(new File(path))) {
+            int row = 0;
+            while(sc.hasNextLine()) {
+                String line = sc.nextLine().trim();
+                String[] tokens = line.split("\\s+");
+                for(int i = 0; i < tokens.length; i++) {
+                    if (tokens[i].equals("1")) {
+                        Brick t = new Brick(startX + spaceX * i, startY + spaceY * row, WIDTH, HEIGHT, BrickType.NORMAL);
+                        map.add(t);
+                    }
                 }
+                row++;
             }
+        } catch (IOException e) {
+            System.err.println("Không thể đọc file Map1.txt: " + e.getMessage());
         }
         addMap(5, map);
     }
