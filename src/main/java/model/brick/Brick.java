@@ -73,8 +73,6 @@ public class Brick extends GameObject {
         BufferedImage img = type.getSprite();
         if (img != null) {
             g.drawImage(img, getX(), getY(), getWidth(), getHeight(), null);
-        } else {
-
         }
     }
 

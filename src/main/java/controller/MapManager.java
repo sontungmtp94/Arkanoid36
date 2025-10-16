@@ -2,9 +2,8 @@ package controller;
 
 import model.brick.Brick;
 import model.brick.BrickType;
-import view.BricksView;
+import view.SpritesView;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -39,8 +38,6 @@ public class MapManager {
      * Constructor - khởi tạo controller.MapManager.
      */
     public MapManager() {
-        BricksView bricksView = new BricksView();
-        bricksView.loadBrickSprites();
         maps = new HashMap<>();
         ListOfMap();
     }
@@ -216,9 +213,4 @@ public class MapManager {
     }
 
     private BufferedImage spriteSheet;
-
-
-
-
-
 }

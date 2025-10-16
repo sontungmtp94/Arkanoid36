@@ -1,50 +1,56 @@
 package model.brick;
 
-import java.awt.*;
+import view.SpritesView;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 
 /**
- * model.brick.BrickType đại diện cho các loại model.brick.Brick.
- * Mỗi loại có màu sắc và độ bền mặc định khác nhau.
+ * BrickType đại diện cho các loại gạch.
+ * Mỗi loại có vị trí riêng trên spritesheet bricks.png.
  */
 public enum BrickType {
-    RED(0, 0, 32, 16, 1),
-    CYAN(0, 16, 32, 16, 1),
-    BLUE(0, 32, 32, 16, 1),
-    PURPLE(0, 48, 32, 16, 1),
-    YELLOW(0, 64, 32, 16, 1),
-    ORANGE(0, 80, 32, 16, 1);
+    RED(0, 0),
+    CYAN(0, 16),
+    BLUE(0, 32),
+    PURPLE(0, 48),
+    YELLOW(0, 64),
+    ORANGE(0, 80);
 
-    private final int x, y, width, height;
-    private final int hitPoints;
+    private static final int WIDTH = 32;
+    private static final int HEIGHT = 16;
+    private static final int HITPOINTS = 1;
+
+    private int x, y;
     private BufferedImage sprite;
 
-    BrickType(int x, int y, int width, int height, int hitPoints) {
+    // Constructor
+    BrickType(int x, int y) {
         this.x = x;
         this.y = y;
-        this.width = width;
-        this.height = height;
-        this.hitPoints = hitPoints;
     }
 
-    // Getter cho spritesheet
-    public int getX() { return x; }
-    public int getY() { return y; }
-    public int getWidth() { return width; }
-    public int getHeight() { return height; }
+    // Static block được chạy SAU khi tất cả enum được tạo
+    static {
+        BufferedImage sheet = SpritesView.loadSprite("images/brick/bricks.png");
+        for (BrickType type : values()) {
+            if (sheet != null) {
+                type.sprite = SpritesView.cutSprite(sheet, type.x, type.y, WIDTH, HEIGHT);
+            }
+        }
+        System.out.println("Brick sprites loaded successfully!");
+    }
 
-    // Getter cho gameplay
-    public int getHitPoints() { return hitPoints; }
+    public BufferedImage getSprite() {
+        return sprite;
+    }
 
+    public int getHitPoints() {
+        return HITPOINTS;
+    }
 
-    // Sprite getter / setter
-    public BufferedImage getSprite() { return sprite; }
-    public void setSprite(BufferedImage sprite) { this.sprite = sprite; }
-
-    /** Chọn ngẫu nhiên 1 loại Brick */
+    /** Trả về 1 loại gạch ngẫu nhiên. */
     public static BrickType getRandomType() {
-        BrickType[] values = BrickType.values();
+        BrickType[] values = values();
         return values[new Random().nextInt(values.length)];
     }
 }
