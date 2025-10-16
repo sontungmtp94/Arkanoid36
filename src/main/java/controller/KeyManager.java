@@ -9,6 +9,7 @@ public class KeyManager implements KeyListener {
     private boolean rightPressed;
     private boolean pausePressed;
     private boolean restartPressed;
+    private boolean nextLevelPressed;
 
     /** Xử lý khi nhấn phím. */
     @Override
@@ -22,6 +23,9 @@ public class KeyManager implements KeyListener {
         }
         if (key == KeyEvent.VK_R) {
             restartPressed = true;
+        }
+        if (key == KeyEvent.VK_N) {
+            nextLevelPressed = true;
         }
         if (key == KeyEvent.VK_ESCAPE) {
             pausePressed = !pausePressed;
@@ -41,6 +45,9 @@ public class KeyManager implements KeyListener {
         }
         if (key == KeyEvent.VK_R) {
             restartPressed = false;
+        }
+        if (key == KeyEvent.VK_N) {
+            nextLevelPressed = true;
         }
     }
 
@@ -64,6 +71,14 @@ public class KeyManager implements KeyListener {
 
     public boolean isRestartPressed() {
         return restartPressed;
+    }
+
+    public boolean isNextLevelPressed() {
+        return nextLevelPressed;
+    }
+
+    public void clearPause() {
+        pausePressed = false;
     }
 
 

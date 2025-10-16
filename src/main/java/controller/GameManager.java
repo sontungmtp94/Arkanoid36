@@ -4,6 +4,8 @@ import game.ScreenSwitcher;
 import model.ball.Ball;
 import model.brick.Brick;
 import model.paddle.Paddle;
+import view.GameOver;
+import view.LevelCompleted;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,25 +20,27 @@ public class GameManager extends JPanel implements ActionListener {
 
     protected int panelWidth;
     protected int panelHeight;
+    protected int currentLevel = 5;          // Mức độ hiện tại
     protected static Paddle paddle;                 // Thanh đỡ
     protected static Ball ball;                     // Quả bóng
     private ArrayList<Brick> bricks;       // Gạch
     private Timer timer;                   // Bộ đếm
     private MapManager mapManger;          // Quản lý bản đồ
     protected static int score, lives, highScore;   // Điểm, mạng, điểm cao
-    private boolean running; // Trạng thái game và phím
     private ScreenSwitcher screenSwitcher;              // Chuyển đổi màn hình
     private KeyManager keyManager;                // Quản lý phím
-    private JLabel gameOver = new JLabel("Game Over!");
-    private JLabel restart = new JLabel("Press R to restart.");
+    private GameOver gameOver;
+    private LevelCompleted levelCompleted;
+    private GameState gameState;
 
     /** Khởi tạo paddle, bóng, gạch,... */
     public void initGameObjects() {
         paddle = new Paddle((panelWidth - 150) / 2, panelHeight - 100, 150, 20, Color.MAGENTA);
         ball = new Ball(panelWidth / 2, panelHeight / 2, 15, 15, 1, Color.BLACK);
 
+
         mapManger = new MapManager();
-        bricks = mapManger.loadMap(1); // Load map đầu tiên
+        bricks = mapManger.loadMap(currentLevel);
 
         ball.setPaddle(paddle);
         ball.setBricks(bricks);
@@ -45,7 +49,6 @@ public class GameManager extends JPanel implements ActionListener {
         lives = 3;
         highScore = 0;
 
-        running = true;
     }
 
     /**
@@ -70,34 +73,64 @@ public class GameManager extends JPanel implements ActionListener {
 
         initGameObjects();
 
+        gameState = GameState.PLAYING;
+
         timer = new Timer(1000/60, this);
         timer.start();
 
         setLayout(null);
 
-        gameOver.setFont(new Font("Arial", Font.BOLD, 72));
-        gameOver.setForeground(Color.RED);
-        gameOver.setHorizontalAlignment(SwingConstants.CENTER);
-        gameOver.setBounds(0, panelHeight / 2 - 120, panelWidth, 100); // căn giữa hoàn hảo
+        gameOver = new GameOver(panelWidth, panelHeight);
+        gameOver.setBounds(0, 0, panelWidth, panelHeight);
         add(gameOver);
-        gameOver.setVisible(false);
 
-        restart.setFont(new Font("Arial", Font.PLAIN, 30));
-        restart.setForeground(Color.DARK_GRAY);
-        restart.setHorizontalAlignment(SwingConstants.CENTER);
-        restart.setBounds(0, panelHeight / 2 - 30, panelWidth, 60); // nằm ngay dưới "Game Over"
-        add(restart);
-        restart.setVisible(false);
+        levelCompleted = new LevelCompleted(panelWidth, panelHeight);
+        levelCompleted.setBounds(0, 0, panelWidth, panelHeight);
+        add(levelCompleted);
     }
 
     /** Cập nhật logic trò chơi mỗi khung hình. */
     public void updateGame() {
-        if (running) {
-            if (keyManager.isLeftPressed()) paddle.moveLeft();
-            if (keyManager.isRightPressed()) paddle.moveRight();
-            if (!keyManager.isLeftPressed() && !keyManager.isRightPressed()) paddle.stop();
+
+
+        if (gameState == GameState.PLAYING) {
+            if (keyManager.isLeftPressed()) {
+                paddle.moveLeft();
+            }
+            if (keyManager.isRightPressed()) {
+                paddle.moveRight();
+            }
+            if (!keyManager.isLeftPressed() && !keyManager.isRightPressed()) {
+                paddle.stop();
+            }
+
+
             ball.update();
             paddle.update();
+
+            for(Brick brick : bricks) {
+                if(brick.isDestroyed() && !brick.isScored()) {
+                    score += 10;
+                    brick.setScored(true);
+                }
+            }
+
+            if (score > highScore) {
+                highScore = score;
+            }
+
+            boolean allCleared = true;
+            for (Brick brick : bricks) {
+                if (!brick.isDestroyed()) {
+                    allCleared = false;
+                    break;
+                }
+            }
+
+            if (allCleared) {
+                gameState = GameState.LEVEL_COMPLETED;
+                levelCompleted.showPanel();
+            }
 
             if (ball.outOfBottom()) {
                 lives--;
@@ -106,16 +139,39 @@ public class GameManager extends JPanel implements ActionListener {
             }
 
             if (lives == 0) {
-                running = false;
-                gameOver.setVisible(true);
-                restart.setVisible(true);
+                gameState = GameState.GAME_OVER;
+                gameOver.showPanel();
             }
+
         }
 
-        if (keyManager.isRestartPressed() && lives == 0) {
+        if (keyManager.isPausePressed()) {
+            if (gameState == GameState.PLAYING) {
+                gameState = GameState.PAUSE;
+            } else if (gameState == GameState.PAUSE) {
+                gameState = GameState.PLAYING;
+            }
+            keyManager.clearPause();
+        }
+
+
+        if (keyManager.isNextLevelPressed() && gameState == GameState.LEVEL_COMPLETED) {
+            currentLevel++;
+            if (currentLevel > 5) {
+                currentLevel = 1;
+            }
             initGameObjects();
-            gameOver.setVisible(false);
-            restart.setVisible(false);
+            gameState = GameState.PLAYING;
+            levelCompleted.hidePanel();
+        }
+
+
+        if (keyManager.isRestartPressed() && gameState == GameState.GAME_OVER
+            || keyManager.isRestartPressed() && gameState == GameState.LEVEL_COMPLETED) {
+            initGameObjects();
+            gameOver.hidePanel();
+            levelCompleted.hidePanel();
+            gameState = GameState.PLAYING;
         }
 
 
@@ -126,18 +182,23 @@ public class GameManager extends JPanel implements ActionListener {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
-        if (running) {
-            ball.render(g2d);
-            paddle.render(g2d);
-        }
+        ball.render(g2d);
+        paddle.render(g2d);
         for (Brick brick : bricks) {
             brick.render(g2d);
         }
         g2d.setColor(Color.BLACK);
         g2d.setFont(new Font("Arial", Font.PLAIN, 20));
         g2d.drawString("Score: " + score, 20, 30);
-        g2d.drawString("Lives: " + lives, 100, 30);
+        g2d.drawString("Lives: " + lives, 200, 30);
         g2d.drawString("High Score: " + highScore, panelWidth - 150, 30);
+        if (gameState == GameState.PAUSE) {
+            g2d.setColor(new Color(0, 0, 0, 150));
+            g2d.fillRect(0, 0, panelWidth, panelHeight);
+            g2d.setColor(Color.WHITE);
+            g2d.setFont(new Font("Arial", Font.BOLD, 60));
+            g2d.drawString("PAUSED", panelWidth / 2 - 150, panelHeight / 2);
+        }
     }
 
     /** Xử lý vòng lặp game. */

@@ -75,7 +75,7 @@ public class MapManager {
      */
     public void map1() {
         ArrayList<Brick> map = new ArrayList<>();
-        String path = "src/main/resources/map/Map1.txt";
+        String path = "src/main/resources/maps/Map1.txt";
 
         try(Scanner sc = new Scanner(new File(path))) {
             int row = 0;
@@ -101,7 +101,7 @@ public class MapManager {
      */
     public void map2() {
         ArrayList<Brick> map = new ArrayList<>();
-        String path = "src/main/resources/map/Map2.txt";
+        String path = "src/main/resources/maps/Map2.txt";
 
         try(Scanner sc = new Scanner(new File(path))) {
             int row = 0;
@@ -127,7 +127,7 @@ public class MapManager {
      */
     public void map3() {
         ArrayList<Brick> map = new ArrayList<>();
-        String path = "src/main/resources/map/Map3.txt";
+        String path = "src/main/resources/maps/Map3.txt";
 
         try(Scanner sc = new Scanner(new File(path))) {
             int row = 0;
@@ -153,7 +153,7 @@ public class MapManager {
      */
     public void map4() {
         ArrayList<Brick> map = new ArrayList<>();
-        String path = "src/main/resources/map/Map4.txt";
+        String path = "src/main/resources/maps/Map4.txt";
 
         try(Scanner sc = new Scanner(new File(path))) {
             int row = 0;
@@ -176,7 +176,7 @@ public class MapManager {
 
     public void map5() {
         ArrayList<Brick> map = new ArrayList<>();
-        String path = "src/main/resources/map/Map5.txt";
+        String path = "src/main/resources/maps/Map5.txt";
 
         try(Scanner sc = new Scanner(new File(path))) {
             int row = 0;

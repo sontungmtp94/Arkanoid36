@@ -16,6 +16,8 @@ public class Brick extends GameObject {
     /** Độ bền model.brick.Brick trong game. */
     private int hitPoints;
 
+    private boolean scored = false; // Biến kiểm tra đã được tính điểm chưa
+
     /**
      * Constructor cho model.brick.Brick.
      *
@@ -84,4 +86,15 @@ public class Brick extends GameObject {
     public void setHitPoints(int hitPoints) {
         this.hitPoints = hitPoints;
     }
+
+
+    public boolean isScored() {
+        return scored;
+    }
+
+    public void setScored(boolean scored) {
+        this.scored = scored;
+    }
+
+
 }
