@@ -2,36 +2,49 @@ package model.paddle;
 
 import game.ArkanoidGame;
 import model.base.*;
+import static view.SpritesView.*;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 /**
- * Lớp model.paddle.Paddle đại diện cho thanh trượt, được người chơi điều khiển để đỡ bóng.
+ * Lớp Paddle đại diện cho thanh trượt, được người chơi điều khiển để đỡ bóng.
  * Thanh trượt có tốc độ ban đầu cố định.
  * Thanh trượt có thể đi sang hai bên trái/phải và phải dừng lại khi chạm biên.
  */
 public class Paddle extends MovableObject {
-    /** Tốc độ mặc định ban đầu. */
-    private final double DEFAULT_SPEED = 8.0;
+    // Kích thước mặc định trong game.
+    private static final int DEFAULT_WIDTH = 100;
+    private static final int DEFAULT_HEIGHT = 20;
 
-    /** Tốc độ hiện tại. */
-    private double speed = DEFAULT_SPEED;
+    // Tọa độ x, y mặc định trong game.
+    private static final int DEFAULT_X = (ArkanoidGame.getGameWidth() - DEFAULT_WIDTH) / 2;
+    private static final int DEFAULT_Y = ArkanoidGame.getGameHeight() - DEFAULT_HEIGHT - 80;
 
-    /** Màu sắc model.paddle.Paddle. */
-    private Color color;
+    // Tốc độ mặc định ban đầu.
+    private static final double DEFAULT_SPEED = 10.0;
+
+    // Tốc độ hiện tại.
+    private double speed;
+
+    // Path đến ảnh Paddle.
+    private static final String SPRITE_PATH = "images/paddle/paddle.png";
+
+    // Sprite Paddle.
+    private BufferedImage sprite;
 
     /**
-     * Constructor cho model.paddle.Paddle.
+     * Constructor cho Paddle.
      *
-     * @param x      Tọa độ x (ngang)
-     * @param y      Tọa độ y (dọc)
-     * @param width  Chiều rộng
-     * @param height Chiều cao
-     * @param color  Màu sắc
+     * @param x           Tọa độ x (ngang)
+     * @param y           Tọa độ y (dọc)
+     * @param width       Chiều rộng
+     * @param height      Chiều cao
      */
-    public Paddle(int x, int y, int width, int height, Color color) {
+    public Paddle(int x, int y, int width, int height) {
         super(x, y, width, height);
-        this.color = color;
+        speed = DEFAULT_SPEED;
+        sprite = loadSprite(SPRITE_PATH);
     }
 
     /** Di chuyển sang trái. */
@@ -49,12 +62,12 @@ public class Paddle extends MovableObject {
         setDx(0);
     }
 
-    /** Cập nhật vị trí của model.paddle.Paddle khi di chuyển. */
+    /** Cập nhật vị trí của Paddle khi di chuyển. */
     @Override
     public void update() {
         setX((int) (getX() + getDx()));
 
-        // Giữ model.paddle.Paddle luôn trong biên
+        // Giữ Paddle luôn trong biên
         if (getX() < 0) {
             setX(0);
         } else if (getX() + getWidth() > ArkanoidGame.getGameWidth()) {
@@ -63,18 +76,14 @@ public class Paddle extends MovableObject {
     }
 
 
-    /**
-     * Đưa paddle về vị trí ban đầu.
-     *
-     * @param newX Tọa độ x mới
-     * @param newY Tọa độ y mới
-     */
-
-    public void resetPosition(int newX, int newY) {
-        setX(newX);
-        setY(newY);
+    /** Reset trạng thái Paddle. */
+    public void resetPaddle() {
+        setX(DEFAULT_X);
+        setY(DEFAULT_Y);
+        setWidth(DEFAULT_WIDTH);
+        setHeight(DEFAULT_HEIGHT);
+        speed = DEFAULT_SPEED;
     }
-
 
     /**
      * Render model.paddle.Paddle lên màn hình.
@@ -83,28 +92,50 @@ public class Paddle extends MovableObject {
      */
     @Override
     public void render(Graphics2D g) {
-        g.setColor(getColor());
-        g.fillRect(getX(), getY(), getWidth(), getHeight());
+        if (sprite != null) {
+            g.drawImage(sprite, getX(), getY(), getWidth(), getHeight(), null);
+        }
     }
 
     // Các getter và setter
+
+    public static int getDefaultX() {
+        return DEFAULT_X;
+    }
+
+    public static int getDefaultY() {
+        return DEFAULT_Y;
+    }
+
+    public static int getDefaultWidth() {
+        return DEFAULT_WIDTH;
+    }
+
+    public static int getDefaultHeight() {
+        return DEFAULT_HEIGHT;
+    }
+
     public double getDefaultSpeed() {
         return DEFAULT_SPEED;
+    }
+
+    public static String getSpritePath() {
+        return SPRITE_PATH;
     }
 
     public double getSpeed() {
         return speed;
     }
 
-    public void setSpeed(int speed) {
+    public void setSpeed(double speed) {
         this.speed = speed;
     }
 
-    public Color getColor() {
-        return color;
+    public BufferedImage getSprite() {
+        return sprite;
     }
 
-    public void setColor(Color color) {
-        this.color = color;
+    public void setSprite(BufferedImage sprite) {
+        this.sprite = sprite;
     }
 }

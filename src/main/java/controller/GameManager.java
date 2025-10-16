@@ -18,6 +18,7 @@ import java.util.ArrayList;
  */
 public class GameManager extends JPanel implements ActionListener {
 
+    private GameState gameState;
     protected int panelWidth;
     protected int panelHeight;
     protected int currentLevel = 5;          // Mức độ hiện tại
@@ -31,11 +32,10 @@ public class GameManager extends JPanel implements ActionListener {
     private KeyManager keyManager;                // Quản lý phím
     private GameOver gameOver;
     private LevelCompleted levelCompleted;
-    private GameState gameState;
 
     /** Khởi tạo paddle, bóng, gạch,... */
     public void initGameObjects() {
-        paddle = new Paddle((panelWidth - 150) / 2, panelHeight - 100, 150, 20, Color.MAGENTA);
+        paddle = new Paddle(Paddle.getDefaultX(), Paddle.getDefaultY(), Paddle.getDefaultWidth(), Paddle.getDefaultHeight());
         ball = new Ball(panelWidth / 2, panelHeight / 2, 15, 15, 1, Color.BLACK);
 
 
@@ -57,7 +57,6 @@ public class GameManager extends JPanel implements ActionListener {
      * @param height chiều cao khung
      * @param switcher đối tượng điều khiển chuyển màn
      */
-
     public GameManager(int width, int height, ScreenSwitcher switcher) {
         panelWidth = width;
         panelHeight = height;
@@ -91,8 +90,6 @@ public class GameManager extends JPanel implements ActionListener {
 
     /** Cập nhật logic trò chơi mỗi khung hình. */
     public void updateGame() {
-
-
         if (gameState == GameState.PLAYING) {
             if (keyManager.isLeftPressed()) {
                 paddle.moveLeft();
@@ -103,7 +100,6 @@ public class GameManager extends JPanel implements ActionListener {
             if (!keyManager.isLeftPressed() && !keyManager.isRightPressed()) {
                 paddle.stop();
             }
-
 
             ball.update();
             paddle.update();
@@ -134,7 +130,7 @@ public class GameManager extends JPanel implements ActionListener {
 
             if (ball.outOfBottom()) {
                 lives--;
-                paddle.resetPosition((panelWidth - 150) / 2, panelHeight - 100);
+                paddle.resetPaddle();
                 ball.resetPosition();
             }
 
@@ -142,7 +138,6 @@ public class GameManager extends JPanel implements ActionListener {
                 gameState = GameState.GAME_OVER;
                 gameOver.showPanel();
             }
-
         }
 
         if (keyManager.isPausePressed()) {
@@ -173,8 +168,6 @@ public class GameManager extends JPanel implements ActionListener {
             levelCompleted.hidePanel();
             gameState = GameState.PLAYING;
         }
-
-
     }
 
     /** Vẽ trò chơi lên màn hình. */
