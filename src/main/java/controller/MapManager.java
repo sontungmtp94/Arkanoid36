@@ -2,6 +2,7 @@ package controller;
 
 import model.brick.Brick;
 import model.brick.BrickType;
+import view.BricksView;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -38,7 +39,8 @@ public class MapManager {
      * Constructor - khởi tạo controller.MapManager.
      */
     public MapManager() {
-        loadBrickSprites();
+        BricksView bricksView = new BricksView();
+        bricksView.loadBrickSprites();
         maps = new HashMap<>();
         ListOfMap();
     }
@@ -215,20 +217,7 @@ public class MapManager {
 
     private BufferedImage spriteSheet;
 
-    public void loadBrickSprites() {
-        try {
-            spriteSheet = ImageIO.read(new File("src/main/resources/images/brick/bricks.png"));
-            for (BrickType type : BrickType.values()) {
-                BufferedImage sub = spriteSheet.getSubimage(
-                        type.getX(), type.getY(), type.getWidth(), type.getHeight()
-                );
-                type.setSprite(sub);
-            }
-            System.out.println("Brick sprites loaded successfully!");
-        } catch (IOException e) {
-            System.err.println("Failed to load sprites: " + e.getMessage());
-        }
-    }
+
 
 
 
