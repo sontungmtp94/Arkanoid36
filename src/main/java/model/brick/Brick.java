@@ -2,6 +2,7 @@ package model.brick;
 
 import model.base.GameObject;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 
 /**
@@ -69,8 +70,12 @@ public class Brick extends GameObject {
             return;
         }
 
-        g.setColor(type.getColor());
-        g.fillRect(getX(), getY(), getWidth(), getHeight());
+        BufferedImage img = type.getSprite();
+        if (img != null) {
+            g.drawImage(img, getX(), getY(), getWidth(), getHeight(), null);
+        } else {
+
+        }
     }
 
     // Các getter và setter

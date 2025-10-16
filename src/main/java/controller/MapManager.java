@@ -3,6 +3,8 @@ package controller;
 import model.brick.Brick;
 import model.brick.BrickType;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,6 +38,7 @@ public class MapManager {
      * Constructor - khởi tạo controller.MapManager.
      */
     public MapManager() {
+        loadBrickSprites();
         maps = new HashMap<>();
         ListOfMap();
     }
@@ -84,7 +87,8 @@ public class MapManager {
                 String[] tokens = line.split("\\s+");
                 for(int i = 0; i < tokens.length; i++) {
                     if (tokens[i].equals("1")) {
-                        Brick t = new Brick(startX + spaceX * i, startY + spaceY * row, WIDTH, HEIGHT, BrickType.NORMAL);
+                        BrickType randomType = BrickType.getRandomType();
+                        Brick t = new Brick(40 + spaceX * i, 40 + spaceY * row, WIDTH, HEIGHT, randomType);
                         map.add(t);
                     }
                 }
@@ -110,7 +114,8 @@ public class MapManager {
                 String[] tokens = line.split("\\s+");
                 for(int i = 0; i < tokens.length; i++) {
                     if (tokens[i].equals("1")) {
-                        Brick t = new Brick(startX + spaceX * i, startY + spaceY * row, WIDTH, HEIGHT, BrickType.NORMAL);
+                        BrickType randomType = BrickType.getRandomType();
+                        Brick t = new Brick(40 + spaceX * i, 40 + spaceY * row, WIDTH, HEIGHT, randomType);
                         map.add(t);
                     }
                 }
@@ -136,7 +141,8 @@ public class MapManager {
                 String[] tokens = line.split("\\s+");
                 for(int i = 0; i < tokens.length; i++) {
                     if (tokens[i].equals("1")) {
-                        Brick t = new Brick(startX + spaceX * i, startY + spaceY * row, WIDTH, HEIGHT, BrickType.NORMAL);
+                        BrickType randomType = BrickType.getRandomType();
+                        Brick t = new Brick(40 + spaceX * i, 40 + spaceY * row, WIDTH, HEIGHT, randomType);
                         map.add(t);
                     }
                 }
@@ -162,7 +168,8 @@ public class MapManager {
                 String[] tokens = line.split("\\s+");
                 for(int i = 0; i < tokens.length; i++) {
                     if (tokens[i].equals("1")) {
-                        Brick t = new Brick(startX + spaceX * i, startY + spaceY * row, WIDTH, HEIGHT, BrickType.NORMAL);
+                        BrickType randomType = BrickType.getRandomType();
+                        Brick t = new Brick(40 + spaceX * i, 40 + spaceY * row, WIDTH, HEIGHT, randomType);
                         map.add(t);
                     }
                 }
@@ -185,7 +192,8 @@ public class MapManager {
                 String[] tokens = line.split("\\s+");
                 for(int i = 0; i < tokens.length; i++) {
                     if (tokens[i].equals("1")) {
-                        Brick t = new Brick(startX + spaceX * i, startY + spaceY * row, WIDTH, HEIGHT, BrickType.NORMAL);
+                        BrickType randomType = BrickType.getRandomType();
+                        Brick t = new Brick(40 + spaceX * i, 40 + spaceY * row, WIDTH, HEIGHT, randomType);
                         map.add(t);
                     }
                 }
@@ -199,8 +207,29 @@ public class MapManager {
 
     public void map6() {
         ArrayList<Brick> map = new ArrayList<>();
-        Brick t = new Brick(startX + 120, startY + 120, WIDTH * 5, HEIGHT * 5, BrickType.NORMAL);
+        BrickType randomType = BrickType.getRandomType();
+        Brick t = new Brick(40, 40, WIDTH, HEIGHT, randomType);
         map.add(t);
         addMap(6, map);
     }
+
+    private BufferedImage spriteSheet;
+
+    public void loadBrickSprites() {
+        try {
+            spriteSheet = ImageIO.read(new File("src/main/resources/images/brick/bricks.png"));
+            for (BrickType type : BrickType.values()) {
+                BufferedImage sub = spriteSheet.getSubimage(
+                        type.getX(), type.getY(), type.getWidth(), type.getHeight()
+                );
+                type.setSprite(sub);
+            }
+            System.out.println("Brick sprites loaded successfully!");
+        } catch (IOException e) {
+            System.err.println("Failed to load sprites: " + e.getMessage());
+        }
+    }
+
+
+
 }
