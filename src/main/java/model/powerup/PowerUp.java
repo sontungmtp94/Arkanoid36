@@ -1,9 +1,13 @@
 package model.powerup;
 
+import static model.ball.Ball.*;
+
 import java.awt.*;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+
+import model.ball.Ball;
 import model.base.MovableObject;
 import controller.GameManager;
 import javax.swing.*;
@@ -93,11 +97,11 @@ public class PowerUp extends MovableObject {
                 break;
             case 2:
                 if (GameManager.getLives() < 5) GameManager.setLives(GameManager.getLives() + 1);
-                System.out.println("PowerUp2: Cong 1 mang");
+                System.out.println("PowerUp 2: Cong 1 mang");
                 break;
             case 3:
                 if (GameManager.ball.getDamage() == 1) {
-                    GameManager.ball.setColor(Color.RED);
+                    GameManager.ball.setAndReloadSpritePath("/images/balls/ball_fire.png");
                     GameManager.ball.setDamage(2);
                 }
                 System.out.println("PowerUp 3: Gap doi sat thuong cua bong");

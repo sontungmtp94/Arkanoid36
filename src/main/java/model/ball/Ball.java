@@ -6,8 +6,10 @@ import model.paddle.*;
 import model.base.*;
 import model.powerup.*;
 import controller.GameManager;
+import static view.SpritesView.*;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 /**
@@ -40,8 +42,9 @@ public class Ball extends MovableObject {
     /** Trạng thái bóng đang chờ (bắt dầu chơi) / đang di chuyển */
     private boolean moving = false;
 
-    /** Màu sắc Ball. */
-    private Color color;
+    /** Sprite của Ball. */
+    private BufferedImage ballSprite;
+    private static String SPRITE_PATH = "images/balls/ball_default.png";
 
     /** Paddle và các Brick mà Ball có thể va chạm. */
     private Paddle paddle;
@@ -61,8 +64,8 @@ public class Ball extends MovableObject {
                 int damage, Color color) {
         super(x, y, width, height);
         this.damage = damage;
-        this.color = color;
         setVelocity(0, 0);
+        ballSprite = loadSprite(SPRITE_PATH);
     }
 
     /** Cập nhật vị trí Ball. */
@@ -254,7 +257,6 @@ public class Ball extends MovableObject {
         setY(paddle.getY() - getHeight());
         setVelocity(0, 0);
         setDamage(DEFAULT_DAMAGE);
-        setColor(Color.BLACK);
         setSpeed(DEFAULT_SPEED);
         moving = false;
         delayTimer = LAUNCH_DELAY_TIME; // Reset thời gian chờ
@@ -267,8 +269,7 @@ public class Ball extends MovableObject {
      */
     @Override
     public void render(Graphics2D g) {
-        g.setColor(getColor());
-        g.fillOval(getX(), getY(), getWidth(), getHeight());
+        g.drawImage(ballSprite, getX(), getY(), getWidth(), getHeight(), null);
     }
 
     // Các getter và setter
@@ -317,14 +318,6 @@ public class Ball extends MovableObject {
         this.moving = moving;
     }
 
-    public Color getColor() {
-        return color;
-    }
-
-    public void setColor(Color color) {
-        this.color = color;
-    }
-
     public Paddle getPaddle() {
         return paddle;
     }
@@ -339,5 +332,14 @@ public class Ball extends MovableObject {
 
     public void setBricks(ArrayList<Brick> bricks) {
         this.bricks = bricks;
+    }
+
+    public String getSpritePath() {
+        return SPRITE_PATH;
+    }
+
+    public void setAndReloadSpritePath(String spritePath) {
+        SPRITE_PATH = spritePath;
+        this.ballSprite = loadSprite(SPRITE_PATH);
     }
 }

@@ -5,6 +5,7 @@ import model.ball.Ball;
 import model.brick.Brick;
 import model.paddle.Paddle;
 import model.powerup.PowerUp;
+import view.GameBackground;
 import view.GameOver;
 import view.LevelCompleted;
 
@@ -29,6 +30,7 @@ public class GameManager extends JPanel implements ActionListener {
     private ArrayList<Brick> bricks;       // Gạch
     private Timer timer;                   // Bộ đếm
     private MapManager mapManger;          // Quản lý bản đồ
+    private GameBackground gameBackground;      // Nền game
     protected static int score, lives, highScore;   // Điểm, mạng, điểm cao
     private ScreenSwitcher screenSwitcher;              // Chuyển đổi màn hình
     private KeyManager keyManager;                // Quản lý phím
@@ -39,9 +41,11 @@ public class GameManager extends JPanel implements ActionListener {
     public void initGameObjects() {
         paddle = new Paddle(Paddle.getDefaultX(), Paddle.getDefaultY(), Paddle.getDefaultWidth(), Paddle.getDefaultHeight());
         ball = new Ball(panelWidth / 2, panelHeight / 2, 15, 15, 1, Color.BLACK);
+        ball.setAndReloadSpritePath("images/balls/ball_default.png");
+        ball.setDamage(1);
         powerUps = new ArrayList<>();
 
-
+        gameBackground = new GameBackground();
         mapManger = new MapManager();
         bricks = mapManger.loadMap(currentLevel);
 
@@ -180,7 +184,12 @@ public class GameManager extends JPanel implements ActionListener {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        g.drawImage(gameBackground.getBackground(), 0, 0, panelWidth, panelHeight, null);
         Graphics2D g2d = (Graphics2D) g;
+        // Bật anti-aliasing cho đồ họa
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        // Bật anti-aliasing cho text
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         ball.render(g2d);
         paddle.render(g2d);
         for (Brick brick : bricks) {
@@ -189,7 +198,7 @@ public class GameManager extends JPanel implements ActionListener {
         for (PowerUp pu : powerUps) {
             pu.render(g2d);
         }
-        g2d.setColor(Color.BLACK);
+        g2d.setColor(Color.WHITE);
         g2d.setFont(new Font("Arial", Font.PLAIN, 20));
         g2d.drawString("Score: " + score, 20, 30);
         g2d.drawString("Lives: " + lives, 200, 30);
