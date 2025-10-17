@@ -4,6 +4,8 @@ import game.ArkanoidGame;
 import model.brick.*;
 import model.paddle.*;
 import model.base.*;
+import model.powerup.*;
+import controller.GameManager;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -21,10 +23,16 @@ public class Ball extends MovableObject {
     /** Tốc độ mặc định ban đầu của Ball theo 2 chiều. */
     private final double DEFAULT_SPEED = 5.0;
 
+    /** Tốc độ hiện tại của bóng. */
+    private double speed = DEFAULT_SPEED;
+
     /** Góc phản xạ khi va chạm từ 60 độ (tại biên) đến 0 độ (tại tâm). */
     private final double MAX_REFLECT_ANGLE = Math.toRadians(60);
 
     private int delayTimer = LAUNCH_DELAY_TIME;
+
+    /** Lượng sát thương mặc định của Ball. */
+    private final int DEFAULT_DAMAGE = 1;
 
     /** Lượng sát thương của Ball. */
     private int damage;
@@ -72,7 +80,7 @@ public class Ball extends MovableObject {
                 // Ball bắt đầu bay lên theo một trong 2 hướng ngẫu nhiên.
                 moving = true;
                 int direction = Math.random() > 0.5 ? 1 : -1;
-                setVelocity(DEFAULT_SPEED * direction, -DEFAULT_SPEED);
+                setVelocity(speed * direction, speed * -1);
             }
             return;
         }
@@ -111,6 +119,13 @@ public class Ball extends MovableObject {
                     && getBounds().intersects(brick.getBounds())) {
                     bounce(brick);
                     brick.takeHits(damage);
+                    if (Math.random() < 0.2) {
+                        int idPower = (int) (Math.random() * 6);
+                        PowerUp newP = new PowerUp(0, 0, 30, 30, idPower);
+                        newP.setX(brick.getX() + brick.getWidth() / 2 - brick.getWidth() / 2);
+                        newP.setY(brick.getY() + brick.getHeight() / 2 - newP.getHeight() / 2);
+                        GameManager.powerUps.add(newP);
+                    }
                     break;
                 }
             }
@@ -232,12 +247,15 @@ public class Ball extends MovableObject {
     }
 
     /**
-     * Reset Ball về vị trí ban đầu.
+     * Reset Ball về trạng thái ban đầu.
      */
-    public void resetPosition() {
+    public void resetBall() {
         setX(paddle.getX() + paddle.getWidth() / 2 - getWidth() / 2);
         setY(paddle.getY() - getHeight());
         setVelocity(0, 0);
+        setDamage(DEFAULT_DAMAGE);
+        setColor(Color.BLACK);
+        setSpeed(DEFAULT_SPEED);
         moving = false;
         delayTimer = LAUNCH_DELAY_TIME; // Reset thời gian chờ
     }
@@ -261,6 +279,14 @@ public class Ball extends MovableObject {
 
     public double getDefaultSpeed() {
         return DEFAULT_SPEED;
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(double s) {
+        this.speed = s;
     }
 
     public double getMaxReflectAngle() {

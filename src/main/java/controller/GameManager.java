@@ -4,6 +4,7 @@ import game.ScreenSwitcher;
 import model.ball.Ball;
 import model.brick.Brick;
 import model.paddle.Paddle;
+import model.powerup.PowerUp;
 import view.GameOver;
 import view.LevelCompleted;
 
@@ -20,10 +21,11 @@ public class GameManager extends JPanel implements ActionListener {
 
     private GameState gameState;
     protected int panelWidth;
-    protected int panelHeight;
+    public static int panelHeight;
     protected int currentLevel = 5;          // Mức độ hiện tại
-    protected static Paddle paddle;                 // Thanh đỡ
-    protected static Ball ball;                     // Quả bóng
+    public static Paddle paddle;                 // Thanh đỡ
+    public static Ball ball;
+    public static ArrayList<PowerUp> powerUps;
     private ArrayList<Brick> bricks;       // Gạch
     private Timer timer;                   // Bộ đếm
     private MapManager mapManger;          // Quản lý bản đồ
@@ -37,6 +39,7 @@ public class GameManager extends JPanel implements ActionListener {
     public void initGameObjects() {
         paddle = new Paddle(Paddle.getDefaultX(), Paddle.getDefaultY(), Paddle.getDefaultWidth(), Paddle.getDefaultHeight());
         ball = new Ball(panelWidth / 2, panelHeight / 2, 15, 15, 1, Color.BLACK);
+        powerUps = new ArrayList<>();
 
 
         mapManger = new MapManager();
@@ -103,6 +106,9 @@ public class GameManager extends JPanel implements ActionListener {
 
             ball.update();
             paddle.update();
+            for (int i = 0; i < powerUps.size(); i++) {
+                powerUps.get(i).update();
+            }
 
             for(Brick brick : bricks) {
                 if(brick.isDestroyed() && !brick.isScored()) {
@@ -131,7 +137,7 @@ public class GameManager extends JPanel implements ActionListener {
             if (ball.outOfBottom()) {
                 lives--;
                 paddle.resetPaddle();
-                ball.resetPosition();
+                ball.resetBall();
             }
 
             if (lives == 0) {
@@ -179,6 +185,9 @@ public class GameManager extends JPanel implements ActionListener {
         paddle.render(g2d);
         for (Brick brick : bricks) {
             brick.render(g2d);
+        }
+        for (PowerUp pu : powerUps) {
+            pu.render(g2d);
         }
         g2d.setColor(Color.BLACK);
         g2d.setFont(new Font("Arial", Font.PLAIN, 20));
