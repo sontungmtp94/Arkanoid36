@@ -1,21 +1,20 @@
 package model.powerup;
 
-import static model.ball.Ball.*;
-
 import java.awt.*;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-import model.ball.Ball;
 import model.base.MovableObject;
 import controller.GameManager;
+import model.paddle.Paddle;
+
 import javax.swing.*;
 
 public class PowerUp extends MovableObject {
     private int id;
-    private int NumsOfPU = 6;
-    private String[] FILE_IMAGES = new String[NumsOfPU];
+    private final int NumsOfPU = 6;
+    private final String[] FILE_IMAGES = new String[NumsOfPU];
     private BufferedImage image;
 
     private void loadImage() {
@@ -49,7 +48,7 @@ public class PowerUp extends MovableObject {
     }
 
     public boolean alive() {
-        return getY() < 1200 ? true : false;
+        return getY() < 1200;
     }
 
     @Override
@@ -90,8 +89,13 @@ public class PowerUp extends MovableObject {
                 System.out.println("PowerUp 0: Cong 5 diem");
                 break;
             case 1:
-                if (GameManager.getPaddle().getWidth() < GameManager.getPaddle().getDefaultWidth() + 50) {
-                    GameManager.getPaddle().setWidth(GameManager.getPaddle().getWidth() + 50);
+                if (GameManager.paddle.getWidth() < Paddle.getDefaultWidth() + 50) {
+                    GameManager.paddle.setWidth(GameManager.getPaddle().getWidth() + 50);
+                    if (GameManager.paddle.getWidth() == Paddle.getDefaultWidth() + 50) {
+                        GameManager.paddle.setAndLoadSprite("images/paddles/GalaxyPaddle_long.png");
+                    } else if (GameManager.paddle.getWidth() == Paddle.getDefaultWidth()) {
+                        GameManager.paddle.setAndLoadSprite("images/paddles/GalaxyPaddle_default.png");
+                    }
                 }
                 System.out.println("PowerUp 1: Tang chieu dai Paddle");
                 break;
@@ -115,8 +119,13 @@ public class PowerUp extends MovableObject {
                 System.out.println("PowerUp 4: Gap doi toc do cua bong");
                 break;
             case 5:
-                if (GameManager.getPaddle().getWidth() >= GameManager.getPaddle().getDefaultWidth()) {
-                    GameManager.getPaddle().setWidth(GameManager.getPaddle().getWidth() - 50);
+                if (GameManager.paddle.getWidth() > Paddle.getDefaultWidth() - 50) {
+                    GameManager.paddle.setWidth(GameManager.paddle.getWidth() - 50);
+                    if (GameManager.paddle.getWidth() == Paddle.getDefaultWidth() - 50) {
+                        GameManager.paddle.setAndLoadSprite("images/paddles/GalaxyPaddle_short.png");
+                    } else if (GameManager.paddle.getWidth() == Paddle.getDefaultWidth()) {
+                        GameManager.paddle.setAndLoadSprite("images/paddles/GalaxyPaddle_default.png");
+                    }
                 }
                 System.out.println("PowerUp 5: Giam chieu dai Paddle");
                 break;

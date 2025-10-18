@@ -22,13 +22,16 @@ public class Paddle extends MovableObject {
     private static final int DEFAULT_Y = ArkanoidGame.getGameHeight() - DEFAULT_HEIGHT - 80;
 
     // Tốc độ mặc định ban đầu.
-    private static final double DEFAULT_SPEED = 10.0;
+    private static final double DEFAULT_SPEED = 15.0;
 
     // Tốc độ hiện tại.
     private double speed;
 
+    // Path đến ảnh Paddle mặc định.
+    private static final String DEFAULT_SPRITE_PATH = "images/paddles/GalaxyPaddle_default.png";
+
     // Path đến ảnh Paddle.
-    private static final String SPRITE_PATH = "images/paddle/paddle.png";
+    private String spritePath;
 
     // Sprite Paddle.
     private BufferedImage sprite;
@@ -44,7 +47,8 @@ public class Paddle extends MovableObject {
     public Paddle(int x, int y, int width, int height) {
         super(x, y, width, height);
         speed = DEFAULT_SPEED;
-        sprite = loadSprite(SPRITE_PATH);
+        spritePath = DEFAULT_SPRITE_PATH;
+        sprite = loadSprite(spritePath);
     }
 
     /** Di chuyển sang trái. */
@@ -75,7 +79,6 @@ public class Paddle extends MovableObject {
         }
     }
 
-
     /** Reset trạng thái Paddle. */
     public void resetPaddle() {
         setX(DEFAULT_X);
@@ -83,10 +86,12 @@ public class Paddle extends MovableObject {
         setWidth(DEFAULT_WIDTH);
         setHeight(DEFAULT_HEIGHT);
         speed = DEFAULT_SPEED;
+        spritePath = DEFAULT_SPRITE_PATH;
+        sprite = loadSprite(spritePath);
     }
 
     /**
-     * Render model.paddle.Paddle lên màn hình.
+     * Render Paddle lên màn hình.
      *
      * @param g Dùng để render
      */
@@ -95,6 +100,11 @@ public class Paddle extends MovableObject {
         if (sprite != null) {
             g.drawImage(sprite, getX(), getY(), getWidth(), getHeight(), null);
         }
+    }
+
+    public void setAndLoadSprite(String spritePath) {
+        this.spritePath = spritePath;
+        sprite = loadSprite(this.spritePath);
     }
 
     // Các getter và setter
@@ -119,16 +129,20 @@ public class Paddle extends MovableObject {
         return DEFAULT_SPEED;
     }
 
-    public static String getSpritePath() {
-        return SPRITE_PATH;
-    }
-
     public double getSpeed() {
         return speed;
     }
 
     public void setSpeed(double speed) {
         this.speed = speed;
+    }
+
+    public String getSpritePath() {
+        return spritePath;
+    }
+
+    public void setSpritePath(String spritePath) {
+        this.spritePath = spritePath;
     }
 
     public BufferedImage getSprite() {
