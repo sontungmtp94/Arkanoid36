@@ -10,25 +10,19 @@ public class KeyManager implements KeyListener {
     private boolean pausePressed;
     private boolean restartPressed;
     private boolean nextLevelPressed;
+    private boolean ballReleased;
 
     /** Xử lý khi nhấn phím. */
     @Override
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
-        if (key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A) {
-            leftPressed = true;
-        }
-        if (key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) {
-            rightPressed = true;
-        }
-        if (key == KeyEvent.VK_R) {
-            restartPressed = true;
-        }
-        if (key == KeyEvent.VK_N) {
-            nextLevelPressed = true;
-        }
-        if (key == KeyEvent.VK_ESCAPE) {
-            pausePressed = !pausePressed;
+        switch (key) {
+            case KeyEvent.VK_LEFT, KeyEvent.VK_A -> leftPressed = true;
+            case KeyEvent.VK_RIGHT, KeyEvent.VK_D -> rightPressed = true;
+            case KeyEvent.VK_ESCAPE -> pausePressed = true;
+            case KeyEvent.VK_R -> restartPressed = true;
+            case KeyEvent.VK_N -> nextLevelPressed = true;
+            case KeyEvent.VK_SPACE -> ballReleased = true;
         }
 
     }
@@ -37,17 +31,12 @@ public class KeyManager implements KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
         int key = e.getKeyCode();
-        if (key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A) {
-            leftPressed = false;
-        }
-        if (key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) {
-            rightPressed = false;
-        }
-        if (key == KeyEvent.VK_R) {
-            restartPressed = false;
-        }
-        if (key == KeyEvent.VK_N) {
-            nextLevelPressed = true;
+        switch (key) {
+            case KeyEvent.VK_LEFT, KeyEvent.VK_A -> leftPressed = false;
+            case KeyEvent.VK_RIGHT, KeyEvent.VK_D -> rightPressed = false;
+            case KeyEvent.VK_R -> restartPressed = false;
+            case KeyEvent.VK_N -> nextLevelPressed = false;
+            case KeyEvent.VK_SPACE -> ballReleased = false;
         }
     }
 
@@ -75,6 +64,10 @@ public class KeyManager implements KeyListener {
 
     public boolean isNextLevelPressed() {
         return nextLevelPressed;
+    }
+
+    public boolean isBallReleased() {
+        return ballReleased;
     }
 
     public void clearPause() {

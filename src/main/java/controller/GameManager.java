@@ -107,7 +107,9 @@ public class GameManager extends JPanel implements ActionListener {
             if (!keyManager.isLeftPressed() && !keyManager.isRightPressed()) {
                 paddle.stop();
             }
-
+            if(keyManager.isBallReleased()) {
+                ball.launch();
+            }
             ball.update();
             paddle.update();
             for (int i = 0; i < powerUps.size(); i++) {
