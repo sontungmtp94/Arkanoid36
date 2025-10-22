@@ -14,8 +14,8 @@ import java.awt.image.BufferedImage;
  */
 public class Paddle extends MovableObject {
     // Kích thước mặc định trong game.
-    private static final int DEFAULT_WIDTH = 100;
-    private static final int DEFAULT_HEIGHT = 20;
+    private static final int DEFAULT_WIDTH = 150;
+    private static final int DEFAULT_HEIGHT = 30;
 
     // Tọa độ x, y mặc định trong game.
     private static final int DEFAULT_X = (ArkanoidGame.getGameWidth() - DEFAULT_WIDTH) / 2;
