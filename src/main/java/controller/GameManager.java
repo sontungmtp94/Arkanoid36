@@ -79,7 +79,7 @@ public class GameManager extends JPanel implements ActionListener {
 
         initGameObjects();
 
-        gameState = GameState.PLAYING;
+        gameState = GameState.READY;
 
         timer = new Timer(1000/60, this);
         timer.start();
@@ -97,7 +97,7 @@ public class GameManager extends JPanel implements ActionListener {
 
     /** Cập nhật logic trò chơi mỗi khung hình. */
     public void updateGame() {
-        if (gameState == GameState.PLAYING) {
+        if(gameState == GameState.READY || gameState == GameState.PLAYING) {
             if (keyManager.isLeftPressed()) {
                 paddle.moveLeft();
             }
@@ -107,11 +107,19 @@ public class GameManager extends JPanel implements ActionListener {
             if (!keyManager.isLeftPressed() && !keyManager.isRightPressed()) {
                 paddle.stop();
             }
-            if(keyManager.isBallReleased()) {
-                ball.launch();
-            }
             ball.update();
             paddle.update();
+        }
+
+        if (gameState == GameState.READY) {
+            if(keyManager.isBallReleased()) {
+                ball.launch();
+                gameState = GameState.PLAYING;
+            }
+
+        }
+
+        if (gameState == GameState.PLAYING) {
             for (int i = 0; i < powerUps.size(); i++) {
                 powerUps.get(i).update();
             }
@@ -144,6 +152,7 @@ public class GameManager extends JPanel implements ActionListener {
                 lives--;
                 paddle.resetPaddle();
                 ball.resetBall();
+                gameState = GameState.READY;
             }
 
             if (lives == 0) {
@@ -152,11 +161,14 @@ public class GameManager extends JPanel implements ActionListener {
             }
         }
 
+
+
+
         if (keyManager.isPausePressed()) {
-            if (gameState == GameState.PLAYING) {
+            if (gameState == GameState.READY) {
                 gameState = GameState.PAUSE;
             } else if (gameState == GameState.PAUSE) {
-                gameState = GameState.PLAYING;
+                gameState = GameState.READY;
             }
             keyManager.clearPause();
         }
@@ -168,7 +180,7 @@ public class GameManager extends JPanel implements ActionListener {
                 currentLevel = 1;
             }
             initGameObjects();
-            gameState = GameState.PLAYING;
+            gameState = GameState.READY;
             levelCompleted.hidePanel();
         }
 
@@ -178,7 +190,7 @@ public class GameManager extends JPanel implements ActionListener {
             initGameObjects();
             gameOver.hidePanel();
             levelCompleted.hidePanel();
-            gameState = GameState.PLAYING;
+            gameState = GameState.READY;
         }
     }
 
