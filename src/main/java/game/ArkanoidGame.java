@@ -52,8 +52,8 @@ public class ArkanoidGame extends JFrame implements ScreenSwitcher {
     }
 
     /**
-     * Hiển thị màn hình trò chơi (chưa có nội dung cụ thể).
-     * Ở đây tạm thời chỉ hiển thị một JLabel đơn giản.
+     * Hiển thị màn hình trò chơi.
+     *
      */
     @Override
     public void showGame() {

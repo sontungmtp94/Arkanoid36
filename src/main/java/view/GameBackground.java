@@ -1,12 +1,10 @@
 package view;
 import static view.SpritesView.*;
 
-import model.ball.Ball;
-
 import java.awt.image.BufferedImage;
 
 public class GameBackground {
-    private static final String path = "images/background_game.png";
+    private static final String path = "images/utils/background_game.png";
 
     private final BufferedImage background;
 
