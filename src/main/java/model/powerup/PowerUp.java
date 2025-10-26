@@ -9,8 +9,6 @@ import model.base.MovableObject;
 import controller.GameManager;
 import model.paddle.Paddle;
 
-import javax.swing.*;
-
 public class PowerUp extends MovableObject {
     private int id;
     private final int NumsOfPU = 6;
@@ -90,13 +88,9 @@ public class PowerUp extends MovableObject {
                 break;
             case 1:
                 if (GameManager.paddle.getWidth() < Paddle.getDefaultWidth() + 60) {
-                    GameManager.paddle.setWidth(GameManager.getPaddle().getWidth() + 60);
-                    if (GameManager.paddle.getWidth() == Paddle.getDefaultWidth() + 60) {
-                        GameManager.paddle.setAndLoadSprite("images/paddles/GalaxyPaddle_long.png");
-                    } else if (GameManager.paddle.getWidth() == Paddle.getDefaultWidth()) {
-                        GameManager.paddle.setAndLoadSprite("images/paddles/GalaxyPaddle_default.png");
-                    }
+                    GameManager.paddle.setWidth(GameManager.paddle.getWidth() + 60);
                 }
+                GameManager.paddle.updateSpriteByWidth();
                 System.out.println("PowerUp 1: Tang chieu dai Paddle");
                 break;
             case 2:
@@ -121,12 +115,8 @@ public class PowerUp extends MovableObject {
             case 5:
                 if (GameManager.paddle.getWidth() > Paddle.getDefaultWidth() - 60) {
                     GameManager.paddle.setWidth(GameManager.paddle.getWidth() - 60);
-                    if (GameManager.paddle.getWidth() == Paddle.getDefaultWidth() - 60) {
-                        GameManager.paddle.setAndLoadSprite("images/paddles/GalaxyPaddle_short.png");
-                    } else if (GameManager.paddle.getWidth() == Paddle.getDefaultWidth()) {
-                        GameManager.paddle.setAndLoadSprite("images/paddles/GalaxyPaddle_default.png");
-                    }
                 }
+                GameManager.paddle.updateSpriteByWidth();
                 System.out.println("PowerUp 5: Giam chieu dai Paddle");
                 break;
             default:
