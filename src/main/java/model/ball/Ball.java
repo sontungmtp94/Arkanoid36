@@ -54,6 +54,7 @@
         /** Paddle và các Brick mà Ball có thể va chạm. */
         private Paddle paddle;
         private ArrayList<Brick> bricks;
+        private boolean bounceBrick = true;
 
 
 
@@ -132,14 +133,11 @@
                 for (Brick brick : bricks) {
                     if (!brick.isDestroyed()
                         && getBounds().intersects(brick.getBounds())) {
-                        bounce(brick);
-                        brick.takeHits(damage);
-                        if (Math.random() < 0.2) {
-                            int idPower = (int) (Math.random() * 6);
-                            PowerUp newP = new PowerUp(0, 0, 30, 30, idPower);
-                            newP.setX(brick.getX() + brick.getWidth() / 2 - brick.getWidth() / 2);
-                            newP.setY(brick.getY() + brick.getHeight() / 2 - newP.getHeight() / 2);
-                            GameManager.powerUps.add(newP);
+                        if(bounceBrick) {
+                            bounce(brick);
+                            brick.takeHits(damage);
+                        } else {
+                            brick.takeHits(36);
                         }
                         break;
                     }
@@ -364,5 +362,9 @@
         public void setAndReloadSpritePath(String spritePath) {
             SPRITE_PATH = spritePath;
             this.ballSprite = loadSprite(SPRITE_PATH);
+        }
+
+        public void setBounceBrick(boolean bounceBrick) {
+            this.bounceBrick = bounceBrick;
         }
     }

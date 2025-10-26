@@ -20,14 +20,14 @@ import java.util.ArrayList;
  */
 public class GameManager extends JPanel implements ActionListener {
 
-    private GameState gameState;
+    private static GameState gameState;
     protected int panelWidth;
     public static int panelHeight;
-    protected int currentLevel = 5;          // Mức độ hiện tại
+    protected int currentLevel = 10;          // Mức độ hiện tại
     public static Paddle paddle;                 // Thanh đỡ
-    public static Ball ball;
     public static ArrayList<PowerUp> powerUps;
-    private ArrayList<Brick> bricks;       // Gạch
+    private static ArrayList<Brick> bricks;
+    public static ArrayList<Ball> balls;   // Bóng
     private Timer timer;                   // Bộ đếm
     private MapManager mapManger;          // Quản lý bản đồ
     private GameBackground gameBackground;      // Nền game
@@ -39,9 +39,11 @@ public class GameManager extends JPanel implements ActionListener {
     /** Khởi tạo paddle, bóng, gạch,... */
     public void initGameObjects() {
         paddle = new Paddle(Paddle.getDefaultX(), Paddle.getDefaultY(), Paddle.getDefaultWidth(), Paddle.getDefaultHeight());
-        ball = new Ball(panelWidth / 2, panelHeight / 2, 15, 15, 1, Color.BLACK);
+        balls = new ArrayList<>();
+        Ball ball = new Ball(panelWidth / 2, panelHeight / 2, 15, 15, 1, Color.BLACK);
         ball.setAndReloadSpritePath("images/balls/ball_default.png");
         ball.setDamage(1);
+        balls.add(ball);
         powerUps = new ArrayList<>();
 
         gameBackground = new GameBackground();
@@ -66,7 +68,7 @@ public class GameManager extends JPanel implements ActionListener {
 
     public void nextLevel() {
         currentLevel++;
-        if(currentLevel > 5){
+        if(currentLevel > MapManager.getNumOfMaps()){
             currentLevel = 1;
         }
         initGameObjects();
@@ -122,13 +124,15 @@ public class GameManager extends JPanel implements ActionListener {
             if (!keyManager.isLeftPressed() && !keyManager.isRightPressed()) {
                 paddle.stop();
             }
-            ball.update();
+            for(Ball b : balls) {
+                b.update();
+            }
             paddle.update();
         }
 
         if (gameState == GameState.READY) {
             if(keyManager.isBallReleased()) {
-                ball.launch();
+                balls.get(0).launch();
                 gameState = GameState.PLAYING;
             }
 
@@ -142,6 +146,7 @@ public class GameManager extends JPanel implements ActionListener {
             for(Brick brick : bricks) {
                 if(brick.isDestroyed() && !brick.isScored()) {
                     score += 10;
+                    PowerUp.createPowerUp(brick, 0.2);
                     brick.setScored(true);
                 }
             }
@@ -159,15 +164,28 @@ public class GameManager extends JPanel implements ActionListener {
             }
 
             if (allCleared) {
+                PowerUp.cancelAllEffects();
                 gameState = GameState.LEVEL_COMPLETED;
                 levelCompleted.showPanel();
             }
 
-            if (ball.outOfBottom()) {
+            for(int i = 0; i < balls.size(); i++) {
+                if (balls.get(i).outOfBottom()) {
+                    balls.remove(i);
+                }
+            }
+
+            if (balls.isEmpty()) {
                 lives--;
+                PowerUp.cancelAllEffects();
                 paddle.resetPaddle();
+                Ball ball = new Ball(0, 0, 15, 15, 1, Color.BLACK);
+                ball.setPaddle(paddle);
+                ball.setBricks(bricks);
+                ball.setAndReloadSpritePath("images/balls/ball_default.png");
                 ball.resetBall();
-                gameState = GameState.READY;
+                ball.launch();
+                balls.add(ball);
             }
 
             if (lives == 0) {
@@ -209,7 +227,9 @@ public class GameManager extends JPanel implements ActionListener {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         // Bật anti-aliasing cho text
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        ball.render(g2d);
+        for(Ball b : balls) {
+            b.render(g2d);
+        }
         paddle.render(g2d);
         for (Brick brick : bricks) {
             brick.render(g2d);
@@ -262,5 +282,13 @@ public class GameManager extends JPanel implements ActionListener {
 
     public static void setPaddle(Paddle paddle) {
         GameManager.paddle = paddle;
+    }
+
+    public static GameState getGameState() {
+        return gameState;
+    }
+
+    public static ArrayList<Brick> getBricks() {
+        return bricks;
     }
 }

@@ -34,11 +34,17 @@ public class MapManager {
     private int spaceX = WIDTH + 5;
     private int spaceY = HEIGHT + 5;
 
+    private static final int numOfMaps = 20;
+    private String[] pathFiles = new String[numOfMaps];
+
     /**
      * Constructor - khởi tạo controller.MapManager.
      */
     public MapManager() {
         maps = new HashMap<>();
+        for (int i = 0; i < numOfMaps; i++) {
+            pathFiles[i] = "src/main/resources/maps/Map" + (i + 1) + ".txt";
+        }
         ListOfMap();
     }
 
@@ -64,20 +70,39 @@ public class MapManager {
      * Tạo sẵn một số map mặc định.
      */
     public void ListOfMap() {
-        map1();
-        map2();
-        map3();
-        map4();
-        map5();
-        map6();
+        for (int i = 1; i <= numOfMaps; i++) {
+            mapTxt(i);
+        }
     }
 
+    public void mapTxt(int id) {
+        ArrayList<Brick> map = new ArrayList<>();
+        try(Scanner sc = new Scanner(new File(pathFiles[id - 1]))) {
+            int row = 0;
+            while(sc.hasNextLine()) {
+                String line = sc.nextLine().trim();
+                String[] tokens = line.split("\\s+");
+                for(int i = 0; i < tokens.length; i++) {
+                    if (!tokens[i].equals("0") && !tokens[i].equals("*")) {
+                        BrickType randomType = BrickType.getRandomType();
+                        Brick t = new Brick(startX + spaceX * i, startY + spaceY * row, WIDTH, HEIGHT, randomType);
+                        t.setHitPoints(Integer.parseInt(tokens[i]));
+                        map.add(t);
+                    }
+                }
+                row++;
+            }
+        } catch (IOException e) {
+            System.err.println("Không thể đọc file Map" + (id + 1) + ".txt" + e.getMessage());
+        }
+        addMap(id, map);
+    }
     /**
-     * Map 1: 5 hàng gạch, mỗi hàng 15 khối.
+     * Hàm tạo map thủ công (phục vụ cho việc xếp Brick không theo vị trí cụ thể).
      */
     public void map1() {
         ArrayList<Brick> map = new ArrayList<>();
-        String path = "src/main/resources/maps/Map1.txt";
+        String path = pathFiles[1];
 
         try(Scanner sc = new Scanner(new File(path))) {
             int row = 0;
@@ -94,123 +119,13 @@ public class MapManager {
                 row++;
             }
         } catch (IOException e) {
-            System.err.println("Không thể đọc file Map1.txt: " + e.getMessage());
+            System.err.println("Không thể đọc file Map" + 1 + ".txt" + e.getMessage());
         }
         addMap(1, map);
     }
 
-    /**
-     * Map 2: Hình kim tự tháp úp ngược.
-     */
-    public void map2() {
-        ArrayList<Brick> map = new ArrayList<>();
-        String path = "src/main/resources/maps/Map2.txt";
-
-        try(Scanner sc = new Scanner(new File(path))) {
-            int row = 0;
-            while(sc.hasNextLine()) {
-                String line = sc.nextLine().trim();
-                String[] tokens = line.split("\\s+");
-                for(int i = 0; i < tokens.length; i++) {
-                    if (tokens[i].equals("1")) {
-                        BrickType randomType = BrickType.getRandomType();
-                        Brick t = new Brick(40 + spaceX * i, 40 + spaceY * row, WIDTH, HEIGHT, randomType);
-                        map.add(t);
-                    }
-                }
-                row++;
-            }
-        } catch (IOException e) {
-            System.err.println("Không thể đọc file Map1.txt: " + e.getMessage());
-        }
-        addMap(2, map);
-    }
-
-    /**
-     * Map 3: 8 cột gạch cách nhau 1 khoảng, mỗi cột 6 khối.
-     */
-    public void map3() {
-        ArrayList<Brick> map = new ArrayList<>();
-        String path = "src/main/resources/maps/Map3.txt";
-
-        try(Scanner sc = new Scanner(new File(path))) {
-            int row = 0;
-            while(sc.hasNextLine()) {
-                String line = sc.nextLine().trim();
-                String[] tokens = line.split("\\s+");
-                for(int i = 0; i < tokens.length; i++) {
-                    if (tokens[i].equals("1")) {
-                        BrickType randomType = BrickType.getRandomType();
-                        Brick t = new Brick(40 + spaceX * i, 40 + spaceY * row, WIDTH, HEIGHT, randomType);
-                        map.add(t);
-                    }
-                }
-                row++;
-            }
-        } catch (IOException e) {
-            System.err.println("Không thể đọc file Map1.txt: " + e.getMessage());
-        }
-        addMap(3, map);
-    }
-
-    /**
-     * Map 4: 5 chùm khối gạch xếp hình chữ X.
-     */
-    public void map4() {
-        ArrayList<Brick> map = new ArrayList<>();
-        String path = "src/main/resources/maps/Map4.txt";
-
-        try(Scanner sc = new Scanner(new File(path))) {
-            int row = 0;
-            while(sc.hasNextLine()) {
-                String line = sc.nextLine().trim();
-                String[] tokens = line.split("\\s+");
-                for(int i = 0; i < tokens.length; i++) {
-                    if (tokens[i].equals("1")) {
-                        BrickType randomType = BrickType.getRandomType();
-                        Brick t = new Brick(40 + spaceX * i, 40 + spaceY * row, WIDTH, HEIGHT, randomType);
-                        map.add(t);
-                    }
-                }
-                row++;
-            }
-        } catch (IOException e) {
-            System.err.println("Không thể đọc file Map1.txt: " + e.getMessage());
-        }
-        addMap(4, map);
-    }
-
-    public void map5() {
-        ArrayList<Brick> map = new ArrayList<>();
-        String path = "src/main/resources/maps/Map5.txt";
-
-        try(Scanner sc = new Scanner(new File(path))) {
-            int row = 0;
-            while(sc.hasNextLine()) {
-                String line = sc.nextLine().trim();
-                String[] tokens = line.split("\\s+");
-                for(int i = 0; i < tokens.length; i++) {
-                    if (tokens[i].equals("1")) {
-                        BrickType randomType = BrickType.getRandomType();
-                        Brick t = new Brick(40 + spaceX * i, 40 + spaceY * row, WIDTH, HEIGHT, randomType);
-                        map.add(t);
-                    }
-                }
-                row++;
-            }
-        } catch (IOException e) {
-            System.err.println("Không thể đọc file Map1.txt: " + e.getMessage());
-        }
-        addMap(5, map);
-    }
-
-    public void map6() {
-        ArrayList<Brick> map = new ArrayList<>();
-        BrickType randomType = BrickType.getRandomType();
-        Brick t = new Brick(40, 40, WIDTH, HEIGHT, randomType);
-        map.add(t);
-        addMap(6, map);
-    }
-
     private BufferedImage spriteSheet;
+    public static int getNumOfMaps() {
+        return numOfMaps;
+    }
 }
