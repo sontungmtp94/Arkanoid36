@@ -7,6 +7,10 @@ import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.net.URL;
+import audio.SoundManager;
+import audio.SoundManager;
+import audio.SoundId;
+
 
 public class MainMenu extends JPanel {
 
@@ -28,6 +32,10 @@ public class MainMenu extends JPanel {
     public MainMenu(ScreenSwitcher switcher) {
         this.screenSwitcher = switcher;
         setLayout(new BorderLayout());
+
+        // Phát nhạc nền.
+        audio.SoundManager.get().playBgm(audio.SoundId.BGM_MENU, 800);
+
 
         JLayeredPane layers = new JLayeredPane();
         add(layers, BorderLayout.CENTER);
@@ -51,10 +59,6 @@ public class MainMenu extends JPanel {
                 layers.repaint();
             }
         });
-
-        // Debug: in thử đường dẫn resource (giữ lại để kiểm tra)
-        System.out.println("CLASSPATH ROOT = " + MainMenu.class.getResource("/"));
-        System.out.println("TEST FRAME = " + MainMenu.class.getResource("/anim2/E9_000.png"));
     }
 
     private JPanel buildUiLayer() {
@@ -76,10 +80,26 @@ public class MainMenu extends JPanel {
         styleButton(btnShop);
         styleButton(btnExit);
 
-        btnPlay.addActionListener(e -> screenSwitcher.showGame());
-        btnSetting.addActionListener(e -> JOptionPane.showMessageDialog(this, "Setting (stub)"));
-        btnShop.addActionListener(e -> JOptionPane.showMessageDialog(this, "Shop (stub)"));
-        btnExit.addActionListener(e -> System.exit(0));
+        // Gọi âm thanh Click.wav.
+        btnPlay.addActionListener(e -> {
+            audio.SoundManager.get().playSfx(audio.SoundId.SFX_CLICK);
+            screenSwitcher.showGame();
+        });
+
+        btnSetting.addActionListener(e -> {
+            audio.SoundManager.get().playSfx(audio.SoundId.SFX_CLICK);
+            JOptionPane.showMessageDialog(this, "Setting (stub)");
+        });
+
+        btnShop.addActionListener(e -> {
+            audio.SoundManager.get().playSfx(audio.SoundId.SFX_CLICK);
+            JOptionPane.showMessageDialog(this, "Shop (stub)");
+        });
+
+        btnExit.addActionListener(e -> {
+            audio.SoundManager.get().playSfx(audio.SoundId.SFX_CLICK);
+            System.exit(0);
+        });
 
         left.add(btnPlay);    left.add(Box.createVerticalStrut(24));
         left.add(btnSetting); left.add(Box.createVerticalStrut(24));
@@ -92,7 +112,6 @@ public class MainMenu extends JPanel {
         JPanel bottomLeft = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 12));
         bottomLeft.setOpaque(false);
 
-        // Có thể để frameCount=0 để tự quét nếu bạn thêm/bớt frame
         PngAnimator ani1 = new PngAnimator(ANIM1_PATTERN, ANIM1_FRAMES, ANIM_FPS, ANIM_SCALE);
         PngAnimator ani2 = new PngAnimator(ANIM2_PATTERN, ANIM2_FRAMES, ANIM_FPS, ANIM_SCALE);
 
@@ -102,6 +121,7 @@ public class MainMenu extends JPanel {
 
         return ui;
     }
+
 
     public void styleButton(JButton b) {
         b.setAlignmentX(Component.LEFT_ALIGNMENT);

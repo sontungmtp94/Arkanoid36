@@ -57,8 +57,24 @@ public class MapManager {
      * @return danh sách gạch (nếu có), null nếu không tồn tại
      */
     public ArrayList<Brick> loadMap(int id) {
-        return maps.get(id);
+        ArrayList<Brick> original = maps.get(id);
+        if (original == null) return null;
+
+        // Tạo danh sách gạch mới
+        ArrayList<Brick> cloneList = new ArrayList<>();
+        for (Brick b : original) {
+            Brick clone = new Brick(
+                    b.getX(),
+                    b.getY(),
+                    b.getWidth(),
+                    b.getHeight(),
+                    b.getType() // cùng loại
+            );
+            cloneList.add(clone);
+        }
+        return cloneList;
     }
+
 
     /**
      * Tạo sẵn một số map mặc định.

@@ -134,6 +134,13 @@
                         && getBounds().intersects(brick.getBounds())) {
                         bounce(brick);
                         brick.takeHits(damage);
+
+                        setX(getX() + (int) getDx());
+                        setY(getY() + (int) getDy());
+
+                        // Phát âm thanh khi bóng đập trúng gạch.
+                        audio.SoundManager.get().playSfx(audio.SoundId.SFX_HIT);
+
                         if (Math.random() < 0.2) {
                             int idPower = (int) (Math.random() * 6);
                             PowerUp newP = new PowerUp(0, 0, 30, 30, idPower);
@@ -150,7 +157,7 @@
         /**
          * Xử lí Ball nảy ra sau khi va chạm với Paddle và Brick.
          *
-         * @param other Đối tượng va chạm
+         * @param other Đối tượng va chạm.
          */
         public void bounce(GameObject other) {
             Rectangle ballRect = getBounds();

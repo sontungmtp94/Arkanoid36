@@ -1,18 +1,22 @@
 package view;
 
-
 import controller.GameManager;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import audio.SoundManager;
+import audio.SoundId;
+
 
 /**
  * Lớp GameOver hiển thị thông báo "Game Over" và hướng dẫn restart.
  */
 public class GameOver extends JPanel {
+    private final GameManager gameManager;
 
     public GameOver(int panelWidth, int panelHeight, GameManager gameManager) {
+        this.gameManager = gameManager;
+
         setLayout(null);
         setOpaque(false);
 
@@ -63,6 +67,7 @@ public class GameOver extends JPanel {
     public void showPanel() {
         setVisible(true);
         repaint();
+        SoundManager.get().playSfx(SoundId.SFX_LOSE);
     }
 
     /** Ẩn bảng Game Over. */

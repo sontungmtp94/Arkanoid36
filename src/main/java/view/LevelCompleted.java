@@ -1,21 +1,20 @@
 package view;
 
-import controller.GameManager;
-import controller.GameState;
-import controller.KeyManager;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
+import controller.GameManager;
+import audio.SoundManager;
+import audio.SoundId;
 
 /**
  * Lớp LevelCompleted hiển thị thông báo "Level Completed" và hướng dẫn next level/ restart.
  */
 public class LevelCompleted extends JPanel {
+    private final GameManager gameManager;
 
     public LevelCompleted(int panelWidth, int panelHeight, GameManager gameManager) {
-        setLayout(null);
+        this.gameManager = gameManager;
 
         setLayout(null);
         setOpaque(false);
@@ -25,7 +24,7 @@ public class LevelCompleted extends JPanel {
         BufferedImage restartBtn = SpritesView.loadSprite("images/utils/restart.png");
         BufferedImage nextLevelBtn = SpritesView.loadSprite("images/utils/next_level.png");
 
-        Image scaledLabel =  winningImage.getScaledInstance(panelWidth, -1, Image.SCALE_SMOOTH);
+        Image scaledLabel = winningImage.getScaledInstance(panelWidth, -1, Image.SCALE_SMOOTH);
         Image scaledMainMenu = mainMenuBtn.getScaledInstance(panelWidth / 10, -1, Image.SCALE_SMOOTH);
         Image scaledRestart = restartBtn.getScaledInstance(panelWidth / 10, -1, Image.SCALE_SMOOTH);
         Image scaledNextLevel = nextLevelBtn.getScaledInstance(panelWidth / 10, -1, Image.SCALE_SMOOTH);
@@ -44,9 +43,6 @@ public class LevelCompleted extends JPanel {
 
         int startX = (panelWidth - 3 * buttonWidth - 2 * spacing) / 2;
 
-
-
-
         winningLabel.setBounds(0, panelHeight / 2 - labelHeight, panelWidth, labelHeight);
         mainMenuButton.setBounds(startX, panelHeight / 2 + 20, buttonWidth, buttonHeight);
         restartButton.setBounds(startX + buttonWidth + spacing, panelHeight / 2 + 20, buttonWidth, buttonHeight);
@@ -54,7 +50,7 @@ public class LevelCompleted extends JPanel {
 
 
         mainMenuButton.addActionListener(e -> {
-             // Tạm thời chưa thêm.
+            // Tạm thời chưa thêm.
         });
 
         restartButton.addActionListener(e -> {
@@ -71,16 +67,13 @@ public class LevelCompleted extends JPanel {
         add(nextLevelButton);
 
         setVisible(false);
-
     }
-
-
-
 
     /** Hiển thị bảng Level Completed. */
     public void showPanel() {
         setVisible(true);
         repaint();
+        SoundManager.get().playSfx(SoundId.SFX_WIN);
     }
 
     /** Ẩn bảng Level Completed. */
