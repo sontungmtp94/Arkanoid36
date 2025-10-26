@@ -13,7 +13,7 @@ public class MainMenu extends JPanel {
     private final ScreenSwitcher screenSwitcher;
 
     // Vì Resources/ là Resources Root
-    private static final String BG_PATH = "/images/bg.png";
+    private static final String BG_PATH = "/images/utils/background_menu.png";
 
     private static final String ANIM1_PATTERN = "/images/anim1/E9_%03d.png"; // 000..005 (6)
     private static final String ANIM2_PATTERN = "/images/anim2/ChibiHerta_%03d.png";         // 000..009 (10)

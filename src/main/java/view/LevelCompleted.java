@@ -1,44 +1,81 @@
 package view;
 
+import controller.GameManager;
+import controller.GameState;
+import controller.KeyManager;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
 
 /**
  * Lớp LevelCompleted hiển thị thông báo "Level Completed" và hướng dẫn next level/ restart.
  */
 public class LevelCompleted extends JPanel {
 
-    public LevelCompleted(int panelWidth, int panelHeight) {
+    public LevelCompleted(int panelWidth, int panelHeight, GameManager gameManager) {
         setLayout(null);
 
-        JLabel winningLabel;
-        JLabel nextLevelLabel;
-        JLabel restartLabel;
+        setLayout(null);
+        setOpaque(false);
 
-        winningLabel = new JLabel("You Win!");
-        winningLabel.setFont(new Font("Arial", Font.BOLD, 72));
-        winningLabel.setForeground(Color.GREEN);
-        winningLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        winningLabel.setBounds(0, panelHeight / 2 - 120, panelWidth, 100);
+        BufferedImage winningImage = SpritesView.loadSprite("images/utils/you_win.png");
+        BufferedImage mainMenuBtn = SpritesView.loadSprite("images/utils/main_menu.png");
+        BufferedImage restartBtn = SpritesView.loadSprite("images/utils/restart.png");
+        BufferedImage nextLevelBtn = SpritesView.loadSprite("images/utils/next_level.png");
+
+        Image scaledLabel =  winningImage.getScaledInstance(panelWidth, -1, Image.SCALE_SMOOTH);
+        Image scaledMainMenu = mainMenuBtn.getScaledInstance(panelWidth / 10, -1, Image.SCALE_SMOOTH);
+        Image scaledRestart = restartBtn.getScaledInstance(panelWidth / 10, -1, Image.SCALE_SMOOTH);
+        Image scaledNextLevel = nextLevelBtn.getScaledInstance(panelWidth / 10, -1, Image.SCALE_SMOOTH);
+
+        JLabel winningLabel = new JLabel(new ImageIcon(scaledLabel));
+        JButton mainMenuButton = new JButton(new ImageIcon(scaledMainMenu));
+        JButton restartButton = new JButton(new ImageIcon(scaledRestart));
+        JButton nextLevelButton = new JButton(new ImageIcon(scaledNextLevel));
+
+
+        int labelHeight = scaledLabel.getHeight(null);
+        int buttonWidth = scaledMainMenu.getWidth(null);
+        int buttonHeight = scaledMainMenu.getHeight(null);
+
+        int spacing = 60;
+
+        int startX = (panelWidth - 3 * buttonWidth - 2 * spacing) / 2;
+
+
+
+
+        winningLabel.setBounds(0, panelHeight / 2 - labelHeight, panelWidth, labelHeight);
+        mainMenuButton.setBounds(startX, panelHeight / 2 + 20, buttonWidth, buttonHeight);
+        restartButton.setBounds(startX + buttonWidth + spacing, panelHeight / 2 + 20, buttonWidth, buttonHeight);
+        nextLevelButton.setBounds(startX + 2 * (buttonWidth + spacing), panelHeight / 2 + 20, buttonWidth, buttonHeight);
+
+
+        mainMenuButton.addActionListener(e -> {
+             // Tạm thời chưa thêm.
+        });
+
+        restartButton.addActionListener(e -> {
+            gameManager.restartGame();
+        });
+
+        nextLevelButton.addActionListener(e -> {
+            gameManager.nextLevel();
+        });
+
         add(winningLabel);
-
-        nextLevelLabel = new JLabel("Press N to go to the next level.");
-        nextLevelLabel.setFont(new Font("Arial", Font.PLAIN, 30));
-        nextLevelLabel.setForeground(Color.DARK_GRAY);
-        nextLevelLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        nextLevelLabel.setBounds(0, panelHeight / 2 - 40, panelWidth, 60);
-        add(nextLevelLabel);
-
-        restartLabel = new JLabel("Press R to restart.");
-        restartLabel.setFont(new Font("Arial", Font.PLAIN, 30));
-        restartLabel.setForeground(Color.DARK_GRAY);
-        restartLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        restartLabel.setBounds(0, panelHeight / 2 - 10, panelWidth, 60);
-        add(restartLabel);
-
+        add(mainMenuButton);
+        add(restartButton);
+        add(nextLevelButton);
 
         setVisible(false);
+
     }
+
+
+
 
     /** Hiển thị bảng Level Completed. */
     public void showPanel() {

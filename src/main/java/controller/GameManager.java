@@ -32,7 +32,6 @@ public class GameManager extends JPanel implements ActionListener {
     private MapManager mapManger;          // Quản lý bản đồ
     private GameBackground gameBackground;      // Nền game
     protected static int score, lives, highScore;   // Điểm, mạng, điểm cao
-    private ScreenSwitcher screenSwitcher;              // Chuyển đổi màn hình
     private KeyManager keyManager;                // Quản lý phím
     private GameOver gameOver;
     private LevelCompleted levelCompleted;
@@ -58,6 +57,23 @@ public class GameManager extends JPanel implements ActionListener {
 
     }
 
+    public void restartGame() {
+        initGameObjects();
+        gameOver.hidePanel();
+        levelCompleted.hidePanel();
+        gameState = GameState.READY;
+    }
+
+    public void nextLevel() {
+        currentLevel++;
+        if(currentLevel > 5){
+            currentLevel = 1;
+        }
+        initGameObjects();
+        levelCompleted.hidePanel();
+        gameState = GameState.READY;
+    }
+
     /**
      * Khởi tạo GameManager.
      * @param width  chiều rộng khung
@@ -67,7 +83,6 @@ public class GameManager extends JPanel implements ActionListener {
     public GameManager(int width, int height, ScreenSwitcher switcher) {
         panelWidth = width;
         panelHeight = height;
-        this.screenSwitcher = switcher;
 
         setPreferredSize(new Dimension(panelWidth, panelHeight));
 
@@ -86,11 +101,11 @@ public class GameManager extends JPanel implements ActionListener {
 
         setLayout(null);
 
-        gameOver = new GameOver(panelWidth, panelHeight);
+        gameOver = new GameOver(panelWidth, panelHeight, this);
         gameOver.setBounds(0, 0, panelWidth, panelHeight);
         add(gameOver);
 
-        levelCompleted = new LevelCompleted(panelWidth, panelHeight);
+        levelCompleted = new LevelCompleted(panelWidth, panelHeight, this);
         levelCompleted.setBounds(0, 0, panelWidth, panelHeight);
         add(levelCompleted);
     }
@@ -161,37 +176,27 @@ public class GameManager extends JPanel implements ActionListener {
             }
         }
 
-
-
-
         if (keyManager.isPausePressed()) {
-            if (gameState == GameState.READY) {
+            if (gameState == GameState.PLAYING) {
                 gameState = GameState.PAUSE;
             } else if (gameState == GameState.PAUSE) {
-                gameState = GameState.READY;
+                gameState = GameState.PLAYING;
             }
             keyManager.clearPause();
         }
 
 
+
         if (keyManager.isNextLevelPressed() && gameState == GameState.LEVEL_COMPLETED) {
-            currentLevel++;
-            if (currentLevel > 5) {
-                currentLevel = 1;
-            }
-            initGameObjects();
-            gameState = GameState.READY;
-            levelCompleted.hidePanel();
+            nextLevel();
         }
 
 
         if (keyManager.isRestartPressed() && gameState == GameState.GAME_OVER
             || keyManager.isRestartPressed() && gameState == GameState.LEVEL_COMPLETED) {
-            initGameObjects();
-            gameOver.hidePanel();
-            levelCompleted.hidePanel();
-            gameState = GameState.READY;
+                restartGame();
         }
+
     }
 
     /** Vẽ trò chơi lên màn hình. */
