@@ -25,7 +25,7 @@ public class GameManager extends JPanel implements ActionListener {
     private static GameState gameState;
     protected int panelWidth;
     public static int panelHeight;
-    protected int currentLevel = 10;          // Mức độ hiện tại
+    protected int currentLevel = 1;          // Mức độ hiện tại
     public static Paddle paddle;                 // Thanh đỡ
     public static ArrayList<PowerUp> powerUps;
     private static ArrayList<Brick> bricks;
@@ -152,7 +152,7 @@ public class GameManager extends JPanel implements ActionListener {
             for (Brick brick : bricks) {
                 if(brick.isDestroyed() && !brick.isScored()) {
                     score += 10;
-                    PowerUp.createPowerUp(brick, 1);
+                    PowerUp.createPowerUp(brick, 0.2);
                     brick.setScored(true);
                 }
             }
@@ -214,8 +214,8 @@ public class GameManager extends JPanel implements ActionListener {
         }
 
         if (keyManager.isRestartPressed() && gameState == GameState.GAME_OVER
-            || keyManager.isRestartPressed() && gameState == GameState.LEVEL_COMPLETED) {
-                restartGame();
+                || keyManager.isRestartPressed() && gameState == GameState.LEVEL_COMPLETED) {
+            restartGame();
         }
     }
 

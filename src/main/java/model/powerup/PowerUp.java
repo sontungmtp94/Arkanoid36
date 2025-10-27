@@ -110,10 +110,10 @@ public class PowerUp extends MovableObject {
         // Nếu chưa có timer -> tạo mới
         remainingTimes.put(id, duration);
         timers.put(id, new Timer(1000, e -> {
-            if (GameManager.getGameState() == GameState.PLAYING) {
-                int remain = remainingTimes.get(id) - 1;
-                remainingTimes.put(id, remain);
-            }
+            // if (GameManager.getGameState() == GameState.PLAYING) {
+            int remain = remainingTimes.get(id) - 1;
+            remainingTimes.put(id, remain);
+            // }
 
             if (remainingTimes.get(id) <= 0) {
                 if (onFinish != null) onFinish.run();
@@ -142,14 +142,14 @@ public class PowerUp extends MovableObject {
 
                 if (GameManager.paddle.getWidth() < Paddle.getDefaultWidth() + 60) {
                     GameManager.paddle.setWidth(GameManager.paddle.getWidth() + 60);
+                    GameManager.paddle.setAndLoadSprite("images/paddles/galaxy/GalaxyPaddle_long.png");
                 }
                 GameManager.paddle.updateSpriteByWidth();
                 if (timers.containsKey(5) && timers.get(5) != null) {
-                cancelEffect(5);
+                    cancelEffect(5);
                 } else {
                     countdown(1, 30, () -> {
-                        GameManager.getPaddle().setWidth(Paddle.getDefaultWidth());
-                        GameManager.paddle.setAndLoadSprite("images/paddles/galaxy/GalaxyPaddle_default.png");
+                        cancelEffect(1);
                     });
                 }
                 break;
@@ -161,6 +161,8 @@ public class PowerUp extends MovableObject {
                 break;
 
             case 3:
+                cancelEffect(8);
+                cancelEffect(10);
                 for(Ball b : GameManager.balls) {
                     if (b.getDamage() == 1) {
                         b.setAndReloadSpritePath("/images/balls/ball_extended.png");
@@ -170,52 +172,34 @@ public class PowerUp extends MovableObject {
                     }
                 }
                 countdown(3, 30, () -> {
-                    for (Ball b : GameManager.balls) {
-                        if (b.getDamage() > 1) b.setDamage(b.getDamage() / 2);
-                        b.setHeight(15);
-                        b.setWidth(15);
-                        b.setAndReloadSpritePath("images/balls/ball_default.png");
-                    }
+                    cancelEffect(3);
                 });
                 System.out.println("PowerUp 3: Tăng kích cỡ bóng");
                 break;
 
             case 4:
-                double multi = 1.5;
-                for(Ball b : GameManager.balls) {
-                    if (b.getSpeed() <= b.getDefaultSpeed()) {
-                        b.setSpeed(b.getSpeed() * multi);
-                        b.setDx((int) (b.getDx() * multi));
-                        double tmp = b.getDy();
-                        b.setDy((int) (Math.sqrt(Math.pow(b.getSpeed(), 2) - Math.pow(b.getDx(), 2))));
-                        if (tmp < 0) b.setDy(b.getDy() * -1);
-                    }
+                double multi = 2;
+                if (GameManager.getPaddle().getSpeed() == GameManager.getPaddle().getDefaultSpeed()) {
+                    GameManager.getPaddle().setSpeed(GameManager.getPaddle().getSpeed() * multi);
                 }
                 countdown(4, 30, () -> {
-                    for(Ball b : GameManager.balls) {
-                        if (b.getSpeed() > b.getDefaultSpeed()) {
-                            b.setSpeed(b.getDefaultSpeed());
-                            b.setDx((int) (b.getDx() / multi));
-                            double tmp = b.getDy();
-                            b.setDy((int) (Math.sqrt(Math.pow(b.getSpeed(), 2) - Math.pow(b.getDx(), 2))));
-                            if (tmp < 0) b.setDy(b.getDy() * -1);
-                        }
-                    }
+                    cancelEffect(4);
                 });
-                System.out.println("PowerUp 4: Gấp đôi tốc độ bóng");
+                System.out.println("PowerUp 4: Gấp đôi tốc độ Paddle");
                 break;
 
             case 5:
                 System.out.println("PowerUp 5: Giảm chiều dài Paddle");
                 if (GameManager.paddle.getWidth() > Paddle.getDefaultWidth() - 60) {
                     GameManager.paddle.setWidth(GameManager.paddle.getWidth() - 60);
+                    GameManager.paddle.setAndLoadSprite("images/paddles/galaxy/GalaxyPaddle_short.png");
                 }
                 GameManager.paddle.updateSpriteByWidth();
                 if (timers.containsKey(1) && timers.get(1) != null) {
                     cancelEffect(1);
                 } else {
                     countdown(5, 30, () -> {
-                        GameManager.getPaddle().setWidth(Paddle.getDefaultWidth());
+                        cancelEffect(1);
                     });
                 }
                 break;
@@ -227,7 +211,7 @@ public class PowerUp extends MovableObject {
                     cancelEffect(6);
                 } else {
                     countdown(6, 30, () -> {
-                        GameManager.getPaddle().setSpeed(GameManager.getPaddle().getDefaultSpeed());
+                        cancelEffect(4);
                     });
                 }
                 break;
@@ -244,6 +228,8 @@ public class PowerUp extends MovableObject {
                 break;
 
             case 8:
+                cancelEffect(3);
+                cancelEffect(10);
                 System.out.println("PowerUp 8: Bóng lửa (5s)");
 
                 // Nếu Paddle chưa đủ dài thì tăng
@@ -252,10 +238,7 @@ public class PowerUp extends MovableObject {
                     b.setAndReloadSpritePath("images/balls/ball_fire.png");
                 }
                 countdown(8, 5, () -> {
-                    for (Ball b : GameManager.balls) {
-                        b.setBounceBrick(true);
-                        b.setAndReloadSpritePath("images/balls/ball_default.png");
-                    }
+                    cancelEffect(8);
                 });
                 break;
 
@@ -265,6 +248,8 @@ public class PowerUp extends MovableObject {
                 break;
 
             case 10:
+                cancelEffect(3);
+                cancelEffect(8);
                 System.out.println("PowerUp 10: Bóng tàng hình (3s)");
 
                 // Nếu Paddle chưa đủ dài thì tăng
@@ -272,9 +257,7 @@ public class PowerUp extends MovableObject {
                     b.setAndReloadSpritePath("images/balls/ball_invisible.png");
                 }
                 countdown(10, 3, () -> {
-                    for (Ball b : GameManager.balls) {
-                        b.setAndReloadSpritePath("images/balls/ball_default.png");
-                    }
+                    cancelEffect(10);
                 });
                 break;
             case 11:
@@ -288,9 +271,59 @@ public class PowerUp extends MovableObject {
 
     /** Hàm gọi khi bóng rơi hoặc Game Over để hủy hiệu ứng */
     public static void cancelEffect(int id) {
+        if (!remainingTimes.containsKey(id)) return;
+
+        Timer t = timers.get(id);
+        if (t != null) {
+            try {
+                t.stop();
+            } catch (Exception ex) {
+                System.err.println("Timer null hoặc đã dừng cho PowerUp ID " + id);
+            }
+        }
+
         remainingTimes.put(id, 0);
         System.out.println("Hủy hiệu ứng PowerUp ID " + id);
+
+        // Nếu giữ sprite thì chỉ reset logic, không đổi sprite
+        switch (id) {
+            case 1: // Paddle quay về chiều dài ban đầu
+                GameManager.getPaddle().setWidth(Paddle.getDefaultWidth());
+                GameManager.paddle.setAndLoadSprite("images/paddles/galaxy/GalaxyPaddle_default.png");
+                break;
+
+            case 3: // Bóng to
+                for (Ball b : GameManager.balls) {
+                    if (b.getDamage() > 1) b.setDamage(b.getDamage() / 2);
+                    b.setHeight(15);
+                    b.setWidth(15);
+                    b.setAndReloadSpritePath("images/balls/ball_default.png");
+                }
+                break;
+
+            case 4:
+                if (GameManager.getPaddle().getSpeed() != GameManager.getPaddle().getDefaultSpeed()) {
+                    GameManager.getPaddle().setSpeed(GameManager.getPaddle().getDefaultSpeed());
+                }
+                break;
+
+            case 8: // Bóng lửa
+                for (Ball b : GameManager.balls) {
+                    b.setBounceBrick(true);
+                    b.setAndReloadSpritePath("images/balls/ball_default.png");
+                }
+                break;
+
+            case 10: // Bóng tàng hình
+                for (Ball b : GameManager.balls) {
+                    b.setAndReloadSpritePath("images/balls/ball_default.png");
+                }
+                break;
+            default:
+                break;
+        }
     }
+
 
     /** Hàm gọi khi bóng rơi hoặc Game Over để hủy hiệu ứng */
     public static void cancelAllEffects() {
