@@ -140,17 +140,16 @@ public class PowerUp extends MovableObject {
             case 1:
                 System.out.println("PowerUp 1: Tăng chiều dài Paddle (30s)");
 
-                // Nếu Paddle chưa đủ dài thì tăng
-                if (GameManager.getPaddle().getWidth() < Paddle.getDefaultWidth() + 60) {
-                    GameManager.getPaddle().setWidth(GameManager.getPaddle().getWidth() + 60);
-                    GameManager.paddle.setAndLoadSprite("images/paddles/GalaxyPaddle_long.png");
+                if (GameManager.paddle.getWidth() < Paddle.getDefaultWidth() + 60) {
+                    GameManager.paddle.setWidth(GameManager.paddle.getWidth() + 60);
                 }
+                GameManager.paddle.updateSpriteByWidth();
                 if (timers.containsKey(5) && timers.get(5) != null) {
                 cancelEffect(5);
                 } else {
                     countdown(1, 30, () -> {
                         GameManager.getPaddle().setWidth(Paddle.getDefaultWidth());
-                        GameManager.paddle.setAndLoadSprite("images/paddles/GalaxyPaddle_default.png");
+                        GameManager.paddle.setAndLoadSprite("images/paddles/galaxy/GalaxyPaddle_default.png");
                     });
                 }
                 break;
@@ -208,15 +207,15 @@ public class PowerUp extends MovableObject {
 
             case 5:
                 System.out.println("PowerUp 5: Giảm chiều dài Paddle");
-                if (GameManager.getPaddle().getWidth() >= GameManager.getPaddle().getDefaultWidth()) {
-                    GameManager.getPaddle().setWidth(GameManager.getPaddle().getWidth() - 60);
-                    GameManager.paddle.setAndLoadSprite("images/paddles/GalaxyPaddle_short.png");
+                if (GameManager.paddle.getWidth() > Paddle.getDefaultWidth() - 60) {
+                    GameManager.paddle.setWidth(GameManager.paddle.getWidth() - 60);
                 }
+                GameManager.paddle.updateSpriteByWidth();
                 if (timers.containsKey(1) && timers.get(1) != null) {
                     cancelEffect(1);
                 } else {
                     countdown(5, 30, () -> {
-                        GameManager.getPaddle().setWidth(GameManager.getPaddle().getDefaultWidth());
+                        GameManager.getPaddle().setWidth(Paddle.getDefaultWidth());
                     });
                 }
                 break;

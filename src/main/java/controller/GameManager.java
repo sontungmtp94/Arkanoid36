@@ -4,6 +4,7 @@ import game.ScreenSwitcher;
 import model.ball.Ball;
 import model.brick.Brick;
 import model.paddle.GalaxyPaddle;
+import model.paddle.NormalPaddle;
 import model.paddle.Paddle;
 import model.powerup.PowerUp;
 import view.GameBackground;
@@ -39,6 +40,10 @@ public class GameManager extends JPanel implements ActionListener {
 
     /** Khởi tạo paddle, bóng, gạch,... */
     public void initGameObjects() {
+        gameBackground = new GameBackground();
+        mapManger = new MapManager();
+        bricks = mapManger.loadMap(currentLevel);
+
         paddle = new GalaxyPaddle(Paddle.getDefaultX(), Paddle.getDefaultY(), Paddle.getDefaultWidth(), Paddle.getDefaultHeight());
         balls = new ArrayList<>();
         Ball ball = new Ball(panelWidth / 2, panelHeight / 2, 15, 15, 1, Color.BLACK);
@@ -47,17 +52,12 @@ public class GameManager extends JPanel implements ActionListener {
         balls.add(ball);
         powerUps = new ArrayList<>();
 
-        gameBackground = new GameBackground();
-        mapManger = new MapManager();
-        bricks = mapManger.loadMap(currentLevel);
-
         ball.setPaddle(paddle);
         ball.setBricks(bricks);
 
         score = 0;
         lives = 3;
         highScore = 0;
-
     }
 
     public void restartGame() {
@@ -69,7 +69,7 @@ public class GameManager extends JPanel implements ActionListener {
 
     public void nextLevel() {
         currentLevel++;
-        if(currentLevel > MapManager.getNumOfMaps()){
+        if (currentLevel > MapManager.getNumOfMaps()) {
             currentLevel = 1;
         }
         initGameObjects();
@@ -115,7 +115,7 @@ public class GameManager extends JPanel implements ActionListener {
 
     /** Cập nhật logic trò chơi mỗi khung hình. */
     public void updateGame() {
-        if(gameState == GameState.READY || gameState == GameState.PLAYING) {
+        if (gameState == GameState.READY || gameState == GameState.PLAYING) {
             if (keyManager.isLeftPressed()) {
                 paddle.moveLeft();
             }
@@ -127,6 +127,11 @@ public class GameManager extends JPanel implements ActionListener {
             }
             for(Ball b : balls) {
                 b.update();
+            }
+            if (gameState == GameState.PLAYING) {
+                if (keyManager.isSkillPressed()) {
+                    paddle.castActiveSkill();
+                }
             }
             paddle.update();
         }
@@ -144,7 +149,7 @@ public class GameManager extends JPanel implements ActionListener {
                 powerUps.get(i).update();
             }
 
-            for(Brick brick : bricks) {
+            for (Brick brick : bricks) {
                 if(brick.isDestroyed() && !brick.isScored()) {
                     score += 10;
                     PowerUp.createPowerUp(brick, 1);
@@ -204,18 +209,14 @@ public class GameManager extends JPanel implements ActionListener {
             keyManager.clearPause();
         }
 
-
-
         if (keyManager.isNextLevelPressed() && gameState == GameState.LEVEL_COMPLETED) {
             nextLevel();
         }
-
 
         if (keyManager.isRestartPressed() && gameState == GameState.GAME_OVER
             || keyManager.isRestartPressed() && gameState == GameState.LEVEL_COMPLETED) {
                 restartGame();
         }
-
     }
 
     /** Vẽ trò chơi lên màn hình. */
@@ -223,21 +224,23 @@ public class GameManager extends JPanel implements ActionListener {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.drawImage(gameBackground.getBackground(), 0, 0, panelWidth, panelHeight, null);
+
         Graphics2D g2d = (Graphics2D) g;
         // Bật anti-aliasing cho đồ họa
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         // Bật anti-aliasing cho text
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        for(Ball b : balls) {
-            b.render(g2d);
-        }
-        paddle.render(g2d);
         for (Brick brick : bricks) {
             brick.render(g2d);
         }
         for (PowerUp pu : powerUps) {
             pu.render(g2d);
         }
+        for(Ball b : balls) {
+            b.render(g2d);
+        }
+        paddle.render(g2d);
+
         g2d.setColor(Color.WHITE);
         g2d.setFont(new Font("Arial", Font.PLAIN, 20));
         g2d.drawString("Score: " + score, 20, 30);
