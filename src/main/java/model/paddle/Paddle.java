@@ -12,43 +12,44 @@ import java.awt.image.BufferedImage;
  * Thanh trượt có tốc độ ban đầu cố định.
  * Thanh trượt có thể đi sang hai bên trái/phải và phải dừng lại khi chạm biên.
  */
-public class Paddle extends MovableObject {
+public abstract class Paddle extends MovableObject {
     // Kích thước mặc định trong game.
-    private static final int DEFAULT_WIDTH = 150;
-    private static final int DEFAULT_HEIGHT = 30;
+    protected static final int DEFAULT_WIDTH = 150;
+    protected static final int DEFAULT_HEIGHT = 30;
 
     // Tọa độ x, y mặc định trong game.
-    private static final int DEFAULT_X = (ArkanoidGame.getGameWidth() - DEFAULT_WIDTH) / 2;
-    private static final int DEFAULT_Y = ArkanoidGame.getGameHeight() - DEFAULT_HEIGHT - 80;
+    protected static final int DEFAULT_X = (ArkanoidGame.getGameWidth()
+                                          - DEFAULT_WIDTH) / 2;
+    protected static final int DEFAULT_Y = ArkanoidGame.getGameHeight()
+                                         - DEFAULT_HEIGHT - 80;
 
     // Tốc độ mặc định ban đầu.
-    private static final double DEFAULT_SPEED = 15.0;
+    protected static final double DEFAULT_SPEED = 12.0;
 
     // Tốc độ hiện tại.
-    private double speed;
+    protected double speed;
 
-    // Path đến ảnh Paddle mặc định.
-    private static final String DEFAULT_SPRITE_PATH = "images/paddles/GalaxyPaddle_default.png";
-
-    // Path đến ảnh Paddle.
-    private String spritePath;
+    // Kỹ năng bị động và chủ động.
+    protected Skill passiveSkill;
+    protected Skill activeSkill;
 
     // Sprite Paddle.
-    private BufferedImage sprite;
+    protected BufferedImage sprite;
+
+    // Path đến sprite.
+    protected String spritePath;
 
     /**
      * Constructor cho Paddle.
      *
-     * @param x           Tọa độ x (ngang)
-     * @param y           Tọa độ y (dọc)
-     * @param width       Chiều rộng
-     * @param height      Chiều cao
+     * @param x      Tọa độ x (ngang)
+     * @param y      Tọa độ y (dọc)
+     * @param width  Chiều rộng
+     * @param height Chiều cao
      */
     public Paddle(int x, int y, int width, int height) {
         super(x, y, width, height);
         speed = DEFAULT_SPEED;
-        spritePath = DEFAULT_SPRITE_PATH;
-        sprite = loadSprite(spritePath);
     }
 
     /** Di chuyển sang trái. */
@@ -66,10 +67,10 @@ public class Paddle extends MovableObject {
         setDx(0);
     }
 
-    /** Cập nhật vị trí của Paddle khi di chuyển. */
+    /** Cập nhật Paddle trong game. */
     @Override
     public void update() {
-        setX((int) (getX() + getDx()));
+        setX(getX() + (int) getDx());
 
         // Giữ Paddle luôn trong biên
         if (getX() < 0) {
@@ -86,9 +87,27 @@ public class Paddle extends MovableObject {
         setWidth(DEFAULT_WIDTH);
         setHeight(DEFAULT_HEIGHT);
         speed = DEFAULT_SPEED;
-        spritePath = DEFAULT_SPRITE_PATH;
-        sprite = loadSprite(spritePath);
     }
+
+    /** Thực hiện kỹ năng bị động. */
+    public abstract void applyPassiveSkill();
+
+    /** Kích hoạt kỹ năng chủ động. */
+    public abstract void castActiveSkill();
+
+    /** Cập nhật sprite tương ứng khi Width thay đổi do Powerup. */
+    public void updateSpriteByWidth() {
+        if (getWidth() == getDefaultWidth() - 60)
+            setAndLoadSprite(getPathShort());
+        else if (getWidth() == getDefaultWidth() + 60)
+            setAndLoadSprite(getPathLong());
+        else
+            setAndLoadSprite(getPathDefault());
+    }
+
+    public abstract String getPathShort();
+    public abstract String getPathLong();
+    public abstract String getPathDefault();
 
     /**
      * Render Paddle lên màn hình.
@@ -137,19 +156,19 @@ public class Paddle extends MovableObject {
         this.speed = speed;
     }
 
-    public String getSpritePath() {
-        return spritePath;
-    }
-
-    public void setSpritePath(String spritePath) {
-        this.spritePath = spritePath;
-    }
-
     public BufferedImage getSprite() {
         return sprite;
     }
 
     public void setSprite(BufferedImage sprite) {
         this.sprite = sprite;
+    }
+
+    public String getSpritePath() {
+        return spritePath;
+    }
+
+    public void setSpritePath(String spritePath) {
+        this.spritePath = spritePath;
     }
 }

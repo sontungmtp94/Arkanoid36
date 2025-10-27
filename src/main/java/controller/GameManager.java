@@ -14,10 +14,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
-import audio.SoundManager;
-import audio.SoundId;
-
-
 /**
  * Quản lý toàn bộ logic, hiển thị và vòng lặp chính của game Arkanoid.
  * Kế thừa JPanel, triển khai ActionListener và KeyListener.
@@ -36,7 +32,6 @@ public class GameManager extends JPanel implements ActionListener {
     private MapManager mapManger;          // Quản lý bản đồ
     private GameBackground gameBackground;      // Nền game
     protected static int score, lives, highScore;   // Điểm, mạng, điểm cao
-    private ScreenSwitcher screenSwitcher;              // Chuyển đổi màn hình
     private KeyManager keyManager;                // Quản lý phím
     private GameOver gameOver;
     private LevelCompleted levelCompleted;
@@ -53,12 +48,6 @@ public class GameManager extends JPanel implements ActionListener {
         mapManger = new MapManager();
         bricks = mapManger.loadMap(currentLevel);
 
-        // Đảm bảo rằng mỗi viên gạch được khởi tạo với HP đúng
-        for (Brick brick : bricks) {
-            // Gán HP cho viên gạch dựa trên loại gạch
-            brick.setHitPoints(brick.getType().getHitPoints());  // Gán HP từ BrickType
-        }
-
         ball.setPaddle(paddle);
         ball.setBricks(bricks);
 
@@ -66,10 +55,23 @@ public class GameManager extends JPanel implements ActionListener {
         lives = 3;
         highScore = 0;
 
-        for (Brick brick : bricks) {
-            System.out.printf("[DEBUG] %s HP=%d%n", brick.getType(), brick.getHitPoints());
-        }
+    }
 
+    public void restartGame() {
+        initGameObjects();
+        gameOver.hidePanel();
+        levelCompleted.hidePanel();
+        gameState = GameState.READY;
+    }
+
+    public void nextLevel() {
+        currentLevel++;
+        if(currentLevel > 5){
+            currentLevel = 1;
+        }
+        initGameObjects();
+        levelCompleted.hidePanel();
+        gameState = GameState.READY;
     }
 
     /**
@@ -81,7 +83,6 @@ public class GameManager extends JPanel implements ActionListener {
     public GameManager(int width, int height, ScreenSwitcher switcher) {
         panelWidth = width;
         panelHeight = height;
-        this.screenSwitcher = switcher;
 
         setPreferredSize(new Dimension(panelWidth, panelHeight));
 
@@ -138,20 +139,10 @@ public class GameManager extends JPanel implements ActionListener {
                 powerUps.get(i).update();
             }
 
-            for (Brick brick : bricks) {
-                if (!brick.isDestroyed() && ball.getBounds().intersects(brick.getBounds())) {
-                    brick.takeHits(1);  // Giảm HP của gạch khi bóng va vào
-
-                    // Đổi hướng bóng khi va vào gạch.
-                    ball.bounce(brick);
-
-                    // Phát âm thanh khi bóng đập trúng gạch.
-                    SoundManager.get().playSfx(SoundId.SFX_HIT);
-
-                    // Nếu gạch bị phá, cộng điểm.
-                    if (brick.isDestroyed()) {
-                        score += 10;
-                    }
+            for(Brick brick : bricks) {
+                if(brick.isDestroyed() && !brick.isScored()) {
+                    score += 10;
+                    brick.setScored(true);
                 }
             }
 
@@ -186,33 +177,26 @@ public class GameManager extends JPanel implements ActionListener {
         }
 
         if (keyManager.isPausePressed()) {
-            if (gameState == GameState.READY) {
+            if (gameState == GameState.PLAYING) {
                 gameState = GameState.PAUSE;
             } else if (gameState == GameState.PAUSE) {
-                gameState = GameState.READY;
+                gameState = GameState.PLAYING;
             }
             keyManager.clearPause();
         }
 
 
+
         if (keyManager.isNextLevelPressed() && gameState == GameState.LEVEL_COMPLETED) {
-            currentLevel++;
-            if (currentLevel > 5) {
-                currentLevel = 1;
-            }
-            initGameObjects();
-            gameState = GameState.READY;
-            levelCompleted.hidePanel();
+            nextLevel();
         }
 
 
         if (keyManager.isRestartPressed() && gameState == GameState.GAME_OVER
             || keyManager.isRestartPressed() && gameState == GameState.LEVEL_COMPLETED) {
-            initGameObjects();
-            gameOver.hidePanel();
-            levelCompleted.hidePanel();
-            gameState = GameState.READY;
+                restartGame();
         }
+
     }
 
     /** Vẽ trò chơi lên màn hình. */
@@ -252,27 +236,6 @@ public class GameManager extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         updateGame();
         repaint();
-    }
-
-    /** Bắt đầu lại màn chơi hiện tại */
-    public void restartGame() {
-        System.out.println("[GameManager] Restarting current level...");
-        initGameObjects(); // tạo lại paddle, ball, bricks, powerups
-        gameOver.hidePanel();
-        levelCompleted.hidePanel();
-        gameState = GameState.READY;
-    }
-
-    /** Chuyển sang màn tiếp theo */
-    public void nextLevel() {
-        System.out.println("[GameManager] Loading next level...");
-        currentLevel++;
-        if (currentLevel > 5) { // giả sử chỉ có 5 level
-            currentLevel = 1;
-        }
-        initGameObjects();
-        levelCompleted.hidePanel();
-        gameState = GameState.READY;
     }
 
     // Các getter và setter
