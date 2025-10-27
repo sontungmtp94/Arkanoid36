@@ -3,6 +3,7 @@ package controller;
 import game.ScreenSwitcher;
 import model.ball.Ball;
 import model.brick.Brick;
+import model.paddle.GalaxyPaddle;
 import model.paddle.Paddle;
 import model.powerup.PowerUp;
 import view.GameBackground;
@@ -32,13 +33,13 @@ public class GameManager extends JPanel implements ActionListener {
     private MapManager mapManger;          // Quản lý bản đồ
     private GameBackground gameBackground;      // Nền game
     protected static int score, lives, highScore;   // Điểm, mạng, điểm cao
-    private KeyManager keyManager;                // Quản lý phím
+    public static KeyManager keyManager;                // Quản lý phím
     private GameOver gameOver;
     private LevelCompleted levelCompleted;
 
     /** Khởi tạo paddle, bóng, gạch,... */
     public void initGameObjects() {
-        paddle = new Paddle(Paddle.getDefaultX(), Paddle.getDefaultY(), Paddle.getDefaultWidth(), Paddle.getDefaultHeight());
+        paddle = new GalaxyPaddle(Paddle.getDefaultX(), Paddle.getDefaultY(), Paddle.getDefaultWidth(), Paddle.getDefaultHeight());
         balls = new ArrayList<>();
         Ball ball = new Ball(panelWidth / 2, panelHeight / 2, 15, 15, 1, Color.BLACK);
         ball.setAndReloadSpritePath("images/balls/ball_default.png");
@@ -146,7 +147,7 @@ public class GameManager extends JPanel implements ActionListener {
             for(Brick brick : bricks) {
                 if(brick.isDestroyed() && !brick.isScored()) {
                     score += 10;
-                    PowerUp.createPowerUp(brick, 0.2);
+                    PowerUp.createPowerUp(brick, 1);
                     brick.setScored(true);
                 }
             }
