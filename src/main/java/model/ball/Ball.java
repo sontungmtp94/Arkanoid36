@@ -54,7 +54,6 @@
         /** Paddle và các Brick mà Ball có thể va chạm. */
         private Paddle paddle;
         private ArrayList<Brick> bricks;
-        private boolean bounceBrick = true;
 
 
 
@@ -133,11 +132,21 @@
                 for (Brick brick : bricks) {
                     if (!brick.isDestroyed()
                         && getBounds().intersects(brick.getBounds())) {
-                        if(bounceBrick) {
-                            bounce(brick);
-                            brick.takeHits(damage);
-                        } else {
-                            brick.takeHits(36);
+                        bounce(brick);
+                        brick.takeHits(damage);
+
+                        setX(getX() + (int) getDx());
+                        setY(getY() + (int) getDy());
+
+                        // Phát âm thanh khi bóng đập trúng gạch.
+                        audio.SoundManager.get().playSfx(audio.SoundId.SFX_HIT);
+
+                        if (Math.random() < 0.2) {
+                            int idPower = (int) (Math.random() * 6);
+                            PowerUp newP = new PowerUp(0, 0, 30, 30, idPower);
+                            newP.setX(brick.getX() + brick.getWidth() / 2 - brick.getWidth() / 2);
+                            newP.setY(brick.getY() + brick.getHeight() / 2 - newP.getHeight() / 2);
+                            GameManager.powerUps.add(newP);
                         }
                         break;
                     }
@@ -148,7 +157,7 @@
         /**
          * Xử lí Ball nảy ra sau khi va chạm với Paddle và Brick.
          *
-         * @param other Đối tượng va chạm
+         * @param other Đối tượng va chạm.
          */
         public void bounce(GameObject other) {
             Rectangle ballRect = getBounds();
@@ -362,9 +371,5 @@
         public void setAndReloadSpritePath(String spritePath) {
             SPRITE_PATH = spritePath;
             this.ballSprite = loadSprite(SPRITE_PATH);
-        }
-
-        public void setBounceBrick(boolean bounceBrick) {
-            this.bounceBrick = bounceBrick;
         }
     }

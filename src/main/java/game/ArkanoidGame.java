@@ -1,5 +1,7 @@
 package game;
 
+import audio.SoundManager;
+import audio.SoundId;
 import javax.swing.*;
 import java.awt.*;
 import view.MainMenu;
@@ -42,6 +44,9 @@ public class ArkanoidGame extends JFrame implements ScreenSwitcher {
      */
     @Override
     public void showMainMenu() {
+        // Chuyển nhạc sang menu
+        SoundManager.get().playBgm(SoundId.BGM_MENU, 1200);
+
         if (currentPanel != null) {
             remove(currentPanel);
         }
@@ -57,6 +62,9 @@ public class ArkanoidGame extends JFrame implements ScreenSwitcher {
      */
     @Override
     public void showGame() {
+        // Chuyển nhạc sang gameplay
+        SoundManager.get().playBgm(SoundId.BGM_GAME, 1200);
+
         if (currentPanel != null) {
             remove(currentPanel);
         }

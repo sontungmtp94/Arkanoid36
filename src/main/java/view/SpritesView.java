@@ -16,8 +16,8 @@ public class SpritesView {
     private static final HashMap<String, BufferedImage> cache = new HashMap<>();
 
     /**
-     * @param path Đường dẫn tương đối đến ảnh (ví dụ: "images/brick/bricks.png")
-     * @return Ảnh BufferedImage hoặc null nếu lỗi.
+     * @param path Đường dẫn đến ảnh (ví dụ: "images/brick/bricks.png")
+     * @return Ảnh BufferedImage (null nếu lỗi).
      */
     public static BufferedImage loadSprite(String path) {
         // Nếu ảnh đã có trong cache thì dùng lại
@@ -36,7 +36,7 @@ public class SpritesView {
     }
 
     /**
-     * Cắt một vùng ảnh từ spritesheet (dùng cho Brick, animation, ...).
+     * Cắt ảnh từ spritesheet (Brick, animation, ...).
      */
     public static BufferedImage cutSprite(BufferedImage sheet, int x, int y, int width, int height) {
         return sheet.getSubimage(x, y, width, height);
