@@ -136,8 +136,10 @@ public class Ball extends MovableObject {
                     if(bounceBrick) {
                         bounce(brick);
                         brick.takeHits(damage);
+                        audio.SoundManager.get().playSfx(audio.SoundId.SFX_HIT);
                     } else {
-                        brick.takeHits(36);
+                        brick.takeHits(1);
+                        audio.SoundManager.get().playSfx(audio.SoundId.SFX_HIT);
                     }
                     break;
                 }

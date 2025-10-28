@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import controller.GameManager;
 import audio.SoundManager;
 import audio.SoundId;
+import game.ScreenSwitcher;
 
 /**
  * Lớp LevelCompleted hiển thị thông báo "Level Completed" và hướng dẫn next level/ restart.

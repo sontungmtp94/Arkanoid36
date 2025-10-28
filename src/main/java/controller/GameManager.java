@@ -1,5 +1,6 @@
 package controller;
 
+import game.ArkanoidGame;
 import game.ScreenSwitcher;
 import model.ball.Ball;
 import model.brick.Brick;
@@ -25,18 +26,19 @@ public class GameManager extends JPanel implements ActionListener {
     private static GameState gameState;
     protected int panelWidth;
     public static int panelHeight;
-    protected int currentLevel = 1;          // Mức độ hiện tại
-    public static Paddle paddle;                 // Thanh đỡ
+    protected int currentLevel = 1; // Mức độ hiện tại
+    public static Paddle paddle; // Thanh đỡ
     public static ArrayList<PowerUp> powerUps;
     private static ArrayList<Brick> bricks;
-    public static ArrayList<Ball> balls;   // Bóng
-    private Timer timer;                   // Bộ đếm
-    private MapManager mapManger;          // Quản lý bản đồ
-    private GameBackground gameBackground;      // Nền game
-    protected static int score, lives, highScore;   // Điểm, mạng, điểm cao
-    public static KeyManager keyManager;                // Quản lý phím
+    public static ArrayList<Ball> balls; // Bóng
+    private Timer timer; // Bộ đếm
+    private MapManager mapManger; // Quản lý bản đồ
+    private GameBackground gameBackground; // Nền game
+    protected static int score, lives, highScore; // Điểm, mạng, điểm cao
+    public static KeyManager keyManager; // Quản lý phím
     private GameOver gameOver;
     private LevelCompleted levelCompleted;
+    private final ArkanoidGame game;
 
     /** Khởi tạo paddle, bóng, gạch,... */
     public void initGameObjects() {
@@ -44,7 +46,8 @@ public class GameManager extends JPanel implements ActionListener {
         mapManger = new MapManager();
         bricks = mapManger.loadMap(currentLevel);
 
-        paddle = new GalaxyPaddle(Paddle.getDefaultX(), Paddle.getDefaultY(), Paddle.getDefaultWidth(), Paddle.getDefaultHeight());
+        paddle = new GalaxyPaddle(Paddle.getDefaultX(), Paddle.getDefaultY(),
+                Paddle.getDefaultWidth(), Paddle.getDefaultHeight());
         balls = new ArrayList<>();
         Ball ball = new Ball(panelWidth / 2, panelHeight / 2, 15, 15, 1, Color.BLACK);
         ball.setAndReloadSpritePath("images/balls/ball_default.png");
@@ -77,29 +80,35 @@ public class GameManager extends JPanel implements ActionListener {
         gameState = GameState.READY;
     }
 
+    public void stopGame() {
+        if (timer != null) {
+            timer.stop();      // Dừng vòng lặp game
+        }
+        PowerUp.cancelAllEffects(); // Hủy mọi hiệu ứng tồn đọng
+    }
+
     /**
      * Khởi tạo GameManager.
-     * @param width  chiều rộng khung
-     * @param height chiều cao khung
-     * @param switcher đối tượng điều khiển chuyển màn
+     * @param panelWidth  chiều rộng khung
+     * @param panelHeight chiều cao khung
+     * @param game        cửa sổ ArkanoidGame
      */
-    public GameManager(int width, int height, ScreenSwitcher switcher) {
-        panelWidth = width;
-        panelHeight = height;
+    public GameManager(int panelWidth, int panelHeight, ArkanoidGame game) {
+        this.panelWidth = panelWidth;
+        this.panelHeight = panelHeight;
+        this.game = game;
 
         setPreferredSize(new Dimension(panelWidth, panelHeight));
-
         setFocusable(true);
 
         keyManager = new KeyManager();
-
         addKeyListener(keyManager);
 
         initGameObjects();
 
         gameState = GameState.READY;
 
-        timer = new Timer(1000/60, this);
+        timer = new Timer(1000 / 60, this);
         timer.start();
 
         setLayout(null);
@@ -116,58 +125,42 @@ public class GameManager extends JPanel implements ActionListener {
     /** Cập nhật logic trò chơi mỗi khung hình. */
     public void updateGame() {
         if (gameState == GameState.READY || gameState == GameState.PLAYING) {
-            if (keyManager.isLeftPressed()) {
-                paddle.moveLeft();
+            if (keyManager.isLeftPressed()) paddle.moveLeft();
+            if (keyManager.isRightPressed()) paddle.moveRight();
+            if (!keyManager.isLeftPressed() && !keyManager.isRightPressed()) paddle.stop();
+
+            for (Ball b : balls) b.update();
+
+            if (gameState == GameState.PLAYING && keyManager.isSkillPressed()) {
+                paddle.castActiveSkill();
             }
-            if (keyManager.isRightPressed()) {
-                paddle.moveRight();
-            }
-            if (!keyManager.isLeftPressed() && !keyManager.isRightPressed()) {
-                paddle.stop();
-            }
-            for(Ball b : balls) {
-                b.update();
-            }
-            if (gameState == GameState.PLAYING) {
-                if (keyManager.isSkillPressed()) {
-                    paddle.castActiveSkill();
-                }
-            }
+
             paddle.update();
         }
 
         if (gameState == GameState.READY) {
-            if(keyManager.isBallReleased()) {
+            if (keyManager.isBallReleased()) {
                 balls.get(0).launch();
                 gameState = GameState.PLAYING;
             }
-
         }
 
         if (gameState == GameState.PLAYING) {
-            for (int i = 0; i < powerUps.size(); i++) {
-                powerUps.get(i).update();
-            }
+            for (int i = 0; i < powerUps.size(); i++) powerUps.get(i).update();
 
             for (Brick brick : bricks) {
-                if(brick.isDestroyed() && !brick.isScored()) {
+                if (brick.isDestroyed() && !brick.isScored()) {
                     score += 10;
                     PowerUp.createPowerUp(brick, 0.2);
                     brick.setScored(true);
                 }
             }
 
-            if (score > highScore) {
-                highScore = score;
-            }
+            if (score > highScore) highScore = score;
 
             boolean allCleared = true;
-            for (Brick brick : bricks) {
-                if (!brick.isDestroyed()) {
-                    allCleared = false;
-                    break;
-                }
-            }
+            for (Brick brick : bricks)
+                if (!brick.isDestroyed()) { allCleared = false; break; }
 
             if (allCleared) {
                 PowerUp.cancelAllEffects();
@@ -175,11 +168,8 @@ public class GameManager extends JPanel implements ActionListener {
                 levelCompleted.showPanel();
             }
 
-            for(int i = 0; i < balls.size(); i++) {
-                if (balls.get(i).outOfBottom()) {
-                    balls.remove(i);
-                }
-            }
+            for (int i = 0; i < balls.size(); i++)
+                if (balls.get(i).outOfBottom()) balls.remove(i);
 
             if (balls.isEmpty()) {
                 lives--;
@@ -201,20 +191,15 @@ public class GameManager extends JPanel implements ActionListener {
         }
 
         if (keyManager.isPausePressed()) {
-            if (gameState == GameState.PLAYING) {
-                gameState = GameState.PAUSE;
-            } else if (gameState == GameState.PAUSE) {
-                gameState = GameState.PLAYING;
-            }
+            if (gameState == GameState.PLAYING) gameState = GameState.PAUSE;
+            else if (gameState == GameState.PAUSE) gameState = GameState.PLAYING;
             keyManager.clearPause();
         }
 
-        if (keyManager.isNextLevelPressed() && gameState == GameState.LEVEL_COMPLETED) {
-            nextLevel();
-        }
+        if (keyManager.isNextLevelPressed() && gameState == GameState.LEVEL_COMPLETED) nextLevel();
 
-        if (keyManager.isRestartPressed() && gameState == GameState.GAME_OVER
-                || keyManager.isRestartPressed() && gameState == GameState.LEVEL_COMPLETED) {
+        if ((keyManager.isRestartPressed() && gameState == GameState.GAME_OVER)
+                || (keyManager.isRestartPressed() && gameState == GameState.LEVEL_COMPLETED)) {
             restartGame();
         }
     }
@@ -226,19 +211,12 @@ public class GameManager extends JPanel implements ActionListener {
         g.drawImage(gameBackground.getBackground(), 0, 0, panelWidth, panelHeight, null);
 
         Graphics2D g2d = (Graphics2D) g;
-        // Bật anti-aliasing cho đồ họa
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        // Bật anti-aliasing cho text
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        for (Brick brick : bricks) {
-            brick.render(g2d);
-        }
-        for (PowerUp pu : powerUps) {
-            pu.render(g2d);
-        }
-        for(Ball b : balls) {
-            b.render(g2d);
-        }
+
+        for (Brick brick : bricks) brick.render(g2d);
+        for (PowerUp pu : powerUps) pu.render(g2d);
+        for (Ball b : balls) b.render(g2d);
         paddle.render(g2d);
 
         g2d.setColor(Color.WHITE);
@@ -246,6 +224,7 @@ public class GameManager extends JPanel implements ActionListener {
         g2d.drawString("Score: " + score, 20, 30);
         g2d.drawString("Lives: " + lives, 200, 30);
         g2d.drawString("High Score: " + highScore, panelWidth - 150, 30);
+
         if (gameState == GameState.PAUSE) {
             g2d.setColor(new Color(0, 0, 0, 150));
             g2d.fillRect(0, 0, panelWidth, panelHeight);
@@ -262,37 +241,13 @@ public class GameManager extends JPanel implements ActionListener {
         repaint();
     }
 
-    // Các getter và setter
-
-    public static int getLives() {
-        return lives;
-    }
-
-    public static void setLives(int lives) {
-        GameManager.lives = lives;
-    }
-
-    public static int getScore() {
-        return score;
-    }
-
-    public static void setScore(int score) {
-        GameManager.score = score;
-    }
-
-    public static Paddle getPaddle() {
-        return paddle;
-    }
-
-    public static void setPaddle(Paddle paddle) {
-        GameManager.paddle = paddle;
-    }
-
-    public static GameState getGameState() {
-        return gameState;
-    }
-
-    public static ArrayList<Brick> getBricks() {
-        return bricks;
-    }
+    // Getter & Setter
+    public static int getLives() { return lives; }
+    public static void setLives(int lives) { GameManager.lives = lives; }
+    public static int getScore() { return score; }
+    public static void setScore(int score) { GameManager.score = score; }
+    public static Paddle getPaddle() { return paddle; }
+    public static void setPaddle(Paddle paddle) { GameManager.paddle = paddle; }
+    public static GameState getGameState() { return gameState; }
+    public static ArrayList<Brick> getBricks() { return bricks; }
 }

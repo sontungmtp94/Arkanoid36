@@ -1,6 +1,7 @@
 package view;
 
 import game.ScreenSwitcher;
+import game.ArkanoidGame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -82,9 +83,10 @@ public class MainMenu extends JPanel {
 
         // Gọi âm thanh Click.wav.
         btnPlay.addActionListener(e -> {
-            audio.SoundManager.get().playSfx(audio.SoundId.SFX_CLICK);
-            screenSwitcher.showGame();
+            SoundManager.get().playSfx(SoundId.SFX_CLICK);
+            screenSwitcher.show((ArkanoidGame) SwingUtilities.getWindowAncestor(this));
         });
+
 
         btnSetting.addActionListener(e -> {
             audio.SoundManager.get().playSfx(audio.SoundId.SFX_CLICK);
