@@ -6,7 +6,8 @@ import java.awt.image.BufferedImage;
 import controller.GameManager;
 import audio.SoundManager;
 import audio.SoundId;
-import game.ScreenSwitcher;
+import controller.GameState;
+import game.ArkanoidGame;
 
 /**
  * Lớp LevelCompleted hiển thị thông báo "Level Completed" và hướng dẫn next level/ restart.
@@ -51,14 +52,17 @@ public class LevelCompleted extends JPanel {
 
 
         mainMenuButton.addActionListener(e -> {
-            // Tạm thời chưa thêm.
+            SoundManager.get().playSfx(SoundId.SFX_CLICK);
+            ((ArkanoidGame) SwingUtilities.getWindowAncestor(this)).changeState(GameState.MENU);
         });
 
         restartButton.addActionListener(e -> {
+            SoundManager.get().playSfx(SoundId.SFX_CLICK);
             gameManager.restartGame();
         });
 
         nextLevelButton.addActionListener(e -> {
+            SoundManager.get().playSfx(SoundId.SFX_CLICK);
             gameManager.nextLevel();
         });
 

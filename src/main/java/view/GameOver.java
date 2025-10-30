@@ -1,8 +1,8 @@
 package view;
 
 import controller.GameManager;
+import controller.GameState;
 import game.ArkanoidGame;
-import game.ScreenSwitcher;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -53,7 +53,7 @@ public class GameOver extends JPanel {
             SoundManager.get().playSfx(SoundId.SFX_CLICK);
             hidePanel();
             gameManager.stopGame(); // Dừng game cũ trước khi chuyển.
-            ScreenSwitcher.MAIN_MENU.show((ArkanoidGame) SwingUtilities.getWindowAncestor(this));
+            ((ArkanoidGame) SwingUtilities.getWindowAncestor(this)).changeState(GameState.MENU);
         });
 
         restartButton.addActionListener(e -> {

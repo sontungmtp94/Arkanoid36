@@ -1,11 +1,9 @@
 package controller;
 
 import game.ArkanoidGame;
-import game.ScreenSwitcher;
 import model.ball.Ball;
 import model.brick.Brick;
 import model.paddle.GalaxyPaddle;
-import model.paddle.NormalPaddle;
 import model.paddle.Paddle;
 import model.powerup.PowerUp;
 import view.GameBackground;
@@ -43,8 +41,17 @@ public class GameManager extends JPanel implements ActionListener {
     /** Khởi tạo paddle, bóng, gạch,... */
     public void initGameObjects() {
         gameBackground = new GameBackground();
+
+        // Khởi tạo MapManager và load map.
         mapManger = new MapManager();
         bricks = mapManger.loadMap(currentLevel);
+
+        // Nếu không load được.
+        if (bricks == null || bricks.isEmpty()) {
+            System.err.println("Map " + currentLevel + " trống hoặc không tồn tại!");
+            bricks = mapManger.loadMap(1);
+        }
+
 
         paddle = new GalaxyPaddle(Paddle.getDefaultX(), Paddle.getDefaultY(),
                 Paddle.getDefaultWidth(), Paddle.getDefaultHeight());

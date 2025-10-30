@@ -45,6 +45,11 @@ public class Brick extends GameObject {
      * @param damage: Lượng sát thương của model.ball.Ball gây ra.
      */
     public void takeHits(int damage) {
+        if (type == BrickType.METAL) {
+            System.out.println("[METAL] hit ignored!");
+            return;
+        }
+
         // Giảm HP của gạch sau khi va chạm.
         hitPoints -= damage;
 
@@ -104,6 +109,4 @@ public class Brick extends GameObject {
     public void setScored(boolean scored) {
         this.scored = scored;
     }
-
-
 }

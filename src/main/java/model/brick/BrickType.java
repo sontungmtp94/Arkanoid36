@@ -6,38 +6,38 @@ import java.util.Random;
 
 /**
  * BrickType đại diện cho 6 loại gạch.
- * Mỗi loại có 3 hp (3 chạm sẽ vỡ).
+ * Mỗi loại có tối đa 6 hp (trừ metal).
  */
 public enum BrickType {
-    RED(0, 3),
-    CYAN(1, 2),
-    BLUE(2, 1),
-    PURPLE(3, 2),
-    YELLOW(4, 1),
-    ORANGE(5, 3);
+    RED(0, 6),
+    CYAN(1, 5),
+    BLUE(2, 4),
+    PURPLE(3, 3),
+    YELLOW(4, 2),
+    ORANGE(5, 1),
+    METAL(6, 100);
 
     private static final int WIDTH = 32;
     private static final int HEIGHT = 16;
 
     private final int row;  // Vị trí hàng trong sprite sheet
     private final int hitPoints;  // HP của loại gạch này
-    private final BufferedImage[] frames = new BufferedImage[3];  // Số trạng thái (HP) của gạch
+    private final BufferedImage[] frames = new BufferedImage[6];  // Số trạng thái (HP) của gạch
 
     BrickType(int row, int hitPoints) {
         this.row = row;
         this.hitPoints = hitPoints;
-
     }
 
     static {
-        BufferedImage sheet = SpritesView.loadSprite("images/brick/bricks2.png");
+        BufferedImage sheet = SpritesView.loadSprite("images/brick/bricks.png");
         if (sheet != null) {
             for (BrickType type : values()) {
-                for (int i = 0; i < 3; i++) {
+                for (int i = 0; i < 6; i++) {
                     type.frames[i] = SpritesView.cutSprite(
                             sheet,
                             i * WIDTH,         // cột = mức độ nứt
-                            type.row * HEIGHT, // hàng = màu
+                            type.row * HEIGHT,    // hàng = màu
                             WIDTH,
                             HEIGHT
                     );
@@ -45,7 +45,7 @@ public enum BrickType {
             }
             System.out.println("Brick sprites loaded successfully!");
         } else {
-            System.err.println("Failed to load bricks2.png");
+            System.err.println("Failed to load bricks.png");
         }
     }
 
@@ -54,20 +54,13 @@ public enum BrickType {
      * HP càng thấp → gạch càng nứt.
      */
     public BufferedImage getFrame(int hpRemaining) {
-        int damageTaken = hitPoints - hpRemaining; // số lần bị trúng
-        int index = Math.min(damageTaken, 2);      // frame 0→1→2
+        if (this == METAL) return frames[0];
+        int damage = hitPoints - hpRemaining; // số lần bị trúng
+        int index = Math.min(damage, frames.length - 1);
         return frames[index];
     }
 
     public int getHitPoints() {
         return hitPoints;
-    }
-
-    /** Trả về loại gạch ngẫu nhiên với độ cứng cố định */
-    private static final Random RANDOM = new Random();
-
-    public static BrickType getRandomType() {
-        BrickType[] values = values();
-        return values[RANDOM.nextInt(values.length)];
     }
 }

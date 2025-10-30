@@ -93,51 +93,60 @@ public class MapManager {
 
     public void mapTxt(int id) {
         ArrayList<Brick> map = new ArrayList<>();
-        try(Scanner sc = new Scanner(new File(pathFiles[id - 1]))) {
-            int row = 0;
-            while(sc.hasNextLine()) {
-                String line = sc.nextLine().trim();
-                String[] tokens = line.split("\\s+");
-                for(int i = 0; i < tokens.length; i++) {
-                    if (!tokens[i].equals("0") && !tokens[i].equals("*")) {
-                        BrickType randomType = BrickType.getRandomType();
-                        Brick t = new Brick(startX + spaceX * i, startY + spaceY * row, WIDTH, HEIGHT, randomType);
-                        t.setHitPoints(Integer.parseInt(tokens[i]));
-                        map.add(t);
-                    }
-                }
-                row++;
-            }
-        } catch (IOException e) {
-            System.err.println("Không thể đọc file Map" + (id + 1) + ".txt" + e.getMessage());
-        }
-        addMap(id, map);
-    }
-    /**
-     * Hàm tạo map thủ công (phục vụ cho việc xếp Brick không theo vị trí cụ thể).
-     */
-    public void map1() {
-        ArrayList<Brick> map = new ArrayList<>();
-        String path = pathFiles[1];
+        File file = new File(pathFiles[id - 1]);
 
-        try(Scanner sc = new Scanner(new File(path))) {
+        try (Scanner sc = new Scanner(file)) {
             int row = 0;
-            while(sc.hasNextLine()) {
+            while (sc.hasNextLine()) {
                 String line = sc.nextLine().trim();
+                if (line.isEmpty()) continue;
+
                 String[] tokens = line.split("\\s+");
-                for(int i = 0; i < tokens.length; i++) {
-                    if (tokens[i].equals("1")) {
-                        BrickType randomType = BrickType.getRandomType();
-                        Brick t = new Brick(40 + spaceX * i, 40 + spaceY * row, WIDTH, HEIGHT, randomType);
-                        map.add(t);
+                for (int col = 0; col < tokens.length; col++) {
+                    String cell = tokens[col];
+                    if (cell.equals("0")) continue;
+
+                    BrickType type;
+                    int hp;
+
+                    if (cell.equals("*")) {
+                        type = BrickType.METAL;
+                        hp = type.getHitPoints();
+                    } else {
+                        hp = Integer.parseInt(cell);
+                        type = getTypeByHP(hp);
                     }
+
+                    Brick brick = new Brick(
+                            startX + spaceX * col,
+                            startY + spaceY * row,
+                            WIDTH, HEIGHT,
+                            type
+                    );
+                    brick.setHitPoints(hp);
+                    map.add(brick);
                 }
                 row++;
             }
-        } catch (IOException e) {
-            System.err.println("Không thể đọc file Map" + 1 + ".txt" + e.getMessage());
-        }
-        addMap(1, map);
+
+            addMap(id, map);
+        System.out.printf("Loaded Map%d with %d bricks.%n", id, map.size());
+
+    } catch (IOException e) {
+        System.err.println("Không thể đọc file Map" + id + ".txt: " + e.getMessage());
+    }
+}
+
+    private BrickType getTypeByHP(int hp) {
+        return switch (hp) {
+            case 1 -> BrickType.ORANGE;
+            case 2 -> BrickType.YELLOW;
+            case 3 -> BrickType.PURPLE;
+            case 4 -> BrickType.BLUE;
+            case 5 -> BrickType.CYAN;
+            case 6 -> BrickType.RED;
+            default -> BrickType.METAL;
+        };
     }
 
     private BufferedImage spriteSheet;

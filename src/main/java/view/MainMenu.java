@@ -1,6 +1,6 @@
 package view;
 
-import game.ScreenSwitcher;
+import controller.GameState;
 import game.ArkanoidGame;
 
 import javax.swing.*;
@@ -9,13 +9,12 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.net.URL;
 import audio.SoundManager;
-import audio.SoundManager;
 import audio.SoundId;
 
 
 public class MainMenu extends JPanel {
 
-    private final ScreenSwitcher screenSwitcher;
+    private final ArkanoidGame game;
 
     // Vì Resources/ là Resources Root
     private static final String BG_PATH = "/images/utils/background_menu.png";
@@ -30,8 +29,8 @@ public class MainMenu extends JPanel {
     private static final int ANIM_FPS = 12;
     private static final double ANIM_SCALE = 1.0;
 
-    public MainMenu(ScreenSwitcher switcher) {
-        this.screenSwitcher = switcher;
+    public MainMenu(ArkanoidGame game) {
+        this.game = game;
         setLayout(new BorderLayout());
 
         // Phát nhạc nền.
@@ -84,7 +83,7 @@ public class MainMenu extends JPanel {
         // Gọi âm thanh Click.wav.
         btnPlay.addActionListener(e -> {
             SoundManager.get().playSfx(SoundId.SFX_CLICK);
-            screenSwitcher.show((ArkanoidGame) SwingUtilities.getWindowAncestor(this));
+            game.changeState(GameState.PLAYING);
         });
 
 
