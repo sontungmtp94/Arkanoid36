@@ -5,7 +5,6 @@ import model.brick.*;
 import model.paddle.*;
 import model.base.*;
 import model.powerup.*;
-import controller.GameManager;
 import static view.SpritesView.*;
 
 import java.awt.*;
@@ -19,11 +18,14 @@ import java.util.ArrayList;
  */
 
 public class Ball extends MovableObject {
-    /** Thời gian delay trước khi bóng tự bay lên khi bắt đầu chơi. */
-    private static final int LAUNCH_DELAY_TIME = 60; // 1s trong 60 fps.
+    /** Kích thước mặc định của Ball. */
+    private static final int DEFAULT_SIZE = 15;
 
-    /** Tốc độ mặc định ban đầu của Ball theo 2 chiều. */
-    private final double DEFAULT_SPEED = 7.0;
+    /** Lượng sát thương mặc định của Ball. */
+    private static final int DEFAULT_DAMAGE = 5;
+
+    /** Tốc độ mặc định của Ball theo 2 chiều. */
+    private static final double DEFAULT_SPEED = 6.0;
 
     /** Tốc độ hiện tại của bóng. */
     private double speed = DEFAULT_SPEED;
@@ -36,10 +38,6 @@ public class Ball extends MovableObject {
     private boolean increasing = true;
     private static final double AIM_SPEED = 2;
     private static final double MAX_LAUNCH_ANGLE = 60;
-
-
-    /** Lượng sát thương mặc định của Ball. */
-    private final int DEFAULT_DAMAGE = 1;
 
     /** Lượng sát thương của Ball. */
     private int damage;
@@ -56,8 +54,6 @@ public class Ball extends MovableObject {
     private ArrayList<Brick> bricks;
     private boolean bounceBrick = true;
 
-
-
     /**
      * Constructor cho Ball.
      *
@@ -65,29 +61,25 @@ public class Ball extends MovableObject {
      * @param y      Tọa độ y (dọc)
      * @param width  Chiều rộng
      * @param height Chiều cao
-     * @param damage Sát thương
-     * @param color  Màu sắc
      */
-    public Ball(int x, int y, int width, int height,
-                int damage, Color color) {
+    public Ball(int x, int y, int width, int height) {
         super(x, y, width, height);
-        this.damage = damage;
+        damage = DEFAULT_DAMAGE;
         setVelocity(0, 0);
         ballSprite = loadSprite(SPRITE_PATH);
     }
 
-    public void launch(){
+    public void launch() {
         moving = true;
         double rad = Math.toRadians(aimAngle);
         setDx(speed * Math.cos(rad - Math.PI / 2));
         setDy(speed * Math.sin(rad - Math.PI / 2));
-
     }
 
     /** Cập nhật vị trí Ball. */
     @Override
     public void update() {
-        // Giai đoạn ban đầu, hết thời gian delay thì Ball bắt đầu di chuyển.
+        // Giai đoạn ban đầu, người chơi căn hướng phóng bóng.
         if (!moving) {
             setX(paddle.getX() + paddle.getWidth() / 2 - getWidth() / 2);
             setY(paddle.getY() - getHeight());
@@ -99,8 +91,8 @@ public class Ball extends MovableObject {
                 aimAngle -= AIM_SPEED;
                 if (aimAngle <= -MAX_LAUNCH_ANGLE) increasing = true;
             }
-
         }
+
         // Cập nhật vị trí khi di chuyển
         setX(getX() + (int) getDx());
         setY(getY() + (int) getDy());
@@ -117,9 +109,9 @@ public class Ball extends MovableObject {
             // Ball vào biên trái, đẩy ra ngoài để tránh kẹt.
             setX(0);
             setDx(-getDx());
-        } else if (getX() + getWidth() >= ArkanoidGame.getGameWidth()) {
+        } else if (getX() + getWidth() >= ArkanoidGame.getGameWidth() - 1) {
             // Ball vào biên phải, đẩy ra ngoài để tránh kẹt.
-            setX(ArkanoidGame.getGameWidth() - getWidth());
+            setX(ArkanoidGame.getGameWidth() - getWidth() - 1);
             setDx(-getDx());
         }
 
@@ -304,12 +296,16 @@ public class Ball extends MovableObject {
 
     // Các getter và setter
 
-    public static int getLaunchDelayTime() {
-        return LAUNCH_DELAY_TIME;
+    public static int getDefaultSize() {
+        return DEFAULT_SIZE;
     }
 
-    public double getDefaultSpeed() {
+    public static double getDefaultSpeed() {
         return DEFAULT_SPEED;
+    }
+
+    public static int getDefaultDamage() {
+        return DEFAULT_DAMAGE;
     }
 
     public double getSpeed() {

@@ -24,14 +24,14 @@ public abstract class Paddle extends MovableObject {
                                          - DEFAULT_HEIGHT - 80;
 
     // Tốc độ mặc định ban đầu.
-    protected static final double DEFAULT_SPEED = 12.0;
+    protected static final double DEFAULT_SPEED = 10.0;
 
     // Tốc độ hiện tại.
     protected double speed;
 
-    // Kỹ năng bị động và chủ động.
-    protected Skill passiveSkill;
-    protected Skill activeSkill;
+    // Kỹ năng chủ động X và C.
+    protected Skill skillX;
+    protected Skill skillC;
 
     // Sprite Paddle.
     protected BufferedImage sprite;
@@ -75,8 +75,8 @@ public abstract class Paddle extends MovableObject {
         // Giữ Paddle luôn trong biên
         if (getX() < 0) {
             setX(0);
-        } else if (getX() + getWidth() > ArkanoidGame.getGameWidth()) {
-            setX(ArkanoidGame.getGameWidth() - getWidth());
+        } else if (getX() + getWidth() > ArkanoidGame.getGameWidth() - 1) {
+            setX(ArkanoidGame.getGameWidth() - getWidth() - 1);
         }
     }
 
@@ -90,10 +90,10 @@ public abstract class Paddle extends MovableObject {
     }
 
     /** Thực hiện kỹ năng bị động. */
-    public abstract void applyPassiveSkill();
+    public abstract void castSkillC();
 
     /** Kích hoạt kỹ năng chủ động. */
-    public abstract void castActiveSkill();
+    public abstract void castSkillX();
 
     /** Cập nhật sprite tương ứng khi Width thay đổi do Powerup. */
     public void updateSpriteByWidth() {

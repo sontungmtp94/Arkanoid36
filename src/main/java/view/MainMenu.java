@@ -71,7 +71,7 @@ public class MainMenu extends JPanel {
         left.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
 
         JButton btnPlay    = new JButton("PLAY");
-        JButton btnSetting = new JButton("SETTING");
+        JButton btnSetting = new JButton("SETTINGS");
         JButton btnShop    = new JButton("SHOP");
         JButton btnExit    = new JButton("EXIT");
 

@@ -4,6 +4,7 @@ import game.ArkanoidGame;
 import model.ball.Ball;
 import model.brick.Brick;
 import model.paddle.GalaxyPaddle;
+import model.paddle.NormalPaddle;
 import model.paddle.Paddle;
 import model.powerup.PowerUp;
 import view.GameBackground;
@@ -41,22 +42,14 @@ public class GameManager extends JPanel implements ActionListener {
     /** Khởi tạo paddle, bóng, gạch,... */
     public void initGameObjects() {
         gameBackground = new GameBackground();
-
-        // Khởi tạo MapManager và load map.
         mapManger = new MapManager();
         bricks = mapManger.loadMap(currentLevel);
-
-        // Nếu không load được.
-        if (bricks == null || bricks.isEmpty()) {
-            System.err.println("Map " + currentLevel + " trống hoặc không tồn tại!");
-            bricks = mapManger.loadMap(1);
-        }
-
 
         paddle = new GalaxyPaddle(Paddle.getDefaultX(), Paddle.getDefaultY(),
                 Paddle.getDefaultWidth(), Paddle.getDefaultHeight());
         balls = new ArrayList<>();
-        Ball ball = new Ball(panelWidth / 2, panelHeight / 2, 15, 15, 1, Color.BLACK);
+        Ball ball = new Ball(panelWidth / 2, panelHeight / 2,
+                            Ball.getDefaultSize(), Ball.getDefaultSize());
         ball.setAndReloadSpritePath("images/balls/ball_default.png");
         ball.setDamage(1);
         balls.add(ball);
@@ -138,8 +131,8 @@ public class GameManager extends JPanel implements ActionListener {
 
             for (Ball b : balls) b.update();
 
-            if (gameState == GameState.PLAYING && keyManager.isSkillPressed()) {
-                paddle.castActiveSkill();
+            if (gameState == GameState.PLAYING && keyManager.isSkillXPressed()) {
+                paddle.castSkillX();
             }
 
             paddle.update();
@@ -182,7 +175,8 @@ public class GameManager extends JPanel implements ActionListener {
                 lives--;
                 PowerUp.cancelAllEffects();
                 paddle.resetPaddle();
-                Ball ball = new Ball(0, 0, 15, 15, 1, Color.BLACK);
+                Ball ball = new Ball(0, 0, Ball.getDefaultSize(),
+                                     Ball.getDefaultSize());
                 ball.setPaddle(paddle);
                 ball.setBricks(bricks);
                 ball.setAndReloadSpritePath("images/balls/ball_default.png");

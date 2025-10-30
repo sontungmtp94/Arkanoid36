@@ -23,10 +23,10 @@ public class NormalPaddle extends Paddle {
     }
 
     @Override
-    public void applyPassiveSkill() {}
+    public void castSkillC() {}
 
     @Override
-    public void castActiveSkill() {}
+    public void castSkillX() {}
 
     @Override
     public String getPathShort() {

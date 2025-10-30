@@ -73,7 +73,9 @@ public class ArkanoidGame extends JFrame {
         }
 
         // Gắn panel mới vào cửa sổ.
-        getContentPane().add(currentPanel);
+        currentPanel.setPreferredSize(new Dimension(WIDTH,HEIGHT));
+        setContentPane(currentPanel);
+        pack();
         revalidate();
         repaint();
         currentPanel.requestFocusInWindow();

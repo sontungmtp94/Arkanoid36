@@ -218,7 +218,8 @@ public class PowerUp extends MovableObject {
 
             case 7:
                 System.out.println("PowerUp 7: Thêm 1 quả bóng");
-                Ball b1 = new Ball(0, 0, 15, 15, 1, Color.BLACK);
+                Ball b1 = new Ball(0, 0, Ball.getDefaultSize(),
+                                   Ball.getDefaultSize());
                 b1.setPaddle(GameManager.getPaddle());
                 b1.setBricks(GameManager.getBricks());
                 b1.setAndReloadSpritePath("images/balls/ball_default.png");
