@@ -70,7 +70,8 @@ public class PngAnimator extends JComponent {
                 (int)Math.round(base.height * scale));
     }
 
-    @Override protected void paintComponent(Graphics g) {
+    @Override
+    public void paintComponent(Graphics g) {
         super.paintComponent(g);
         if (frames.isEmpty()) return;
         BufferedImage img = frames.get(idx);

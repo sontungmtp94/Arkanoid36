@@ -7,6 +7,7 @@ import model.paddle.GalaxyPaddle;
 import model.paddle.NormalPaddle;
 import model.paddle.Paddle;
 import model.powerup.PowerUp;
+import model.projectile.Projectile;
 import view.GameBackground;
 import view.GameOver;
 import view.LevelCompleted;
@@ -23,13 +24,14 @@ import java.util.ArrayList;
 public class GameManager extends JPanel implements ActionListener {
 
     private static GameState gameState;
-    protected int panelWidth;
-    public static int panelHeight;
+    private static int panelWidth;
+    private static int panelHeight;
     protected int currentLevel = 1; // Mức độ hiện tại
     public static Paddle paddle; // Thanh đỡ
     public static ArrayList<PowerUp> powerUps;
     private static ArrayList<Brick> bricks;
     public static ArrayList<Ball> balls; // Bóng
+    private static ArrayList<Projectile> projectiles; // Các Projectile.
     private Timer timer; // Bộ đếm
     private MapManager mapManger; // Quản lý bản đồ
     private GameBackground gameBackground; // Nền game
@@ -47,6 +49,7 @@ public class GameManager extends JPanel implements ActionListener {
 
         paddle = new GalaxyPaddle(Paddle.getDefaultX(), Paddle.getDefaultY(),
                 Paddle.getDefaultWidth(), Paddle.getDefaultHeight());
+        projectiles = new ArrayList<>();
         balls = new ArrayList<>();
         Ball ball = new Ball(panelWidth / 2, panelHeight / 2,
                             Ball.getDefaultSize(), Ball.getDefaultSize());
@@ -94,8 +97,8 @@ public class GameManager extends JPanel implements ActionListener {
      * @param game        cửa sổ ArkanoidGame
      */
     public GameManager(int panelWidth, int panelHeight, ArkanoidGame game) {
-        this.panelWidth = panelWidth;
-        this.panelHeight = panelHeight;
+        GameManager.panelWidth = panelWidth;
+        GameManager.panelHeight = panelHeight;
         this.game = game;
 
         setPreferredSize(new Dimension(panelWidth, panelHeight));
@@ -125,17 +128,28 @@ public class GameManager extends JPanel implements ActionListener {
     /** Cập nhật logic trò chơi mỗi khung hình. */
     public void updateGame() {
         if (gameState == GameState.READY || gameState == GameState.PLAYING) {
-            if (keyManager.isLeftPressed()) paddle.moveLeft();
-            if (keyManager.isRightPressed()) paddle.moveRight();
+            if (keyManager.isLeftPressed() && paddle.isMovingAllowed()) {
+                paddle.moveLeft();
+            }
+            if (keyManager.isRightPressed() && paddle.isMovingAllowed()) {
+                paddle.moveRight();
+            }
             if (!keyManager.isLeftPressed() && !keyManager.isRightPressed()) paddle.stop();
 
             for (Ball b : balls) b.update();
 
-            if (gameState == GameState.PLAYING && keyManager.isSkillXPressed()) {
-                paddle.castSkillX();
+            if (gameState == GameState.PLAYING) {
+                if (keyManager.isSkillXPressed()) {
+                    paddle.castSkillX();
+                }
+
+                if (keyManager.isSkillCPressed()) {
+                    paddle.castSkillC();
+                }
             }
 
             paddle.update();
+            updateProjectile();
         }
 
         if (gameState == GameState.READY) {
@@ -200,9 +214,22 @@ public class GameManager extends JPanel implements ActionListener {
         if (keyManager.isNextLevelPressed() && gameState == GameState.LEVEL_COMPLETED) nextLevel();
 
         if ((keyManager.isRestartPressed() && gameState == GameState.GAME_OVER)
-                || (keyManager.isRestartPressed() && gameState == GameState.LEVEL_COMPLETED)) {
+            || (keyManager.isRestartPressed() && gameState == GameState.LEVEL_COMPLETED)) {
             restartGame();
         }
+    }
+
+    /** Thêm Projectile do Paddle. */
+    public static void addProjectile(Projectile p) {
+        projectiles.add(p);
+    }
+
+    /** Cập nhật các projectiles. */
+    public void updateProjectile() {
+        for (Projectile p : projectiles) {
+            p.update();
+        }
+        projectiles.removeIf(p -> !p.isActive());
     }
 
     /** Vẽ trò chơi lên màn hình. */
@@ -219,6 +246,7 @@ public class GameManager extends JPanel implements ActionListener {
         for (PowerUp pu : powerUps) pu.render(g2d);
         for (Ball b : balls) b.render(g2d);
         paddle.render(g2d);
+        for (Projectile p : projectiles) p.render(g2d);
 
         g2d.setColor(Color.WHITE);
         g2d.setFont(new Font("Arial", Font.PLAIN, 20));
@@ -243,6 +271,15 @@ public class GameManager extends JPanel implements ActionListener {
     }
 
     // Getter & Setter
+
+    public static int getPanelWidth() {
+        return panelWidth;
+    }
+
+    public static int getPanelHeight() {
+        return panelHeight;
+    }
+
     public static int getLives() { return lives; }
     public static void setLives(int lives) { GameManager.lives = lives; }
     public static int getScore() { return score; }

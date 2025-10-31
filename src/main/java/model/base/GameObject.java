@@ -27,13 +27,6 @@ public abstract class GameObject {
     }
 
     /**
-     * Render đối tượng lên màn hình.
-     *
-     * @param g Dùng để render
-     */
-    public abstract void render(Graphics2D g);
-
-    /**
      * Cập nhật đối tượng, được lớp con Override.
      */
     public abstract void update();
@@ -47,6 +40,13 @@ public abstract class GameObject {
     public Rectangle getBounds() {
         return new Rectangle(x, y, width, height);
     }
+
+    /**
+     * Render đối tượng lên màn hình.
+     *
+     * @param g Dùng để render
+     */
+    public abstract void render(Graphics2D g);
 
     // Các getter và setter
 

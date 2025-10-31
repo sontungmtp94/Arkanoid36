@@ -80,7 +80,7 @@ public class PowerUp extends MovableObject {
                 i--;
             }
             // Nếu power rơi ra khỏi màn hình
-            else if (GameManager.powerUps.get(i).getY() > GameManager.panelHeight) {
+            else if (GameManager.powerUps.get(i).getY() > GameManager.getPanelHeight()) {
                 GameManager.powerUps.remove(i);
                 i--;
             }

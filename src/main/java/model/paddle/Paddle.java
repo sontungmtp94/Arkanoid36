@@ -2,6 +2,7 @@ package model.paddle;
 
 import game.ArkanoidGame;
 import model.base.*;
+
 import static view.SpritesView.*;
 
 import java.awt.*;
@@ -29,9 +30,11 @@ public abstract class Paddle extends MovableObject {
     // Tốc độ hiện tại.
     protected double speed;
 
-    // Kỹ năng chủ động X và C.
+    // Kỹ năng X và C.
     protected Skill skillX;
     protected Skill skillC;
+
+    protected boolean movingAllowed = true;
 
     // Sprite Paddle.
     protected BufferedImage sprite;
@@ -156,19 +159,11 @@ public abstract class Paddle extends MovableObject {
         this.speed = speed;
     }
 
-    public BufferedImage getSprite() {
-        return sprite;
+    public boolean isMovingAllowed() {
+        return movingAllowed;
     }
 
-    public void setSprite(BufferedImage sprite) {
-        this.sprite = sprite;
-    }
-
-    public String getSpritePath() {
-        return spritePath;
-    }
-
-    public void setSpritePath(String spritePath) {
-        this.spritePath = spritePath;
+    public void setMovingAllowed(boolean movingAllowed) {
+        this.movingAllowed = movingAllowed;
     }
 }

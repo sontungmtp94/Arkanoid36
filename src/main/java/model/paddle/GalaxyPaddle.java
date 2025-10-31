@@ -2,10 +2,7 @@ package model.paddle;
 
 import controller.GameManager;
 import game.ArkanoidGame;
-import model.ball.Ball;
-
-import java.awt.*;
-import java.awt.image.BufferedImage;
+import model.projectile.Blast;
 
 import static view.SpritesView.loadSprite;
 
@@ -15,15 +12,18 @@ public class GalaxyPaddle extends Paddle {
     private final String PATH_DEFAULT = "images/paddles/galaxy/GalaxyPaddle_default.png";
     private final String PATH_LONG = "images/paddles/galaxy/GalaxyPaddle_long.png";
 
-    private final int DURATION = 3000; //3000
-    private final int COOLDOWN = 500; //20000
-
+    private final int DURATION_X = 3000; //3000
+    private final int COOLDOWN_X = 200; //20000
+    private final double X_SPEED_BOOST = 1.4;
     private boolean skillXOn = false;
-    private int remainingDuration = DURATION;
-    private int remainingCooldown = 0;
+    private int remainingDurationX = DURATION_X;
+    private int remainingCooldownX = 0;
 
-    private int ballHits = 0;
-    private BufferedImage blast;
+    private final int COOLDOWN_C = 200; //20000
+    private final int C_FREEZE_TIME = Blast.getLifeTime();
+    private boolean skillCOn = false;
+    private int remainingCooldownC = 0;
+    private long skillCStartTime;
 
     /**
      * Constructor cho Paddle.
@@ -38,21 +38,12 @@ public class GalaxyPaddle extends Paddle {
         spritePath = PATH_DEFAULT;
         sprite = loadSprite(spritePath);
         skillX = new Skill("Space Travel",
-                                 "Can move freely and have boosted speed",
-                                 "images/paddles/galaxy/SpaceTravel.png");
-        skillC = new Skill("Solar Blast",
-                                 "Shoot an energy beam upwards.",
-                                 "images/paddles/galaxy/SolarBlast.png");
-        blast = loadSprite("images/paddles/galaxy/lase.png");
+                           "Can move freely and have boosted speed",
+                           "images/paddles/galaxy/SpaceTravel.png");
+        skillC = new Skill("Supernova Blast",
+                           "Shoot an energy beam upwards.",
+                           "images/paddles/galaxy/SupernovaBlast.png");
     }
-
-    /* @Override
-    public void render(Graphics2D g) {
-        super.render(g);
-        int laserX = getX() + getWidth() / 2 - 25;
-        int laserY = getY() - 1170;
-        g.drawImage(blast, laserX, laserY, 50, 1170, null);
-    }*/
 
     @Override
     public void updateSpriteByWidth() {
@@ -67,38 +58,51 @@ public class GalaxyPaddle extends Paddle {
 
     @Override
     public void castSkillX() {
-        if (skillXOn || remainingCooldown > 0) {
+        if (skillXOn || remainingCooldownX > 0) {
             return;
         }
 
         skillXOn = true;
-        remainingDuration = DURATION;
-        setSpeed(speed * 1.5);
+        remainingDurationX = DURATION_X;
+        setSpeed(speed * X_SPEED_BOOST);
     }
 
     @Override
     public void castSkillC() {
+        if (skillCOn || remainingCooldownC > 0) {
+            return;
+        }
 
+        skillCOn = true;
+        skillCStartTime = System.currentTimeMillis();
+
+        int blastX = getX() + getWidth() / 2 - Blast.getDefaultWidth() / 2;
+        int blastY = getY() - Blast.getDefaultHeight();
+        GameManager.addProjectile(new Blast(blastX, blastY));
+
+        movingAllowed = false;
     }
 
     @Override
     public void update() {
         super.update();
 
-        // Khi kích hoạt Active
+        // Khi kích hoạt skill X.
         if (skillXOn) {
             // Giảm dần duration
-            remainingDuration -= 1000 / 60;
-            System.out.println("duration is " + remainingDuration);
+            remainingDurationX -= 1000 / 60;
+            System.out.println("durationX is " + remainingDurationX);
 
             // Cho phép Paddle di chuyển dọc bằng W/S.
-            if (GameManager.keyManager.isUpPressed()) {
-                setDy(-speed);
-                setY(getY() - (int) getSpeed());
-            }
-            if (GameManager.keyManager.isDownPressed()) {
-                setDy(speed);
-                setY(getY() + (int) getSpeed());
+            if (movingAllowed) {
+                if (GameManager.keyManager.isUpPressed()) {
+                    setDy(-speed);
+                    setY(getY() - (int) getSpeed());
+                }
+                if (GameManager.keyManager.isDownPressed()) {
+                    setDy(speed);
+                    setY(getY() + (int) getSpeed());
+                }
             }
 
             // Giữ Paddle luôn trong trần và đáy.
@@ -109,19 +113,37 @@ public class GalaxyPaddle extends Paddle {
             }
         }
 
-        // Hết duration
-        if (remainingDuration <= 0) {
+        // Hết duration skill X
+        if (remainingDurationX <= 0) {
             skillXOn = false;
-            remainingCooldown = COOLDOWN;
+            remainingCooldownX = COOLDOWN_X;
             setSpeed(DEFAULT_SPEED);
             setY(DEFAULT_Y);
-            remainingDuration = DURATION;
+            remainingDurationX = DURATION_X;
         }
 
-        // Bắt đầu cooldown
-        if (remainingCooldown > 0) {
-            remainingCooldown -= 1000/60;
-            System.out.println("cooldown is " + remainingCooldown);
+        // Cooldown skill X.
+        if (remainingCooldownX > 0) {
+            remainingCooldownX -= 1000 / 60;
+            System.out.println("cooldownX is " + remainingCooldownX);
+        }
+
+        // Khi kích hoạt skill C.
+        if (skillCOn) {
+            // Paddle phải đứng yên.
+            movingAllowed = false;
+
+            if (System.currentTimeMillis() - skillCStartTime > C_FREEZE_TIME) {
+                skillCOn = false;
+                movingAllowed = true;
+                remainingCooldownC = COOLDOWN_C;
+            }
+        }
+
+        // Cooldown skill C.
+        if (remainingCooldownC > 0) {
+            remainingCooldownC -= 1000 / 60;
+            System.out.println("cooldownC is " + remainingCooldownC);
         }
     }
 
@@ -129,7 +151,7 @@ public class GalaxyPaddle extends Paddle {
     public void resetPaddle() {
         super.resetPaddle();
         skillXOn = false;
-        remainingDuration = DURATION;
+        remainingDurationX = DURATION_X;
         sprite = loadSprite(PATH_DEFAULT);
     }
 
