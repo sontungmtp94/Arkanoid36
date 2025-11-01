@@ -6,5 +6,9 @@ public enum GameState {
     PLAYING,
     PAUSE,
     LEVEL_COMPLETED,
-    GAME_OVER
+    GAME_OVER,
+    SHOP,
+    SHOP_BACKGROUND,
+    SHOP_PADDLE
+
 }
