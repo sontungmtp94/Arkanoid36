@@ -2,6 +2,7 @@ package model.powerup;
 
 import java.awt.*;
 import javax.imageio.ImageIO;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.HashMap;
@@ -74,7 +75,7 @@ public class PowerUp extends MovableObject {
         setX(getX() + (int)getDx());
         setY(getY() + (int)getDy());
         for (int i = 0; i < GameManager.powerUps.size(); i++) {
-            if (GameManager.powerUps.get(i).getBounds().intersects(GameManager.getPaddle().getBounds())) {
+            if (GameManager.powerUps.get(i).getBounds().intersects((Rectangle2D) GameManager.getPaddle().getBounds())) {
                 GameManager.powerUps.get(i).applyEffect(GameManager.powerUps.get(i).getId());
                 GameManager.powerUps.remove(i);
                 i--;
@@ -85,6 +86,11 @@ public class PowerUp extends MovableObject {
                 i--;
             }
         }
+    }
+
+    @Override
+    public Shape getBounds() {
+        return new Rectangle2D.Double(x, y, width, height);
     }
 
     @Override
@@ -218,8 +224,7 @@ public class PowerUp extends MovableObject {
 
             case 7:
                 System.out.println("PowerUp 7: Thêm 1 quả bóng");
-                Ball b1 = new Ball(0, 0, Ball.getDefaultSize(),
-                                   Ball.getDefaultSize());
+                Ball b1 = new Ball(0, 0, Ball.getDefaultSize());
                 b1.setPaddle(GameManager.getPaddle());
                 b1.setBricks(GameManager.getBricks());
                 b1.setAndReloadSpritePath("images/balls/ball_default.png");

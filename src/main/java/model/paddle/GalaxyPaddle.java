@@ -7,26 +7,26 @@ import model.projectile.Blast;
 import static view.SpritesView.loadSprite;
 
 public class GalaxyPaddle extends Paddle {
-    // 3 path đến 3 sprites của GalaxyPaddle.
-    private final String PATH_SHORT = "images/paddles/galaxy/GalaxyPaddle_short.png";
-    private final String PATH_DEFAULT = "images/paddles/galaxy/GalaxyPaddle_default.png";
-    private final String PATH_LONG = "images/paddles/galaxy/GalaxyPaddle_long.png";
-
-    private final int DURATION_X = 3000; //3000
-    private final int COOLDOWN_X = 200; //20000
+    private final int X_DURATION = 3000; //3000
+    private final int X_COOLDOWN = 200; //20000
     private final double X_SPEED_BOOST = 1.4;
     private boolean skillXOn = false;
-    private int remainingDurationX = DURATION_X;
+    private int remainingDurationX = X_DURATION;
     private int remainingCooldownX = 0;
 
-    private final int COOLDOWN_C = 200; //20000
+    private final int C_COOLDOWN = 200; //20000
     private final int C_FREEZE_TIME = Blast.getLifeTime();
     private boolean skillCOn = false;
     private int remainingCooldownC = 0;
     private long skillCStartTime;
 
+    // 3 path đến 3 sprites của GalaxyPaddle.
+    private final String PATH_DEFAULT = "images/paddles/galaxy/GalaxyPaddle_default.png";
+    private final String PATH_SHORT = "images/paddles/galaxy/GalaxyPaddle_short.png";
+    private final String PATH_LONG = "images/paddles/galaxy/GalaxyPaddle_long.png";
+
     /**
-     * Constructor cho Paddle.
+     * Constructor cho GalaxyPaddle.
      *
      * @param x          Tọa độ x (ngang)
      * @param y          Tọa độ y (dọc)
@@ -63,7 +63,7 @@ public class GalaxyPaddle extends Paddle {
         }
 
         skillXOn = true;
-        remainingDurationX = DURATION_X;
+        remainingDurationX = X_DURATION;
         setSpeed(speed * X_SPEED_BOOST);
     }
 
@@ -116,10 +116,10 @@ public class GalaxyPaddle extends Paddle {
         // Hết duration skill X
         if (remainingDurationX <= 0) {
             skillXOn = false;
-            remainingCooldownX = COOLDOWN_X;
+            remainingCooldownX = X_COOLDOWN;
             setSpeed(DEFAULT_SPEED);
             setY(DEFAULT_Y);
-            remainingDurationX = DURATION_X;
+            remainingDurationX = X_DURATION;
         }
 
         // Cooldown skill X.
@@ -136,7 +136,7 @@ public class GalaxyPaddle extends Paddle {
             if (System.currentTimeMillis() - skillCStartTime > C_FREEZE_TIME) {
                 skillCOn = false;
                 movingAllowed = true;
-                remainingCooldownC = COOLDOWN_C;
+                remainingCooldownC = C_COOLDOWN;
             }
         }
 
@@ -151,7 +151,7 @@ public class GalaxyPaddle extends Paddle {
     public void resetPaddle() {
         super.resetPaddle();
         skillXOn = false;
-        remainingDurationX = DURATION_X;
+        remainingDurationX = X_DURATION;
         sprite = loadSprite(PATH_DEFAULT);
     }
 

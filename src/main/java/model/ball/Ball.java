@@ -8,6 +8,8 @@ import model.powerup.*;
 import static view.SpritesView.*;
 
 import java.awt.*;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -59,11 +61,10 @@ public class Ball extends MovableObject {
      *
      * @param x      Tọa độ x (ngang)
      * @param y      Tọa độ y (dọc)
-     * @param width  Chiều rộng
-     * @param height Chiều cao
+     * @param size   Kích thước Ball
      */
-    public Ball(int x, int y, int width, int height) {
-        super(x, y, width, height);
+    public Ball(int x, int y, int size) {
+        super(x, y, size, size);
         damage = DEFAULT_DAMAGE;
         setVelocity(0, 0);
         ballSprite = loadSprite(SPRITE_PATH);
@@ -116,7 +117,7 @@ public class Ball extends MovableObject {
         }
 
         // Va chạm với Paddle.
-        if (paddle != null && getBounds().intersects(paddle.getBounds())) {
+        if (paddle != null && getBounds().intersects((Rectangle2D) paddle.getBounds())) {
             bounce(paddle);
         }
 
@@ -124,8 +125,8 @@ public class Ball extends MovableObject {
         if (bricks != null) {
             for (Brick brick : bricks) {
                 if (!brick.isDestroyed()
-                        && getBounds().intersects(brick.getBounds())) {
-                    if(bounceBrick) {
+                        && getBounds().intersects((Rectangle2D) brick.getBounds())) {
+                    if (bounceBrick) {
                         bounce(brick);
                         brick.takeHits(damage);
                         audio.SoundManager.get().playSfx(audio.SoundId.SFX_HIT);
@@ -145,10 +146,10 @@ public class Ball extends MovableObject {
      * @param other Đối tượng va chạm
      */
     public void bounce(GameObject other) {
-        Rectangle ballRect = getBounds();
+        Ellipse2D ballRect = (Ellipse2D) getBounds();
         // Va chạm với Paddle.
         if (other instanceof Paddle p) {
-            Rectangle paddleRect = p.getBounds();
+            Rectangle2D paddleRect = (Rectangle2D) p.getBounds();
 
             // Tính phần chồng lấn nhau để xác định hướng va chạm.
             double overlapX = Math.min(ballRect.getMaxX(), paddleRect.getMaxX())
@@ -209,7 +210,7 @@ public class Ball extends MovableObject {
 
         // Va chạm với Brick.
         else if (other instanceof Brick br) {
-            Rectangle brickRect = br.getBounds();
+            Rectangle2D brickRect = (Rectangle2D) br.getBounds();
 
             // Tính phần chồng lấn nhau để xác định hướng va chạm.
             double overlapX = Math.min(ballRect.getMaxX(), brickRect.getMaxX())
@@ -241,6 +242,11 @@ public class Ball extends MovableObject {
                 setVelocity(-getDx(), -getDy());
             }
         }
+    }
+
+    @Override
+    public Shape getBounds() {
+        return new Ellipse2D.Double(x, y, width, height);
     }
 
     /**

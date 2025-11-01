@@ -57,38 +57,43 @@ public abstract class Paddle extends MovableObject {
 
     /** Di chuyển sang trái. */
     public void moveLeft() {
-        setDx(-speed);
+        dx = -speed;
     }
 
     /** Di chuyển sang phải. */
     public void moveRight() {
-        setDx(speed);
+        dx = speed;
     }
 
     /** Dừng di chuyển. */
     public void stop() {
-        setDx(0);
+        dx = 0;
     }
 
     /** Cập nhật Paddle trong game. */
     @Override
     public void update() {
-        setX(getX() + (int) getDx());
+        x += (int) dx;
 
         // Giữ Paddle luôn trong biên
-        if (getX() < 0) {
-            setX(0);
-        } else if (getX() + getWidth() > ArkanoidGame.getGameWidth() - 1) {
-            setX(ArkanoidGame.getGameWidth() - getWidth() - 1);
+        if (x < 0) {
+            x = 0;
+        } else if (x + width > ArkanoidGame.getGameWidth() - 1) {
+            x = ArkanoidGame.getGameWidth() - width - 1;
         }
+    }
+
+    @Override
+    public Shape getBounds() {
+        return new Rectangle(x, y, width, height);
     }
 
     /** Reset trạng thái Paddle. */
     public void resetPaddle() {
-        setX(DEFAULT_X);
-        setY(DEFAULT_Y);
-        setWidth(DEFAULT_WIDTH);
-        setHeight(DEFAULT_HEIGHT);
+        x = DEFAULT_X;
+        y = DEFAULT_Y;
+        width = DEFAULT_WIDTH;
+        height = DEFAULT_HEIGHT;
         speed = DEFAULT_SPEED;
     }
 
@@ -100,12 +105,13 @@ public abstract class Paddle extends MovableObject {
 
     /** Cập nhật sprite tương ứng khi Width thay đổi do Powerup. */
     public void updateSpriteByWidth() {
-        if (getWidth() == getDefaultWidth() - 60)
+        if (width == DEFAULT_WIDTH - 60) {
             setAndLoadSprite(getPathShort());
-        else if (getWidth() == getDefaultWidth() + 60)
+        } else if (width == DEFAULT_WIDTH + 60) {
             setAndLoadSprite(getPathLong());
-        else
+        } else {
             setAndLoadSprite(getPathDefault());
+        }
     }
 
     public abstract String getPathShort();
@@ -120,7 +126,7 @@ public abstract class Paddle extends MovableObject {
     @Override
     public void render(Graphics2D g) {
         if (sprite != null) {
-            g.drawImage(sprite, getX(), getY(), getWidth(), getHeight(), null);
+            g.drawImage(sprite, x, y, width, height, null);
         }
     }
 

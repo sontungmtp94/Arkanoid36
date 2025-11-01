@@ -70,6 +70,11 @@ public class Brick extends GameObject {
         return hitPoints <= 0;
     }
 
+    @Override
+    public Shape getBounds() {
+        return new Rectangle(x, y, width, height);
+    }
+
     /** Render model.brick.Brick lên màn hình.
      *
      * @param g Dùng để render
@@ -83,7 +88,7 @@ public class Brick extends GameObject {
         // Lấy ảnh sprite tương ứng với hp hiện tại.
         BufferedImage img = type.getFrame(hitPoints);  // Lấy frame theo HP còn lại
         if (img != null) {
-            g.drawImage(img, getX(), getY(), getWidth(), getHeight(), null);
+            g.drawImage(img, x, y, width, height, null);
         }
     }
 

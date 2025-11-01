@@ -4,6 +4,7 @@ import controller.GameManager;
 import model.brick.Brick;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import static view.SpritesView.loadSprite;
@@ -40,9 +41,9 @@ public class Blast extends Projectile {
         }
 
         // Nếu Blast xuyên qua Brick thì gây sát thương.
-        Rectangle blastRect = getBounds();
+        Rectangle2D blastRect = (Rectangle2D) getBounds();
         for (Brick b : GameManager.getBricks()) {
-            if (blastRect.intersects(b.getBounds())) {
+            if (blastRect.intersects((Rectangle2D) b.getBounds())) {
                 b.takeHits(DAMAGE);
             }
         }
@@ -52,6 +53,10 @@ public class Blast extends Projectile {
         }
     }
 
+    @Override
+    public Shape getBounds() {
+        return new Rectangle2D.Double(x, y, width, height);
+    }
 
     @Override
     public void render(Graphics2D g) {

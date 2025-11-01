@@ -52,7 +52,7 @@ public class GameManager extends JPanel implements ActionListener {
         projectiles = new ArrayList<>();
         balls = new ArrayList<>();
         Ball ball = new Ball(panelWidth / 2, panelHeight / 2,
-                            Ball.getDefaultSize(), Ball.getDefaultSize());
+                            Ball.getDefaultSize());
         ball.setAndReloadSpritePath("images/balls/ball_default.png");
         ball.setDamage(1);
         balls.add(ball);
@@ -189,8 +189,7 @@ public class GameManager extends JPanel implements ActionListener {
                 lives--;
                 PowerUp.cancelAllEffects();
                 paddle.resetPaddle();
-                Ball ball = new Ball(0, 0, Ball.getDefaultSize(),
-                                     Ball.getDefaultSize());
+                Ball ball = new Ball(0, 0, Ball.getDefaultSize());
                 ball.setPaddle(paddle);
                 ball.setBricks(bricks);
                 ball.setAndReloadSpritePath("images/balls/ball_default.png");
@@ -288,4 +287,8 @@ public class GameManager extends JPanel implements ActionListener {
     public static void setPaddle(Paddle paddle) { GameManager.paddle = paddle; }
     public static GameState getGameState() { return gameState; }
     public static ArrayList<Brick> getBricks() { return bricks; }
+
+    public static ArrayList<Projectile> getProjectiles() {
+        return projectiles;
+    }
 }

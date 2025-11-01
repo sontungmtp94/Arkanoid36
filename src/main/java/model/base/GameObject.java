@@ -4,12 +4,12 @@ import java.awt.*;
 
 public abstract class GameObject {
     /** Tọa độ góc trên bên trái của GameObjext. */
-    private int x;
-    private int y;
+    protected int x;
+    protected int y;
 
     /** Kích thước của model.base.GameObject. */
-    private int width;
-    private int height;
+    protected int width;
+    protected int height;
 
     /**
      * Constructor cho model.base.GameObject với vị trí và kích thước.
@@ -37,9 +37,7 @@ public abstract class GameObject {
      *
      * @return Trả về vùng chiếm chỗ của đối tượng
      */
-    public Rectangle getBounds() {
-        return new Rectangle(x, y, width, height);
-    }
+    public abstract Shape getBounds();
 
     /**
      * Render đối tượng lên màn hình.
