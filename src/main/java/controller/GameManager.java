@@ -10,11 +10,7 @@ import model.paddle.Paddle;
 import model.powerup.PowerUp;
 import model.powerup.PowerUpView;
 import model.projectile.Projectile;
-import view.GameBackground;
-import view.GameInformation;
-import view.GameOver;
-import view.LevelCompleted;
-import view.PngAnimator;
+import view.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -48,6 +44,7 @@ public class GameManager extends JPanel implements ActionListener {
     public static KeyManager keyManager; // Quản lý phím
     private GameOver gameOver;
     private LevelCompleted levelCompleted;
+    private Paused paused;
     private final ArkanoidGame game;
 
     /** Khởi tạo paddle, bóng, gạch,... */
@@ -87,9 +84,6 @@ public class GameManager extends JPanel implements ActionListener {
 
     public void nextLevel() {
         currentLevel++;
-        if (currentLevel > MapManager.getNumOfMaps()) {
-            currentLevel = 1;
-        }
         initGameObjects();
         levelCompleted.hidePanel();
         gameState = GameState.READY;
@@ -135,6 +129,11 @@ public class GameManager extends JPanel implements ActionListener {
         levelCompleted = new LevelCompleted(panelWidth, panelHeight, this);
         levelCompleted.setBounds(0, 0, panelWidth, panelHeight);
         add(levelCompleted);
+
+
+        paused = new Paused(panelWidth, panelHeight, this);
+        paused.setBounds(0, 0, panelWidth, panelHeight);
+        add(paused);
     }
 
     /** Cập nhật logic trò chơi mỗi khung hình. */
@@ -218,8 +217,14 @@ public class GameManager extends JPanel implements ActionListener {
         }
 
         if (keyManager.isPausePressed()) {
-            if (gameState == GameState.PLAYING) gameState = GameState.PAUSE;
-            else if (gameState == GameState.PAUSE) gameState = GameState.PLAYING;
+            if (gameState == GameState.PLAYING) {
+                gameState = GameState.PAUSE;
+                paused.showPanel();
+            }
+            else if (gameState == GameState.PAUSE) {
+                gameState = GameState.PLAYING;
+                paused.hidePanel();
+            }
             keyManager.clearPause();
         }
 
@@ -259,15 +264,6 @@ public class GameManager extends JPanel implements ActionListener {
         for (Ball b : balls) b.render(g2d);
         paddle.render(g2d);
         for (Projectile p : projectiles) p.render(g2d);
-
-        if (gameState == GameState.PAUSE) {
-            g2d.setColor(new Color(0, 0, 0, 150));
-            g2d.fillRect(0, 0, panelWidth, panelHeight);
-            g2d.setColor(Color.WHITE);
-            g2d.setFont(new Font("IntelOne Display Bold", Font.BOLD, 60));
-            g2d.drawString("PAUSED", panelWidth / 2 - 150, panelHeight / 2);
-        }
-
         // Phần thể hiện thông tin của 1 ván trò chơi.
         g.drawImage(GameInformation.getInformationBar(), 0, 610, panelWidth, 40, null);
         g2d.setColor(Color.WHITE);
