@@ -85,6 +85,7 @@ public class GalaxyPaddle extends Paddle {
 
     @Override
     public void update() {
+        final int BAR_HEIGHT = 41;
         super.update();
 
         // Khi kích hoạt skill X.
@@ -108,8 +109,8 @@ public class GalaxyPaddle extends Paddle {
             // Giữ Paddle luôn trong trần và đáy.
             if (getY() < 0) {
                 setY(0);
-            } else if (getY() + getHeight() > ArkanoidGame.getGameHeight() - 1) {
-                setY(ArkanoidGame.getGameHeight() - getHeight() - 1);
+            } else if (getY() + getHeight() > ArkanoidGame.getGameHeight() - BAR_HEIGHT) {
+                setY(ArkanoidGame.getGameHeight() - getHeight() - BAR_HEIGHT);
             }
         }
 

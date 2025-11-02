@@ -26,6 +26,10 @@ public class PowerUp extends MovableObject {
     private static Map<Integer, Timer> timers = new HashMap<>();
     private static Map<Integer, Integer> remainingTimes = new HashMap<>(); // giây còn lại
 
+    private static String activeMessage = null;
+    public static long messageStartTime = 0;
+    public static final int MESSAGE_DURATION_MS = 2000; // hiển thị 2 giây
+
     private void loadImage() {
         try {
             image = ImageIO.read(getClass().getResourceAsStream(FILE_IMAGES[id]));
@@ -35,6 +39,20 @@ public class PowerUp extends MovableObject {
             e.printStackTrace();
             image = null;
         }
+    }
+
+    public static String getActiveMessage() {
+        if (activeMessage == null) return null;
+        long now = System.currentTimeMillis();
+        if (now - messageStartTime > MESSAGE_DURATION_MS) {
+            activeMessage = null; // hết thời gian
+        }
+        return activeMessage;
+    }
+
+    private static void showMessage(String text) {
+        activeMessage = text;
+        messageStartTime = System.currentTimeMillis();
     }
 
     public PowerUp(int x, int y, int w, int h, int id) {
@@ -115,36 +133,38 @@ public class PowerUp extends MovableObject {
 
         // Nếu chưa có timer -> tạo mới
         remainingTimes.put(id, duration);
-        timers.put(id, new Timer(1000, e -> {
-            // if (GameManager.getGameState() == GameState.PLAYING) {
-            int remain = remainingTimes.get(id) - 1;
-            remainingTimes.put(id, remain);
-            // }
+        Timer t = new Timer(1000, e -> {
+            if(GameManager.getGameState() == GameState.PLAYING) {
+                int remain = remainingTimes.get(id) - 1;
+                remainingTimes.put(id, remain);
 
-            if (remainingTimes.get(id) <= 0) {
-                if (onFinish != null) onFinish.run();
-                timers.get(id).stop();
-                timers.put(id, null);
-                System.out.println("Hết thời gian PowerUp ID " + id);
-            } else {
-                System.out.println("PowerUp " + id + " còn " + remainingTimes.get(id) + "s");
+                if (remain <= 0) {
+                    ((Timer) e.getSource()).stop();
+                    timers.put(id, null);
+                    remainingTimes.put(id, 0);
+
+                    System.out.println("⏰ Hết thời gian PowerUp ID " + id);
+                    if (onFinish != null) onFinish.run();
+                } else {
+                    System.out.println("PowerUp " + id + " còn " + remain + "s");
+                }
             }
-        }));
+        });
 
-        //timers.put(id, t);
-        timers.get(id).start();
-        System.out.println("Bắt đầu đếm PowerUp ID " + id + " (" + duration + "s)");
+        timers.put(id, t);
+        t.start();
+        System.out.println("▶ Bắt đầu đếm PowerUp ID " + id + " (" + duration + "s)");
     }
 
     public void applyEffect(int id) {
         switch (id) {
             case 0:
                 GameManager.setScore(GameManager.getScore() + 50);
-                System.out.println("PowerUp 0: +50 điểm");
+                showMessage("+50 điểm!");
                 break;
 
             case 1:
-                System.out.println("PowerUp 1: Tăng chiều dài Paddle (30s)");
+                showMessage("Tăng chiều dài Paddle");
 
                 if (GameManager.paddle.getWidth() < Paddle.getDefaultWidth() + 60) {
                     GameManager.paddle.setWidth(GameManager.paddle.getWidth() + 60);
@@ -163,39 +183,39 @@ public class PowerUp extends MovableObject {
             case 2:
                 if (GameManager.getLives() < 5)
                     GameManager.setLives(GameManager.getLives() + 1);
-                System.out.println("PowerUp 2: +1 mạng");
+                showMessage("+1 mạng");
                 break;
 
             case 3:
                 cancelEffect(8);
                 cancelEffect(10);
                 for(Ball b : GameManager.balls) {
-                    if (b.getDamage() == 1) {
+                    if (b.getDamage() == 1 && b.getHeight() == Ball.getDefaultSize()) {
                         b.setAndReloadSpritePath("/images/balls/ball_extended.png");
-                        b.setDamage(b.getDamage() * 2);
-                        b.setHeight(25);
-                        b.setWidth(25);
+                        int multi = 2;
+                        b.setDamage(b.getDamage() * multi);
+                        b.setHeight(Ball.getDefaultSize() * multi);
+                        b.setWidth(Ball.getDefaultSize() * multi);
                     }
                 }
                 countdown(3, 30, () -> {
                     cancelEffect(3);
                 });
-                System.out.println("PowerUp 3: Tăng kích cỡ bóng");
+                showMessage("Tăng kích cỡ bóng");
                 break;
 
             case 4:
                 double multi = 2;
-                if (GameManager.getPaddle().getSpeed() == GameManager.getPaddle().getDefaultSpeed()) {
+                if (Math.abs(GameManager.getPaddle().getSpeed()) == GameManager.getPaddle().getDefaultSpeed()) {
                     GameManager.getPaddle().setSpeed(GameManager.getPaddle().getSpeed() * multi);
                 }
                 countdown(4, 30, () -> {
                     cancelEffect(4);
                 });
-                System.out.println("PowerUp 4: Gấp đôi tốc độ Paddle");
+                showMessage("Gấp đôi tốc độ Paddle");
                 break;
 
             case 5:
-                System.out.println("PowerUp 5: Giảm chiều dài Paddle");
                 if (GameManager.paddle.getWidth() > Paddle.getDefaultWidth() - 60) {
                     GameManager.paddle.setWidth(GameManager.paddle.getWidth() - 60);
                     GameManager.paddle.setAndLoadSprite("images/paddles/galaxy/GalaxyPaddle_short.png");
@@ -205,25 +225,25 @@ public class PowerUp extends MovableObject {
                     cancelEffect(1);
                 } else {
                     countdown(5, 30, () -> {
-                        cancelEffect(1);
+                        cancelEffect(5);
                     });
                 }
+                showMessage("Giảm chiều dài Paddle");
                 break;
 
             case 6:
-                System.out.println("PowerUp 6: Đảo ngược Paddle");
                 GameManager.getPaddle().setSpeed(GameManager.getPaddle().getSpeed() * -1);
                 if (timers.containsKey(6) && timers.get(6) != null) {
                     cancelEffect(6);
                 } else {
                     countdown(6, 30, () -> {
-                        cancelEffect(4);
+                        cancelEffect(6);
                     });
                 }
+                showMessage("Đảo ngược Paddle");
                 break;
 
             case 7:
-                System.out.println("PowerUp 7: Thêm 1 quả bóng");
                 Ball b1 = new Ball(0, 0, Ball.getDefaultSize());
                 b1.setPaddle(GameManager.getPaddle());
                 b1.setBricks(GameManager.getBricks());
@@ -231,14 +251,28 @@ public class PowerUp extends MovableObject {
                 b1.resetBall();
                 b1.launch();
                 GameManager.balls.add(b1);
+                if (timers.get(3) != null) {
+                    int timeleft = remainingTimes.get(3);
+                    applyEffect(3);
+                    remainingTimes.put(3, timeleft);
+                }
+                else if (timers.get(8) != null) {
+                    int timeleft = remainingTimes.get(8);
+                    applyEffect(8);
+                    remainingTimes.put(8, timeleft);
+                }
+                else if (timers.get(10) != null) {
+                    int timeleft = remainingTimes.get(10);
+                    applyEffect(10);
+                    remainingTimes.put(10, timeleft);
+                }
+                showMessage("Thêm 1 quả bóng");
                 break;
 
             case 8:
                 cancelEffect(3);
                 cancelEffect(10);
-                System.out.println("PowerUp 8: Bóng lửa (5s)");
 
-                // Nếu Paddle chưa đủ dài thì tăng
                 for(Ball b : GameManager.balls) {
                     b.setBounceBrick(false);
                     b.setAndReloadSpritePath("images/balls/ball_fire.png");
@@ -246,17 +280,17 @@ public class PowerUp extends MovableObject {
                 countdown(8, 5, () -> {
                     cancelEffect(8);
                 });
+                showMessage("Bóng lửa");
                 break;
 
             case 9:
-                System.out.println("PowerUp 9: Hủy hết mọi PowerUp đang có");
                 cancelAllEffects();
+                showMessage("Hủy hết mọi PowerUp đang có");
                 break;
 
             case 10:
                 cancelEffect(3);
                 cancelEffect(8);
-                System.out.println("PowerUp 10: Bóng tàng hình (3s)");
 
                 // Nếu Paddle chưa đủ dài thì tăng
                 for(Ball b : GameManager.balls) {
@@ -265,6 +299,7 @@ public class PowerUp extends MovableObject {
                 countdown(10, 3, () -> {
                     cancelEffect(10);
                 });
+                showMessage("Bóng tàng hình");
                 break;
             case 11:
                 applyEffect((int) (Math.random() * numsOfPU));
@@ -283,6 +318,7 @@ public class PowerUp extends MovableObject {
         if (t != null) {
             try {
                 t.stop();
+                timers.put(id, null);
             } catch (Exception ex) {
                 System.err.println("Timer null hoặc đã dừng cho PowerUp ID " + id);
             }
@@ -293,7 +329,8 @@ public class PowerUp extends MovableObject {
 
         // Nếu giữ sprite thì chỉ reset logic, không đổi sprite
         switch (id) {
-            case 1: // Paddle quay về chiều dài ban đầu
+            case 1:
+            case 5: // Paddle quay về chiều dài ban đầu
                 GameManager.getPaddle().setWidth(Paddle.getDefaultWidth());
                 GameManager.paddle.setAndLoadSprite("images/paddles/galaxy/GalaxyPaddle_default.png");
                 break;
@@ -301,15 +338,21 @@ public class PowerUp extends MovableObject {
             case 3: // Bóng to
                 for (Ball b : GameManager.balls) {
                     if (b.getDamage() > 1) b.setDamage(b.getDamage() / 2);
-                    b.setHeight(15);
-                    b.setWidth(15);
+                    b.setHeight(Ball.getDefaultSize());
+                    b.setWidth(Ball.getDefaultSize());
                     b.setAndReloadSpritePath("images/balls/ball_default.png");
                 }
                 break;
 
             case 4:
-                if (GameManager.getPaddle().getSpeed() != GameManager.getPaddle().getDefaultSpeed()) {
-                    GameManager.getPaddle().setSpeed(GameManager.getPaddle().getDefaultSpeed());
+                if (Math.abs(GameManager.getPaddle().getSpeed()) > GameManager.getPaddle().getDefaultSpeed()) {
+                    GameManager.getPaddle().setSpeed((int) (GameManager.getPaddle().getSpeed() / 2));
+                }
+                break;
+
+            case 6:
+                if (GameManager.getPaddle().getSpeed() < 0) {
+                    GameManager.getPaddle().setSpeed(GameManager.getPaddle().getSpeed() * -1);
                 }
                 break;
 
@@ -333,9 +376,24 @@ public class PowerUp extends MovableObject {
 
     /** Hàm gọi khi bóng rơi hoặc Game Over để hủy hiệu ứng */
     public static void cancelAllEffects() {
+//        for (Integer id : remainingTimes.keySet()) {
+//            if(timers.containsKey(id) && timers.get(id) != null) {
+//                timers.get(id).stop();
+//                timers.put(id, null);
+//                remainingTimes.put(id, 0);
+//            }
+//        }
         for (Integer id : remainingTimes.keySet()) {
-            remainingTimes.put(id, 0);
+            cancelEffect(id);
         }
         System.out.println("Hủy toàn bộ hiệu ứng PowerUp.");
+    }
+
+    public static Map<Integer, Integer> getRemainingTimes() {
+        return remainingTimes;
+    }
+
+    public static Map<Integer, Timer> getTimers() {
+        return timers;
     }
 }

@@ -24,7 +24,7 @@ public class Ball extends MovableObject {
     private static final int DEFAULT_SIZE = 15;
 
     /** Lượng sát thương mặc định của Ball. */
-    private static final int DEFAULT_DAMAGE = 5;
+    private static final int DEFAULT_DAMAGE = 1;
 
     /** Tốc độ mặc định của Ball theo 2 chiều. */
     private static final double DEFAULT_SPEED = 6.0;
@@ -131,7 +131,7 @@ public class Ball extends MovableObject {
                         brick.takeHits(damage);
                         audio.SoundManager.get().playSfx(audio.SoundId.SFX_HIT);
                     } else {
-                        brick.takeHits(1);
+                        brick.takeHits(36);
                         audio.SoundManager.get().playSfx(audio.SoundId.SFX_HIT);
                     }
                     break;

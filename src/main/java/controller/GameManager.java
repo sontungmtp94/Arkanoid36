@@ -7,6 +7,7 @@ import model.paddle.GalaxyPaddle;
 import model.paddle.NormalPaddle;
 import model.paddle.Paddle;
 import model.powerup.PowerUp;
+import model.powerup.PowerUpView;
 import model.projectile.Projectile;
 import view.GameBackground;
 import view.GameOver;
@@ -15,7 +16,9 @@ import view.LevelCompleted;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  * Quản lý toàn bộ logic, hiển thị và vòng lặp chính của game Arkanoid.
@@ -26,16 +29,18 @@ public class GameManager extends JPanel implements ActionListener {
     private static GameState gameState;
     private static int panelWidth;
     private static int panelHeight;
-    protected int currentLevel = 1; // Mức độ hiện tại
+    public static String playerName;
+    protected static int currentLevel = 1; // Mức độ hiện tại
     public static Paddle paddle; // Thanh đỡ
     public static ArrayList<PowerUp> powerUps;
+    private PowerUpView powerUpView = new PowerUpView();
     private static ArrayList<Brick> bricks;
     public static ArrayList<Ball> balls; // Bóng
     private static ArrayList<Projectile> projectiles; // Các Projectile.
     private Timer timer; // Bộ đếm
-    private MapManager mapManger; // Quản lý bản đồ
+    private MapManager mapManager; // Quản lý bản đồ
     private GameBackground gameBackground; // Nền game
-    protected static int score, lives, highScore; // Điểm, mạng, điểm cao
+    protected static int score, lives; // Điểm, mạng, điểm cao
     public static KeyManager keyManager; // Quản lý phím
     private GameOver gameOver;
     private LevelCompleted levelCompleted;
@@ -43,9 +48,13 @@ public class GameManager extends JPanel implements ActionListener {
 
     /** Khởi tạo paddle, bóng, gạch,... */
     public void initGameObjects() {
+        loadPlayerName();
         gameBackground = new GameBackground();
-        mapManger = new MapManager();
-        bricks = mapManger.loadMap(currentLevel);
+        if (playerName == null || playerName.isEmpty()) {
+            playerName = "Unknown";
+        }
+        mapManager = new MapManager();
+        bricks = mapManager.loadMap(currentLevel);
 
         paddle = new GalaxyPaddle(Paddle.getDefaultX(), Paddle.getDefaultY(),
                 Paddle.getDefaultWidth(), Paddle.getDefaultHeight());
@@ -63,7 +72,6 @@ public class GameManager extends JPanel implements ActionListener {
 
         score = 0;
         lives = 3;
-        highScore = 0;
     }
 
     public void restartGame() {
@@ -170,14 +178,13 @@ public class GameManager extends JPanel implements ActionListener {
                 }
             }
 
-            if (score > highScore) highScore = score;
-
             boolean allCleared = true;
             for (Brick brick : bricks)
                 if (!brick.isDestroyed()) { allCleared = false; break; }
 
             if (allCleared) {
                 PowerUp.cancelAllEffects();
+                LevelCompleted.unlockNewLevel();
                 gameState = GameState.LEVEL_COMPLETED;
                 levelCompleted.showPanel();
             }
@@ -247,18 +254,60 @@ public class GameManager extends JPanel implements ActionListener {
         paddle.render(g2d);
         for (Projectile p : projectiles) p.render(g2d);
 
-        g2d.setColor(Color.WHITE);
-        g2d.setFont(new Font("Arial", Font.PLAIN, 20));
-        g2d.drawString("Score: " + score, 20, 30);
-        g2d.drawString("Lives: " + lives, 200, 30);
-        g2d.drawString("High Score: " + highScore, panelWidth - 150, 30);
-
         if (gameState == GameState.PAUSE) {
             g2d.setColor(new Color(0, 0, 0, 150));
             g2d.fillRect(0, 0, panelWidth, panelHeight);
             g2d.setColor(Color.WHITE);
-            g2d.setFont(new Font("Arial", Font.BOLD, 60));
+            g2d.setFont(new Font("IntelOne Display Bold", Font.BOLD, 60));
             g2d.drawString("PAUSED", panelWidth / 2 - 150, panelHeight / 2);
+        }
+
+        // Phần thể hiện thông tin của 1 ván trò chơi.
+        g.drawImage(gameBackground.getInformationBar(), 0, 610, panelWidth, 40, null);
+        g2d.setColor(Color.WHITE);
+        g2d.setFont(new Font("Vermin Vibes 1989", Font.PLAIN, 36));
+        g2d.drawString(String.valueOf(score), 105, 637);
+        for (int i = 0; i < 5; i++) {
+            if (i <= (lives - 1)) {
+                g.drawImage(gameBackground.getHeart(true), 319 + 30 * i, 616, 28, 25, null);
+            } else {
+                g.drawImage(gameBackground.getHeart(false), 319 + 30 * i, 616, 28, 25, null);
+            }
+        }
+        String inforLevel = String.valueOf(currentLevel) + " / 20";
+        if (currentLevel < 10) {
+            inforLevel = "0" + inforLevel;
+        }
+        g2d.setFont(new Font("Vermin Vibes 1989", Font.PLAIN, 32));
+        g2d.drawString(inforLevel, 580, 637);
+
+        // Hiện thị thông tin PowerUp vừa kích hoạt.
+        powerUpView.draw((Graphics2D) g, panelWidth, panelHeight);
+        String msg = PowerUp.getActiveMessage();
+        if (msg != null) {
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setFont(new Font("IntelOne Display Bold", Font.BOLD, 28));
+            FontMetrics fm = g2.getFontMetrics();
+
+            int textWidth = fm.stringWidth(msg);
+            int centerX = (panelWidth - textWidth) / 2;
+            int centerY = 500;
+
+            // Tính độ mờ dần theo thời gian
+            float alpha = 1.0f - (float)(System.currentTimeMillis() - PowerUp.messageStartTime) / PowerUp.MESSAGE_DURATION_MS;
+            alpha = Math.max(0f, alpha);
+
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+
+            // Bóng đổ
+            g2.setColor(new Color(0, 0, 0, 150));
+            g2.drawString(msg, centerX + 2, centerY + 2);
+
+            // Text chính
+            g2.setColor(Color.WHITE);
+            g2.drawString(msg, centerX, centerY);
+
+            g2.setComposite(AlphaComposite.SrcOver);
         }
     }
 
@@ -287,8 +336,28 @@ public class GameManager extends JPanel implements ActionListener {
     public static void setPaddle(Paddle paddle) { GameManager.paddle = paddle; }
     public static GameState getGameState() { return gameState; }
     public static ArrayList<Brick> getBricks() { return bricks; }
-
+    public static int getCurrentLevel() {
+        return currentLevel;
+    }
+    public static void setCurrentLevel(int lv) {
+        currentLevel = lv;
+    }
     public static ArrayList<Projectile> getProjectiles() {
         return projectiles;
+    }
+    public static void loadPlayerName() {
+        try {
+            File file = new File("src/main/resources/DataPlayer.txt");
+            if (!file.exists()) return;
+
+            Scanner sc = new Scanner(file, "UTF-8");
+            if (sc.hasNextLine()) {
+                String name = sc.nextLine().trim();
+                if (!name.isEmpty()) playerName = name;
+            }
+            sc.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

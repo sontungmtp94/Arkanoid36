@@ -1,13 +1,20 @@
 package view;
 
+import controller.GameManager;
 import controller.GameState;
 import game.ArkanoidGame;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URL;
+import java.util.Scanner;
+
 import audio.SoundManager;
 import audio.SoundId;
 
@@ -28,6 +35,10 @@ public class MainMenu extends JPanel {
 
     private static final int ANIM_FPS = 12;
     private static final double ANIM_SCALE = 1.0;
+
+    private JTextField nameField;
+    private JButton editButton;
+    private static final String PLAYER_FILE = "src/main/resources/DataPlayer.txt";
 
     public MainMenu(ArkanoidGame game) {
         this.game = game;
@@ -61,6 +72,53 @@ public class MainMenu extends JPanel {
         });
     }
 
+    // Đọc tên người chơi từ file (nếu chưa có -> "Guest")
+    private String loadPlayerName(String path) {
+        try {
+            File pathName = new File(path);
+
+            // Nếu file có tồn tại → đọc nội dung đầu tiên
+            Scanner scanner = new Scanner(pathName, "UTF-8");
+            String name = scanner.hasNextLine() ? scanner.nextLine().trim() : "Unknown";
+            scanner.close();
+
+            // Trả về nội dung file (nếu rỗng thì fallback "Player1")
+            return name.isEmpty() ? "Unknown" : name;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "Unknown";
+        }
+    }
+
+    // Lưu thông tin tên người chơi.
+    private static void savePlayerName(String name) {
+        try {
+            File file = new File(PLAYER_FILE);
+            java.util.List<String> lines = new java.util.ArrayList<>();
+
+            // Đọc toàn bộ file
+            if (file.exists()) {
+                Scanner sc = new Scanner(file, "UTF-8");
+                while (sc.hasNextLine()) lines.add(sc.nextLine());
+                sc.close();
+            }
+
+            // Đảm bảo có ít nhất 2 dòng
+            while (lines.size() < 2) lines.add("");
+
+            // Sửa dòng đầu tiên
+            lines.set(0, name);
+
+            // Ghi lại toàn bộ
+            PrintWriter pw = new PrintWriter(file, "UTF-8");
+            for (String line : lines) pw.println(line);
+            pw.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private JPanel buildUiLayer() {
         JPanel ui = new JPanel(new BorderLayout());
 
@@ -70,39 +128,70 @@ public class MainMenu extends JPanel {
         left.setLayout(new BoxLayout(left, BoxLayout.Y_AXIS));
         left.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
 
+        // Thanh tên người chơi (trên cùng)
+        JPanel top = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 10));
+        top.setOpaque(false);
+
+        JLabel lblName = new JLabel("Player: " + loadPlayerName(PLAYER_FILE));
+        lblName.setFont(lblName.getFont().deriveFont(Font.BOLD, 24f));
+        lblName.setForeground(Color.WHITE);
+
         JButton btnPlay    = new JButton("PLAY");
-        JButton btnSetting = new JButton("SETTINGS");
+        JButton btnLeaderBoard    = new JButton("LEADERBOARD");
+        JButton btnSetting = new JButton("SETTING");
         JButton btnShop    = new JButton("SHOP");
+        JButton btnEdit = new JButton("Edit");
         JButton btnExit    = new JButton("EXIT");
 
+        top.add(lblName);
+        top.add(btnEdit);
+        ui.add(top, BorderLayout.NORTH);
+
         styleButton(btnPlay);
+        styleButton(btnLeaderBoard);
         styleButton(btnSetting);
         styleButton(btnShop);
         styleButton(btnExit);
+        styleButton(btnEdit); // tái dùng hàm styleButton
+        btnEdit.setFont(btnEdit.getFont().deriveFont(20f));
 
         // Gọi âm thanh Click.wav.
         btnPlay.addActionListener(e -> {
             SoundManager.get().playSfx(SoundId.SFX_CLICK);
-            game.changeState(GameState.PLAYING);
+            game.changeState(GameState.LEVEL_CHOOSE);
         });
 
+        // Gọi âm thanh Click.wav.
+        btnLeaderBoard.addActionListener(e -> {
+            SoundManager.get().playSfx(SoundId.SFX_CLICK);
+            game.changeState(GameState.LEADERBOARD);
+        });
 
         btnSetting.addActionListener(e -> {
-            audio.SoundManager.get().playSfx(audio.SoundId.SFX_CLICK);
+            SoundManager.get().playSfx(SoundId.SFX_CLICK);
             JOptionPane.showMessageDialog(this, "Setting (stub)");
         });
 
         btnShop.addActionListener(e -> {
-            audio.SoundManager.get().playSfx(audio.SoundId.SFX_CLICK);
+            SoundManager.get().playSfx(SoundId.SFX_CLICK);
             JOptionPane.showMessageDialog(this, "Shop (stub)");
         });
 
         btnExit.addActionListener(e -> {
-            audio.SoundManager.get().playSfx(audio.SoundId.SFX_CLICK);
+            SoundManager.get().playSfx(SoundId.SFX_CLICK);
             System.exit(0);
+        });
+        btnEdit.addActionListener(e -> {
+            SoundManager.get().playSfx(SoundId.SFX_CLICK);
+            String newName = JOptionPane.showInputDialog(this, "Enter new name:", loadPlayerName(PLAYER_FILE));
+            if (newName != null && !newName.trim().isEmpty()) {
+                savePlayerName(newName.trim());
+                lblName.setText("Player: " + newName.trim());
+            }
         });
 
         left.add(btnPlay);    left.add(Box.createVerticalStrut(24));
+        left.add(btnLeaderBoard);    left.add(Box.createVerticalStrut(24));
         left.add(btnSetting); left.add(Box.createVerticalStrut(24));
         left.add(btnShop);    left.add(Box.createVerticalStrut(24));
         left.add(btnExit);

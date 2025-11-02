@@ -55,6 +55,14 @@ public class ArkanoidGame extends JFrame {
                 SoundManager.get().playBgm(SoundId.BGM_MENU, 1200);
                 currentPanel = new MainMenu(this);
             }
+            case LEADERBOARD -> {
+                SoundManager.get().playBgm(SoundId.BGM_MENU, 1200);
+                currentPanel = new LeaderBoard(WIDTH, HEIGHT,this);
+            }
+            case LEVEL_CHOOSE -> {
+                SoundManager.get().playBgm(SoundId.BGM_MENU, 1200);
+                currentPanel = new LevelChoose(WIDTH, HEIGHT,this);
+            }
             case READY, PLAYING -> {
                 SoundManager.get().playBgm(SoundId.BGM_GAME, 1200);
                 currentPanel = new GameManager(WIDTH, HEIGHT, this);

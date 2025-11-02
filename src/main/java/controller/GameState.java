@@ -2,6 +2,8 @@ package controller;
 
 public enum GameState {
     MENU,
+    LEADERBOARD,
+    LEVEL_CHOOSE,
     READY,
     PLAYING,
     PAUSE,

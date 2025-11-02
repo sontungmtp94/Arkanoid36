@@ -1,13 +1,22 @@
 package view;
 
 import javax.swing.*;
-import java.awt.*;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
+
+import java.io.File;
+import java.io.PrintWriter;
+import java.util.Scanner;
+
 import controller.GameManager;
 import audio.SoundManager;
 import audio.SoundId;
 import controller.GameState;
 import game.ArkanoidGame;
+import java.util.List;
+import java.util.ArrayList;
+import view.LeaderBoard;
+
 
 /**
  * Lớp LevelCompleted hiển thị thông báo "Level Completed" và hướng dẫn next level/ restart.
@@ -36,7 +45,6 @@ public class LevelCompleted extends JPanel {
         JButton restartButton = new JButton(new ImageIcon(scaledRestart));
         JButton nextLevelButton = new JButton(new ImageIcon(scaledNextLevel));
 
-
         int labelHeight = scaledLabel.getHeight(null);
         int buttonWidth = scaledMainMenu.getWidth(null);
         int buttonHeight = scaledMainMenu.getHeight(null);
@@ -61,7 +69,7 @@ public class LevelCompleted extends JPanel {
             gameManager.restartGame();
         });
 
-        nextLevelButton.addActionListener(e -> {
+        nextLevelButton.addActionListener(e -> {            SoundManager.get().playSfx(SoundId.SFX_CLICK);
             SoundManager.get().playSfx(SoundId.SFX_CLICK);
             gameManager.nextLevel();
         });
@@ -72,6 +80,47 @@ public class LevelCompleted extends JPanel {
         add(nextLevelButton);
 
         setVisible(false);
+
+
+    }
+
+    /** Ghi lại thông tin người chơi và trạng thái mở khóa */
+    protected static void updateDataPlayer() {
+        try {
+            File file = new File("src/main/resources/DataPlayer.txt");
+            List<String> lines = new ArrayList<>();
+
+            if (file.exists()) {
+                Scanner sc = new Scanner(file, "UTF-8");
+                while (sc.hasNextLine()) lines.add(sc.nextLine());
+                sc.close();
+            }
+
+            while (lines.size() < 2) lines.add("");
+
+            StringBuilder unlock = new StringBuilder();
+            for (int i = 0; i < LevelChoose.unlock.length; i++) {
+                unlock.append(LevelChoose.unlock[i]).append(" ");
+            }
+
+            lines.set(1, unlock.toString());
+
+            try (PrintWriter pw = new PrintWriter(file, "UTF-8")) {
+                for (String line : lines) pw.println(line);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void unlockNewLevel() {
+        // Mở khóa màn tiếp theo.
+        if (LevelChoose.unlock[GameManager.getCurrentLevel()] == 0 && GameManager.getCurrentLevel() < 20) {
+            LevelChoose.unlock[GameManager.getCurrentLevel()] = 1;
+        }
+
+        // === Cập nhật file DataPlayer.txt ===
+        LevelCompleted.updateDataPlayer();
     }
 
     /** Hiển thị bảng Level Completed. */
@@ -79,6 +128,17 @@ public class LevelCompleted extends JPanel {
         setVisible(true);
         repaint();
         SoundManager.get().playSfx(SoundId.SFX_WIN);
+
+        // === In ra điểm và cập nhật leaderboard ===
+        System.out.println(GameManager.playerName + ": " + GameManager.getScore());
+
+        try {
+            LeaderBoard.updateLeaderboard(GameManager.playerName, GameManager.getScore());
+            System.out.println("✅ Leaderboard updated for " + GameManager.playerName);
+        } catch (Exception e) {
+            System.err.println("⚠️ Lỗi khi cập nhật LeaderBoard:");
+            e.printStackTrace();
+        }
     }
 
     /** Ẩn bảng Level Completed. */
