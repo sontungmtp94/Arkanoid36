@@ -1,7 +1,5 @@
 package model.projectile;
 
-import view.PngAnimator;
-
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
@@ -10,8 +8,8 @@ import static view.SpritesView.loadSprite;
 
 /**
  * Lớp Bomb đại diện cho bomb từ kỹ năng X của BomberPaddle.
- * Bomb có kích thước 60 x 84, khi nổ gây 1 sát thương cho gạch trong vùng nổ.
- * Vùng nổ tính từ tâm của thân bomb với bán kính 90.
+ * Bomb có kích thước 30 x 42, khi nổ gây 1 sát thương cho gạch trong vùng nổ.
+ * Vùng nổ tính từ tâm của thân bomb với bán kính 50.
  */
 public class Bomb extends ExplosiveProjectile {
     private static final int DEFAULT_WIDTH = 30;
@@ -24,7 +22,6 @@ public class Bomb extends ExplosiveProjectile {
 
     private BufferedImage spriteNormal;
     private BufferedImage spriteGray;
-    private PngAnimator explosionAnimator;
     private boolean playingExplosion = false;
 
     /**
@@ -40,16 +37,6 @@ public class Bomb extends ExplosiveProjectile {
     }
 
     @Override
-    public void update() {
-        super.update();
-
-        if (exploded && !playingExplosion) {
-            explosionAnimator = new PngAnimator(PATH_EXPLOSION, 10, 60, 2.0);
-            playingExplosion = true;
-        }
-    }
-
-    @Override
     public Shape getBounds() {
         return new Ellipse2D.Double(x, y + (height - width), width, width);
     }
@@ -62,22 +49,17 @@ public class Bomb extends ExplosiveProjectile {
 
     @Override
     public void render(Graphics2D g) {
-        if (!active && !playingExplosion) {
+        if (!active && playingExplosion) {
             return;
         }
 
         if (exploded) {
-            // checker
-            if (explosionAnimator == null) {
-                System.err.println("no explo anim");
-                return;
-            }
-
-            Graphics2D g2d = (Graphics2D) g.create();
-            g2d.translate(x + width / 2.0 - explosionRadius,
-                          y + (height - width) + width / 2.0 - explosionRadius);
-            explosionAnimator.paint(g2d);
-            g2d.dispose();
+            g.drawImage(explosion,
+                        x + width / 2 - explosionRadius,
+                        y + height - width / 2 - explosionRadius,
+                        explosionRadius * 2,
+                        explosionRadius * 2,
+                        null);
             return;
         }
 

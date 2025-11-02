@@ -43,23 +43,6 @@ public class GalaxyPaddle extends Paddle {
         super(x, y, width, height);
         spritePath = PATH_DEFAULT;
         sprite = loadSprite(spritePath);
-        skillX = new Skill("Space Travel",
-                           "Can move freely and have boosted speed",
-                           "images/paddles/galaxy/SpaceTravel.png");
-        skillC = new Skill("Supernova Blast",
-                           "Shoot an energy beam upwards.",
-                           "images/paddles/galaxy/SupernovaBlast.png");
-    }
-
-    @Override
-    public void updateSpriteByWidth() {
-        if (getWidth() == DEFAULT_WIDTH + 60)
-            setAndLoadSprite(PATH_LONG);
-        else if (getWidth() == DEFAULT_WIDTH - 60)
-            setAndLoadSprite(PATH_SHORT);
-        else {
-            setAndLoadSprite(PATH_DEFAULT);
-        }
     }
 
     @Override

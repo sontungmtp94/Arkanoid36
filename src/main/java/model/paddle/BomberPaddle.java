@@ -24,9 +24,9 @@ public class BomberPaddle extends Paddle {
     private int cooldownTimerC = 0;
 
     // 3 path đến 3 sprites của BomberPaddle.
-    private final String PATH_DEFAULT = "images/paddles/normal/NormalPaddle_default.png";
-    private final String PATH_SHORT = "images/paddles/galaxy/BomberPaddle_short.png";
-    private final String PATH_LONG = "images/paddles/galaxy/BomberPaddle_long.png";
+    private final String PATH_DEFAULT = "images/paddles/bomber/BomberPaddle_default.png";
+    private final String PATH_SHORT = "images/paddles/bomber/BomberPaddle_short.png";
+    private final String PATH_LONG = "images/paddles/bomber/BomberPaddle_long.png";
 
     /**
      * Constructor cho BomberPaddle.
@@ -40,26 +40,6 @@ public class BomberPaddle extends Paddle {
         super(x, y, width, height);
         spritePath = PATH_DEFAULT;
         sprite = loadSprite(spritePath);
-        skillX = new Skill("Chain Explosion",
-                           "Plant up to "
-                           + X_MAX_STACK
-                           + " bombs that automatically explode."
-                           + " Bombs can be triggered by other explosions.",
-                           "images/paddles/galaxy/ChainExplosion.png");
-        skillC = new Skill("Nuke 'Em",
-                           "Plant a Nuke that has impactful explosion.",
-                           "images/paddles/galaxy/NukeEm.png");
-    }
-
-    @Override
-    public void updateSpriteByWidth() {
-        if (getWidth() == DEFAULT_WIDTH + 60)
-            setAndLoadSprite(PATH_LONG);
-        else if (getWidth() == DEFAULT_WIDTH - 60)
-            setAndLoadSprite(PATH_SHORT);
-        else {
-            setAndLoadSprite(PATH_DEFAULT);
-        }
     }
 
     @Override

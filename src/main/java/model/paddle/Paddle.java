@@ -30,10 +30,6 @@ public abstract class Paddle extends MovableObject {
     // Tốc độ hiện tại.
     protected double speed;
 
-    // Kỹ năng X và C.
-    protected Skill skillX;
-    protected Skill skillC;
-
     protected boolean movingAllowed = true;
 
     // Sprite Paddle.

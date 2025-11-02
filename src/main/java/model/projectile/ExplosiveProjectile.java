@@ -7,6 +7,9 @@ import model.brick.Brick;
 import java.awt.*;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
+import java.awt.image.BufferedImage;
+
+import static view.SpritesView.loadSprite;
 
 /**
  * Lớp ExplosiveProjectile đại diện cho các loại Projectile gây nổ (Bomb, Nuke).
@@ -17,27 +20,38 @@ public abstract class ExplosiveProjectile extends Projectile {
     protected final int damage;
 
     protected boolean deployed = false;
-    private static final double DEPLOYING_SPEED = 40.0;
+    private static final double DEPLOYING_SPEED = 25.0;
 
     protected boolean exploded = false;
     protected long deployedTime;
-    protected final int EXPLODE_DELAY = 5000;
+    protected long explosionStartTime;
+    protected final int EXPLODE_DURATION = 250;
+    protected final int EXPLODE_DELAY = 2000;
 
-    protected static final String PATH_EXPLOSION = "images/paddles/bomber/explosion_%02d.png";
+    protected static final String PATH_EXPLOSION = "images/paddles/bomber/explosion.png";
+    protected BufferedImage explosion;
 
     public ExplosiveProjectile(int x, int y, int width, int height,
                                int explosionRadius, int damage) {
         super(x, y, width, height);
         this.explosionRadius = explosionRadius;
         this.damage = damage;
+        explosion = loadSprite(PATH_EXPLOSION);
         active = true;
     }
 
     /** Cập nhật trạng thái. */
     @Override
     public void update() {
-        if (!active || exploded) {
+        if (!active) {
             return;
+        }
+
+        if (exploded) {
+            if (System.currentTimeMillis() - explosionStartTime > EXPLODE_DURATION) {
+                active = false;
+            }
+            return; // vẫn render animation
         }
 
         // Chưa đặt xuống, di chuyển để đặt.
@@ -76,10 +90,7 @@ public abstract class ExplosiveProjectile extends Projectile {
                 deployed = true;
                 deployedTime = System.currentTimeMillis();
             }
-        }
-
-        // Hết thời gian delay thì nổ.
-        if (deployed) {
+        } else {
             if (System.currentTimeMillis() - deployedTime > EXPLODE_DELAY) {
                 explode();
             }
@@ -92,6 +103,7 @@ public abstract class ExplosiveProjectile extends Projectile {
             return;
         }
         exploded = true;
+        explosionStartTime = System.currentTimeMillis();
 
         Area explosionArea = new Area(getExplosionBounds());
 
@@ -106,7 +118,7 @@ public abstract class ExplosiveProjectile extends Projectile {
 
         // Gây nổ dây chuyền.
         for (Projectile p : GameManager.getProjectiles()) {
-            if (p instanceof Bomb b && b != this && b.isActive()) {
+            if (p instanceof Bomb b && b != this && b.isDeployed()) {
                 Area intersectArea = new Area(b.getBounds());
                 intersectArea.intersect(explosionArea);
                 if (!intersectArea.isEmpty()) {
@@ -114,8 +126,6 @@ public abstract class ExplosiveProjectile extends Projectile {
                 }
             }
         }
-
-        active = false;
     }
 
     /** Lấy vùng nổ. */

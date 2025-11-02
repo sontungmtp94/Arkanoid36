@@ -1,7 +1,5 @@
 package model.projectile;
 
-import view.PngAnimator;
-
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
@@ -23,8 +21,6 @@ public class Nuke extends ExplosiveProjectile {
 
     private BufferedImage spriteNormal;
     private BufferedImage spriteGray;
-    private PngAnimator explosionAnimator;
-    private boolean playingExplosion = false;
 
     /**
      * Constructor cho Nuke.
@@ -36,16 +32,6 @@ public class Nuke extends ExplosiveProjectile {
         super(x, y, DEFAULT_SIZE, DEFAULT_SIZE, EXPLOSION_RADIUS, DAMAGE);
         spriteNormal = loadSprite(PATH_NORMAL);
         spriteGray = loadSprite(PATH_GRAY);
-    }
-
-    @Override
-    public void update() {
-        super.update();
-
-        if (exploded && !playingExplosion) {
-            explosionAnimator = new PngAnimator(PATH_EXPLOSION, 10, 60, 2.0);
-            playingExplosion = true;
-        }
     }
 
     @Override
@@ -61,22 +47,17 @@ public class Nuke extends ExplosiveProjectile {
 
     @Override
     public void render(Graphics2D g) {
-        if (!active && !playingExplosion) {
+        if (!active) {
             return;
         }
 
         if (exploded) {
-            // checker
-            if (explosionAnimator == null) {
-                System.err.println("no explo anim");
-                return;
-            }
-
-            Graphics2D g2d = (Graphics2D) g.create();
-            g2d.translate(x + width / 2.0 - explosionRadius,
-                          y + height / 2.0 - explosionRadius);
-            explosionAnimator.paint(g2d);
-            g2d.dispose();
+            g.drawImage(explosion,
+                        x + width / 2 - explosionRadius,
+                        y + height / 2 - explosionRadius,
+                        explosionRadius * 2,
+                        explosionRadius * 2,
+                        null);
             return;
         }
 
