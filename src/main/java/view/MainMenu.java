@@ -138,7 +138,7 @@ public class MainMenu extends JPanel {
 
         JButton btnPlay    = new JButton("PLAY");
         JButton btnLeaderBoard    = new JButton("LEADERBOARD");
-        JButton btnSetting = new JButton("SETTING");
+        JButton btnSetting = new JButton("SETTINGS");
         JButton btnShop    = new JButton("SHOP");
         JButton btnEdit = new JButton("Edit");
         JButton btnExit    = new JButton("EXIT");

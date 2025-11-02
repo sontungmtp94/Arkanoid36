@@ -3,6 +3,7 @@ package controller;
 import game.ArkanoidGame;
 import model.ball.Ball;
 import model.brick.Brick;
+import model.paddle.BomberPaddle;
 import model.paddle.GalaxyPaddle;
 import model.paddle.NormalPaddle;
 import model.paddle.Paddle;
@@ -13,6 +14,7 @@ import view.GameBackground;
 import view.GameInformation;
 import view.GameOver;
 import view.LevelCompleted;
+import view.PngAnimator;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,6 +28,7 @@ import java.util.Scanner;
  * Kế thừa JPanel, triển khai ActionListener và KeyListener.
  */
 public class GameManager extends JPanel implements ActionListener {
+    private static final int FPS = 60;
 
     private static GameState gameState;
     private static int panelWidth;
@@ -57,7 +60,7 @@ public class GameManager extends JPanel implements ActionListener {
         mapManager = new MapManager();
         bricks = mapManager.loadMap(currentLevel);
 
-        paddle = new GalaxyPaddle(Paddle.getDefaultX(), Paddle.getDefaultY(),
+        paddle = new BomberPaddle(Paddle.getDefaultX(), Paddle.getDefaultY(),
                 Paddle.getDefaultWidth(), Paddle.getDefaultHeight());
         projectiles = new ArrayList<>();
         balls = new ArrayList<>();
@@ -120,7 +123,7 @@ public class GameManager extends JPanel implements ActionListener {
 
         gameState = GameState.READY;
 
-        timer = new Timer(1000 / 60, this);
+        timer = new Timer(1000 / FPS, this);
         timer.start();
 
         setLayout(null);
@@ -143,7 +146,9 @@ public class GameManager extends JPanel implements ActionListener {
             if (keyManager.isRightPressed() && paddle.isMovingAllowed()) {
                 paddle.moveRight();
             }
-            if (!keyManager.isLeftPressed() && !keyManager.isRightPressed()) paddle.stop();
+            if (!keyManager.isLeftPressed() && !keyManager.isRightPressed()) {
+                paddle.stop();
+            }
 
             for (Ball b : balls) b.update();
 
@@ -320,6 +325,11 @@ public class GameManager extends JPanel implements ActionListener {
     }
 
     // Getter & Setter
+
+
+    public static int getFps() {
+        return FPS;
+    }
 
     public static int getPanelWidth() {
         return panelWidth;

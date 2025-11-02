@@ -5,7 +5,8 @@ import java.awt.image.BufferedImage;
 import static view.SpritesView.loadSprite;
 
 public class GameInformation {
-    private static final BufferedImage informationBar = loadSprite("images/utils/informationBar.png");;
+    private static final int BAR_HEIGHT = 41;
+    private static final BufferedImage informationBar = loadSprite("images/utils/informationBar.png");
     private static  final BufferedImage heart = loadSprite("images/utils/heart.png");
     private static final BufferedImage unheart = loadSprite("images/utils/unheart.png");
 
@@ -19,5 +20,9 @@ public class GameInformation {
     public static BufferedImage getHeart(boolean t) {
         if (t) return heart;
         else return unheart;
+    }
+
+    public static int getBarHeight() {
+        return BAR_HEIGHT;
     }
 }
