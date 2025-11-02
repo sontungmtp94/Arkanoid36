@@ -10,6 +10,7 @@ import model.powerup.PowerUp;
 import model.powerup.PowerUpView;
 import model.projectile.Projectile;
 import view.GameBackground;
+import view.GameInformation;
 import view.GameOver;
 import view.LevelCompleted;
 
@@ -263,15 +264,15 @@ public class GameManager extends JPanel implements ActionListener {
         }
 
         // Phần thể hiện thông tin của 1 ván trò chơi.
-        g.drawImage(gameBackground.getInformationBar(), 0, 610, panelWidth, 40, null);
+        g.drawImage(GameInformation.getInformationBar(), 0, 610, panelWidth, 40, null);
         g2d.setColor(Color.WHITE);
         g2d.setFont(new Font("Vermin Vibes 1989", Font.PLAIN, 36));
         g2d.drawString(String.valueOf(score), 105, 637);
         for (int i = 0; i < 5; i++) {
             if (i <= (lives - 1)) {
-                g.drawImage(gameBackground.getHeart(true), 319 + 30 * i, 616, 28, 25, null);
+                g.drawImage(GameInformation.getHeart(true), 319 + 30 * i, 616, 28, 25, null);
             } else {
-                g.drawImage(gameBackground.getHeart(false), 319 + 30 * i, 616, 28, 25, null);
+                g.drawImage(GameInformation.getHeart(false), 319 + 30 * i, 616, 28, 25, null);
             }
         }
         String inforLevel = String.valueOf(currentLevel) + " / 20";

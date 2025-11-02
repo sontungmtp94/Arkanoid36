@@ -173,8 +173,8 @@ public class MainMenu extends JPanel {
         });
 
         btnShop.addActionListener(e -> {
-            SoundManager.get().playSfx(SoundId.SFX_CLICK);
-            JOptionPane.showMessageDialog(this, "Shop (stub)");
+            audio.SoundManager.get().playSfx(SoundId.SFX_CLICK);
+            game.changeState(GameState.SHOP);
         });
 
         btnExit.addActionListener(e -> {
