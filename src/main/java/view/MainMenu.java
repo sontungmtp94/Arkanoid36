@@ -1,10 +1,8 @@
 package view;
 
-import controller.GameManager;
 import controller.GameState;
 import game.ArkanoidGame;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
@@ -13,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 import audio.SoundManager;
@@ -78,7 +77,7 @@ public class MainMenu extends JPanel {
             File pathName = new File(path);
 
             // Nếu file có tồn tại → đọc nội dung đầu tiên
-            Scanner scanner = new Scanner(pathName, "UTF-8");
+            Scanner scanner = new Scanner(pathName, StandardCharsets.UTF_8);
             String name = scanner.hasNextLine() ? scanner.nextLine().trim() : "Unknown";
             scanner.close();
 
@@ -99,7 +98,7 @@ public class MainMenu extends JPanel {
 
             // Đọc toàn bộ file
             if (file.exists()) {
-                Scanner sc = new Scanner(file, "UTF-8");
+                Scanner sc = new Scanner(file, StandardCharsets.UTF_8);
                 while (sc.hasNextLine()) lines.add(sc.nextLine());
                 sc.close();
             }
@@ -111,7 +110,7 @@ public class MainMenu extends JPanel {
             lines.set(0, name);
 
             // Ghi lại toàn bộ
-            PrintWriter pw = new PrintWriter(file, "UTF-8");
+            PrintWriter pw = new PrintWriter(file, StandardCharsets.UTF_8);
             for (String line : lines) pw.println(line);
             pw.close();
         } catch (Exception e) {

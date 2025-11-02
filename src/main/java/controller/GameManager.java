@@ -93,7 +93,7 @@ public class GameManager extends JPanel implements ActionListener {
         if (timer != null) {
             timer.stop();      // Dừng vòng lặp game
         }
-        PowerUp.cancelAllEffects(); // Hủy mọi hiệu ứng tồn đọng
+        PowerUp.cancelAllEffects(); // Hủy mọi hiệu ứng
     }
 
     /**

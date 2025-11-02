@@ -24,7 +24,7 @@ public class LeaderBoard extends JPanel {
     private static final ArrayList<String> names = new ArrayList<>();
     private static final ArrayList<Integer> scores = new ArrayList<>();
 
-    /** Đường dẫn ghi được*/
+    /** Đường dẫn ghi được */
     private static final File SAVE_FILE = new File("src/main/resources/LeaderBoard.txt");
 
     public LeaderBoard(int width, int height, ArkanoidGame game) {
@@ -67,7 +67,6 @@ public class LeaderBoard extends JPanel {
         scores.clear();
         try {
             if (!SAVE_FILE.exists()) {
-                // Nếu chưa có file, tạo mặc định 10 dòng
                 SAVE_FILE.getParentFile().mkdirs();
                 try (PrintWriter pw = new PrintWriter(SAVE_FILE, StandardCharsets.UTF_8)) {
                     for (int i = 0; i < 10; i++) pw.println("Unknown - 0");
@@ -92,10 +91,10 @@ public class LeaderBoard extends JPanel {
         }
     }
 
+    /** Cập nhật leaderboard khi người chơi có điểm cao hơn */
     public static void updateLeaderboard(String playerName, int newScore) {
         loadLeaderboard();
 
-        // Nếu tên đã tồn tại thì cập nhật điểm cao hơn.
         boolean found = false;
         for (int i = 0; i < names.size(); i++) {
             if (names.get(i).equalsIgnoreCase(playerName)) {
@@ -109,7 +108,55 @@ public class LeaderBoard extends JPanel {
             scores.add(newScore);
         }
 
-        // Sắp xếp giảm dần
+        sortLeaderboard();
+        saveLeaderboard();
+
+        System.out.println("Update leaderboard thành công cho " + playerName + "!");
+    }
+
+    /** Trả về điểm hiện tại của player */
+    public static int getScoreByName(String playerName) {
+        loadLeaderboard();
+        for (int i = 0; i < names.size(); i++) {
+            if (names.get(i).equalsIgnoreCase(playerName)) {
+                return scores.get(i);
+            }
+        }
+        return 0;
+    }
+
+    /** Cộng/trừ điểm cho player (dùng trong shop) */
+    public static void addScore(String playerName, int delta) {
+        loadLeaderboard();
+        boolean found = false;
+        for (int i = 0; i < names.size(); i++) {
+            if (names.get(i).equalsIgnoreCase(playerName)) {
+                scores.set(i, Math.max(0, scores.get(i) + delta));
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            names.add(playerName);
+            scores.add(Math.max(0, delta));
+        }
+        sortLeaderboard();
+        saveLeaderboard();
+    }
+
+    /** Ghi lại danh sách điểm vào file */
+    private static void saveLeaderboard() {
+        try (PrintWriter pw = new PrintWriter(SAVE_FILE, StandardCharsets.UTF_8)) {
+            for (int i = 0; i < Math.min(10, names.size()); i++) {
+                pw.println(names.get(i) + " - " + scores.get(i));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /** Sắp xếp giảm dần theo điểm */
+    private static void sortLeaderboard() {
         for (int i = 0; i < scores.size() - 1; i++) {
             for (int j = i + 1; j < scores.size(); j++) {
                 if (scores.get(j) > scores.get(i)) {
@@ -123,18 +170,6 @@ public class LeaderBoard extends JPanel {
                 }
             }
         }
-
-        // Ghi lại tối đa 10 dòng
-        try (PrintWriter pw = new PrintWriter(SAVE_FILE, StandardCharsets.UTF_8)) {
-            for (int i = 0; i < Math.min(10, names.size()); i++) {
-                pw.println(names.get(i) + " - " + scores.get(i));
-            }
-        } catch (Exception e) {
-            System.err.println("Lỗi khi ghi file LeaderBoard.txt:");
-            e.printStackTrace();
-        }
-
-        System.out.println("Update leaderboard thành công cho " + playerName + "!");
     }
 
     @Override
@@ -151,14 +186,6 @@ public class LeaderBoard extends JPanel {
         if (backgroundImg != null)
             g2.drawImage(backgroundImg, 0, 0, w, h, this);
         else {
-            g2.setColor(Color.BLACK);
-            g2.fillRect(0, 0, w, h);
-        }
-
-        // Vẽ nền
-        if (backgroundImg != null) {
-            g2.drawImage(backgroundImg, 0, 0, w, h, this);
-        } else {
             g2.setColor(Color.BLACK);
             g2.fillRect(0, 0, w, h);
         }
@@ -200,4 +227,3 @@ public class LeaderBoard extends JPanel {
         }
     }
 }
-

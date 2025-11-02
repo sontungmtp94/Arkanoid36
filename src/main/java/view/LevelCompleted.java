@@ -61,6 +61,7 @@ public class LevelCompleted extends JPanel {
 
         mainMenuButton.addActionListener(e -> {
             SoundManager.get().playSfx(SoundId.SFX_CLICK);
+            gameManager.stopGame();
             ((ArkanoidGame) SwingUtilities.getWindowAncestor(this)).changeState(GameState.MENU);
         });
 
@@ -80,8 +81,6 @@ public class LevelCompleted extends JPanel {
         add(nextLevelButton);
 
         setVisible(false);
-
-
     }
 
     /** Ghi lại thông tin người chơi và trạng thái mở khóa */
@@ -134,9 +133,9 @@ public class LevelCompleted extends JPanel {
 
         try {
             LeaderBoard.updateLeaderboard(GameManager.playerName, GameManager.getScore());
-            System.out.println("✅ Leaderboard updated for " + GameManager.playerName);
+            System.out.println("Leaderboard updated for " + GameManager.playerName);
         } catch (Exception e) {
-            System.err.println("⚠️ Lỗi khi cập nhật LeaderBoard:");
+            System.err.println("Lỗi khi cập nhật LeaderBoard:");
             e.printStackTrace();
         }
     }
