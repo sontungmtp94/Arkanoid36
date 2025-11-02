@@ -56,6 +56,10 @@ public class Ball extends MovableObject {
     private ArrayList<Brick> bricks;
     private boolean bounceBrick = true;
 
+
+    /** Chia nhỏ di chuyển thành các steps nhỏ hơn. **/
+    private static final int MAX_MOVE_STEPS = 4;
+
     /**
      * Constructor cho Ball.
      *
@@ -94,9 +98,27 @@ public class Ball extends MovableObject {
             }
         }
 
-        // Cập nhật vị trí khi di chuyển
-        setX(getX() + (int) getDx());
-        setY(getY() + (int) getDy());
+        // Cập nhật vị trí khi di chuyển sử dụng CCD bằng cách chia steps.
+        double totalDx = getDx();
+        double totalDy = getDy();
+        double distance = Math.sqrt(totalDx * totalDx + totalDy * totalDy);
+
+        int steps = (int) Math.ceil(distance / 5.0);
+        steps = Math.min(steps, MAX_MOVE_STEPS);
+
+        double stepDx = totalDx / steps;
+        double stepDy = totalDy / steps;
+
+        double posX = getX();
+        double posY = getY();
+
+        for (int i = 0; i < steps; i++) {
+            posX += stepDx;
+            posY += stepDy;
+            setX((int) posX);
+            setY((int) posY);
+        }
+
 
         // Va chạm với trần.
         if (getY() <= 0) {

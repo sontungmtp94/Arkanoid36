@@ -78,6 +78,18 @@ public class ArkanoidGame extends JFrame {
             case PAUSE -> {
                 currentPanel = createPausePanel();
             }
+            case SHOP -> {
+                SoundManager.get().playBgm(SoundId.BGM_MENU, 1200);
+                currentPanel = new ShopPanel(this); // menu shopd
+            }
+            case SHOP_BACKGROUND -> {
+                SoundManager.get().playBgm(SoundId.BGM_MENU, 1200);
+                currentPanel = new ShopBackgroundPanel(this); // chọn background
+            }
+            case SHOP_PADDLE -> {
+                SoundManager.get().playBgm(SoundId.BGM_MENU, 1200);
+                currentPanel = new ShopPaddlePanel(this); // chọn paddle
+            }
         }
 
         // Gắn panel mới vào cửa sổ.

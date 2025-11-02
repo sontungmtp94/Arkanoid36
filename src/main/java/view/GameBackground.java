@@ -1,38 +1,45 @@
 package view;
-import controller.GameManager;
 
-import static view.SpritesView.*;
-
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
+/**
+ * Quản lý background hiện tại của trò chơi.
+ * Cho phép đổi ảnh nền từ ShopPanel hoặc các trạng thái khác.
+ */
 public class GameBackground {
-    private static final String[] path = new String[7];
 
-    private final BufferedImage background;
-    private final BufferedImage informationBar;
-    private final BufferedImage heart;
-    private final BufferedImage unheart;
+    private static String currentBackgroundPath = "/images/utils/background_game.png";
+    private static BufferedImage currentBackground;
 
-    public GameBackground() {
-        for (int i = 0; i < 7; i++) {
-            path[i] = "images/utils/background_game/background" + i + ".png";
+    static {
+        loadCurrentBackground();
+    }
+
+    /** Load ảnh nền hiện tại */
+    private static void loadCurrentBackground() {
+        try {
+            currentBackground = ImageIO.read(GameBackground.class.getResourceAsStream(currentBackgroundPath));
+        } catch (IOException | IllegalArgumentException e) {
+            System.err.println("Không thể load background: " + currentBackgroundPath);
+            currentBackground = null;
         }
-        background = loadSprite(path[(GameManager.getCurrentLevel()) % 7]);
-        informationBar = loadSprite("images/utils/informationBar.png");
-        heart = loadSprite("images/utils/heart.png");
-        unheart = loadSprite("images/utils/unheart.png");
     }
 
-    public BufferedImage getBackground() {
-        return background;
+    /** Đổi ảnh nền sang đường dẫn mới */
+    public static void setCurrentBackground(String newPath) {
+        currentBackgroundPath = newPath;
+        loadCurrentBackground();
     }
 
-    public BufferedImage getInformationBar() {
-        return informationBar;
+    /** Lấy ảnh nền hiện tại */
+    public static BufferedImage getBackground() {
+        return currentBackground;
     }
 
-    public BufferedImage getHeart(boolean t) {
-        if (t) return heart;
-        else return unheart;
+    /** Lấy đường dẫn hiện tại */
+    public static String getCurrentBackgroundPath() {
+        return currentBackgroundPath;
     }
 }
