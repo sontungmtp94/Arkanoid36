@@ -109,4 +109,9 @@ public class Brick extends GameObject {
     public void setScored(boolean scored) {
         this.scored = scored;
     }
+
+    public boolean haveBreakable() {
+        return type != BrickType.METAL;
+    }
+
 }

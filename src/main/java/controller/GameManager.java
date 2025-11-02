@@ -181,7 +181,7 @@ public class GameManager extends JPanel implements ActionListener {
 
             boolean allCleared = true;
             for (Brick brick : bricks)
-                if (!brick.isDestroyed()) { allCleared = false; break; }
+                if (!brick.isDestroyed() && brick.haveBreakable()) { allCleared = false; break; }
 
             if (allCleared) {
                 PowerUp.cancelAllEffects();
