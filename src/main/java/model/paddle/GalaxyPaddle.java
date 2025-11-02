@@ -4,21 +4,27 @@ import controller.GameManager;
 import game.ArkanoidGame;
 import model.projectile.Blast;
 
+import view.GameInformation;
 import static view.SpritesView.loadSprite;
 
+/**
+ * GalaxyPaddle có các kỹ năng:
+ * Kỹ năng X: Cho phép di chuyển dọc bằng W/S và được tăng tốc độ trong 3s.
+ * Kỹ năng C: Bắn blast lên trên, gây sát thương cho gạch trong phạm vi.
+ */
 public class GalaxyPaddle extends Paddle {
     private final int X_DURATION = 3000; //3000
     private final int X_COOLDOWN = 200; //20000
-    private final double X_SPEED_BOOST = 1.4;
+    private final double X_SPEED_BOOST = 1.3;
     private boolean skillXOn = false;
     private int remainingDurationX = X_DURATION;
-    private int remainingCooldownX = 0;
+    private int cooldownTimerX = 0;
 
     private final int C_COOLDOWN = 200; //20000
     private final int C_FREEZE_TIME = Blast.getLifeTime();
     private boolean skillCOn = false;
-    private int remainingCooldownC = 0;
-    private long skillCStartTime;
+    private int cooldownTimerC = 0;
+    private long startTimeC;
 
     // 3 path đến 3 sprites của GalaxyPaddle.
     private final String PATH_DEFAULT = "images/paddles/galaxy/GalaxyPaddle_default.png";
@@ -28,10 +34,10 @@ public class GalaxyPaddle extends Paddle {
     /**
      * Constructor cho GalaxyPaddle.
      *
-     * @param x          Tọa độ x (ngang)
-     * @param y          Tọa độ y (dọc)
-     * @param width      Chiều rộng
-     * @param height     Chiều cao
+     * @param x      Tọa độ x (ngang)
+     * @param y      Tọa độ y (dọc)
+     * @param width  Chiều rộng
+     * @param height Chiều cao
      */
     public GalaxyPaddle(int x, int y, int width, int height) {
         super(x, y, width, height);
@@ -58,7 +64,7 @@ public class GalaxyPaddle extends Paddle {
 
     @Override
     public void castSkillX() {
-        if (skillXOn || remainingCooldownX > 0) {
+        if (skillXOn || cooldownTimerX > 0) {
             return;
         }
 
@@ -69,12 +75,12 @@ public class GalaxyPaddle extends Paddle {
 
     @Override
     public void castSkillC() {
-        if (skillCOn || remainingCooldownC > 0) {
+        if (skillCOn || cooldownTimerC > 0) {
             return;
         }
 
         skillCOn = true;
-        skillCStartTime = System.currentTimeMillis();
+        startTimeC = System.currentTimeMillis();
 
         int blastX = getX() + getWidth() / 2 - Blast.getDefaultWidth() / 2;
         int blastY = getY() - Blast.getDefaultHeight();
@@ -85,48 +91,52 @@ public class GalaxyPaddle extends Paddle {
 
     @Override
     public void update() {
-        final int BAR_HEIGHT = 41;
         super.update();
 
         // Khi kích hoạt skill X.
         if (skillXOn) {
             // Giảm dần duration
-            remainingDurationX -= 1000 / 60;
+            remainingDurationX -= 1000 / GameManager.getFps();
             System.out.println("durationX is " + remainingDurationX);
 
             // Cho phép Paddle di chuyển dọc bằng W/S.
             if (movingAllowed) {
                 if (GameManager.keyManager.isUpPressed()) {
-                    setDy(-speed);
-                    setY(getY() - (int) getSpeed());
+                    dy = -speed;
+                    y += (int) dy;
                 }
                 if (GameManager.keyManager.isDownPressed()) {
-                    setDy(speed);
-                    setY(getY() + (int) getSpeed());
+                    dy = speed;
+                    y += (int) dy;
                 }
             }
 
             // Giữ Paddle luôn trong trần và đáy.
-            if (getY() < 0) {
-                setY(0);
-            } else if (getY() + getHeight() > ArkanoidGame.getGameHeight() - BAR_HEIGHT) {
-                setY(ArkanoidGame.getGameHeight() - getHeight() - BAR_HEIGHT);
+            if (y < 0) {
+                y = 0;
+            } else if (getY() + getHeight()
+                       > ArkanoidGame.getGameHeight() - 1
+                         - GameInformation.getBarHeight()) {
+                y = ArkanoidGame.getGameHeight() - 1
+                    - GameInformation.getBarHeight() - getHeight();
             }
         }
 
         // Hết duration skill X
         if (remainingDurationX <= 0) {
             skillXOn = false;
-            remainingCooldownX = X_COOLDOWN;
-            setSpeed(DEFAULT_SPEED);
-            setY(DEFAULT_Y);
+            cooldownTimerX = X_COOLDOWN;
+            speed = DEFAULT_SPEED;
+            y = DEFAULT_Y;
             remainingDurationX = X_DURATION;
         }
 
         // Cooldown skill X.
-        if (remainingCooldownX > 0) {
-            remainingCooldownX -= 1000 / 60;
-            System.out.println("cooldownX is " + remainingCooldownX);
+        if (cooldownTimerX > 0) {
+            cooldownTimerX -= 1000 / GameManager.getFps();
+            if (cooldownTimerX < 0) {
+                cooldownTimerX = 0;
+            }
         }
 
         // Khi kích hoạt skill C.
@@ -134,17 +144,19 @@ public class GalaxyPaddle extends Paddle {
             // Paddle phải đứng yên.
             movingAllowed = false;
 
-            if (System.currentTimeMillis() - skillCStartTime > C_FREEZE_TIME) {
+            if (System.currentTimeMillis() - startTimeC > C_FREEZE_TIME) {
                 skillCOn = false;
                 movingAllowed = true;
-                remainingCooldownC = C_COOLDOWN;
+                cooldownTimerC = C_COOLDOWN;
             }
         }
 
         // Cooldown skill C.
-        if (remainingCooldownC > 0) {
-            remainingCooldownC -= 1000 / 60;
-            System.out.println("cooldownC is " + remainingCooldownC);
+        if (cooldownTimerC > 0) {
+            cooldownTimerC -= 1000 / GameManager.getFps();
+            if (cooldownTimerC < 0) {
+                cooldownTimerC = 0;
+            }
         }
     }
 
@@ -153,6 +165,7 @@ public class GalaxyPaddle extends Paddle {
         super.resetPaddle();
         skillXOn = false;
         remainingDurationX = X_DURATION;
+        skillCOn = false;
         sprite = loadSprite(PATH_DEFAULT);
     }
 
