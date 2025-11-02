@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 
 /**
  * Lớp model.brick.Brick đại diện cho gạch.
- * Gạch có nhiều loại model.brick.BrickType,ứng với màu săc và độ bền mặc định khác nhau.
+ * Gạch có nhiều loại BrickType, ứng với màu săc và độ bền mặc định khác nhau.
  * Gạch bị phá hủy khi hết độ bền.
  */
 public class Brick extends GameObject {
@@ -98,14 +98,9 @@ public class Brick extends GameObject {
         return type;
     }
 
-    public int getHitPoints() {
-        return hitPoints;
-    }
-
     public void setHitPoints(int hitPoints) {
         this.hitPoints = hitPoints;
     }
-
 
     public boolean isScored() {
         return scored;

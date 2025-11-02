@@ -93,8 +93,8 @@ public class MainMenu extends JPanel {
         });
 
         btnShop.addActionListener(e -> {
-            audio.SoundManager.get().playSfx(audio.SoundId.SFX_CLICK);
-            JOptionPane.showMessageDialog(this, "Shop (stub)");
+            SoundManager.get().playSfx(SoundId.SFX_CLICK);
+            game.changeState(GameState.SHOP);
         });
 
         btnExit.addActionListener(e -> {
@@ -142,13 +142,13 @@ public class MainMenu extends JPanel {
         return (u == null) ? null : new ImageIcon(u).getImage();
     }
 
-    /** Tìm resource trên classpath theo nhiều cách. */
+    /** Tìm resource trên classpath. */
     private static URL findOnClasspath(String path) {
         String noSlash = path.startsWith("/") ? path.substring(1) : path;
 
         String[] candidates = new String[] {
                 path,                          // /anim2/E9_000.png
-                "/" + noSlash,                 // phòng khi thiếu slash
+                "/" + noSlash,
                 "/Resources/" + noSlash,       // /Resources/anim2/E9_000.png
                 "Resources/" + noSlash
         };

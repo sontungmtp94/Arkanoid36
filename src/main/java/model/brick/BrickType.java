@@ -2,7 +2,6 @@ package model.brick;
 
 import view.SpritesView;
 import java.awt.image.BufferedImage;
-import java.util.Random;
 
 /**
  * BrickType đại diện cho 6 loại gạch.
@@ -20,9 +19,9 @@ public enum BrickType {
     private static final int WIDTH = 32;
     private static final int HEIGHT = 16;
 
-    private final int row;  // Vị trí hàng trong sprite sheet
+    private final int row;
     private final int hitPoints;  // HP của loại gạch này
-    private final BufferedImage[] frames = new BufferedImage[6];  // Số trạng thái (HP) của gạch
+    private final BufferedImage[] frames = new BufferedImage[6];
 
     BrickType(int row, int hitPoints) {
         this.row = row;
@@ -51,11 +50,10 @@ public enum BrickType {
 
     /**
      * Lấy hình ảnh ứng với số HP còn lại.
-     * HP càng thấp → gạch càng nứt.
      */
     public BufferedImage getFrame(int hpRemaining) {
         if (this == METAL) return frames[0];
-        int damage = hitPoints - hpRemaining; // số lần bị trúng
+        int damage = hitPoints - hpRemaining; // số lần bị trúng.
         int index = Math.min(damage, frames.length - 1);
         return frames[index];
     }
