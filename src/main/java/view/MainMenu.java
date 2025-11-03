@@ -22,13 +22,11 @@ public class MainMenu extends JPanel {
 
     private final ArkanoidGame game;
 
-    // Vì Resources/ là Resources Root
     private static final String BG_PATH = "/images/utils/background_menu.png";
 
     private static final String ANIM1_PATTERN = "/images/anim1/E9_%03d.png"; // 000..005 (6)
     private static final String ANIM2_PATTERN = "/images/anim2/ChibiHerta_%03d.png";         // 000..009 (10)
 
-    // Số frame đúng; có thể set = 0 để auto-scan
     private static final int ANIM1_FRAMES = 0;
     private static final int ANIM2_FRAMES = 0;
 
@@ -41,7 +39,7 @@ public class MainMenu extends JPanel {
         this.game = game;
         setLayout(new BorderLayout());
 
-        // Phát nhạc nền.
+        /** Phát nhạc nền. */
         audio.SoundManager.get().playBgm(audio.SoundId.BGM_MENU, 800);
 
 
@@ -69,17 +67,17 @@ public class MainMenu extends JPanel {
         });
     }
 
-    // Đọc tên người chơi từ file (nếu chưa có -> "Guest")
+    /** Đọc tên người chơi từ file (nếu chưa có -> "Guest") */
     private String loadPlayerName(String path) {
         try {
             File pathName = new File(path);
 
-            // Nếu file có tồn tại → đọc nội dung đầu tiên
+            /** Nếu file có tồn tại → đọc nội dung đầu tiên */
             Scanner scanner = new Scanner(pathName, StandardCharsets.UTF_8);
             String name = scanner.hasNextLine() ? scanner.nextLine().trim() : "Unknown";
             scanner.close();
 
-            // Trả về nội dung file (nếu rỗng thì fallback "Player1")
+            /** Trả về nội dung file */
             return name.isEmpty() ? "Unknown" : name;
 
         } catch (IOException e) {
@@ -88,26 +86,25 @@ public class MainMenu extends JPanel {
         }
     }
 
-    // Lưu thông tin tên người chơi.
+    /** Lưu thông tin tên người chơi. */
     private static void savePlayerName(String name) {
         try {
             File file = new File(PLAYER_FILE);
             java.util.List<String> lines = new java.util.ArrayList<>();
 
-            // Đọc toàn bộ file
+            /** Đọc toàn bộ file */
             if (file.exists()) {
                 Scanner sc = new Scanner(file, StandardCharsets.UTF_8);
                 while (sc.hasNextLine()) lines.add(sc.nextLine());
                 sc.close();
             }
 
-            // Đảm bảo có ít nhất 2 dòng
+            /** Đảm bảo có ít nhất 2 dòng */
             while (lines.size() < 2) lines.add("");
 
-            // Sửa dòng đầu tiên
             lines.set(0, name);
 
-            // Ghi lại toàn bộ
+            /** Ghi lại toàn bộ */
             PrintWriter pw = new PrintWriter(file, StandardCharsets.UTF_8);
             for (String line : lines) pw.println(line);
             pw.close();
@@ -119,13 +116,13 @@ public class MainMenu extends JPanel {
     private JPanel buildUiLayer() {
         JPanel ui = new JPanel(new BorderLayout());
 
-        // Menu bên trái
+        /** Menu bên trái */
         JPanel left = new JPanel();
         left.setOpaque(false);
         left.setLayout(new BoxLayout(left, BoxLayout.Y_AXIS));
         left.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
 
-        // Thanh tên người chơi (trên cùng)
+        /** Thanh tên người chơi */
         JPanel top = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 10));
         top.setOpaque(false);
 
@@ -133,11 +130,11 @@ public class MainMenu extends JPanel {
         lblName.setFont(new Font("Vermin Vibes 1989", Font.PLAIN, 34));
         lblName.setForeground(Color.WHITE);
 
-        JButton btnPlay    = new JButton("PLAY");
-        JButton btnLeaderBoard    = new JButton("LEADERBOARD");
-        JButton btnShop    = new JButton("SHOP");
+        JButton btnPlay = new JButton("PLAY");
+        JButton btnLeaderBoard = new JButton("LEADERBOARD");
+        JButton btnShop = new JButton("SHOP");
         JButton btnEdit = new JButton("Edit");
-        JButton btnExit    = new JButton("EXIT");
+        JButton btnExit = new JButton("EXIT");
 
         try {
             Font vermin = new Font("Vermin Vibes 1989", Font.PLAIN, 1);
@@ -158,15 +155,14 @@ public class MainMenu extends JPanel {
         styleButton(btnLeaderBoard);
         styleButton(btnShop);
         styleButton(btnExit);
-        styleButton(btnEdit); // tái dùng hàm styleButton
+        styleButton(btnEdit);
 
-        // Gọi âm thanh Click.wav.
+        /** Gọi âm thanh Click.wav. */
         btnPlay.addActionListener(e -> {
             SoundManager.get().playSfx(SoundId.SFX_CLICK);
             game.changeState(GameState.LEVEL_CHOOSE);
         });
 
-        // Gọi âm thanh Click.wav.
         btnLeaderBoard.addActionListener(e -> {
             SoundManager.get().playSfx(SoundId.SFX_CLICK);
             game.changeState(GameState.LEADERBOARD);
@@ -197,7 +193,7 @@ public class MainMenu extends JPanel {
 
         ui.add(left, BorderLayout.WEST);
 
-        // Hai animation PNG góc dưới-trái
+        /** Hai animation PNG góc dưới-trái */
         JPanel bottomLeft = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 12));
         bottomLeft.setOpaque(false);
 
@@ -234,9 +230,9 @@ public class MainMenu extends JPanel {
         String noSlash = path.startsWith("/") ? path.substring(1) : path;
 
         String[] candidates = new String[] {
-                path,                          // /anim2/E9_000.png
-                "/" + noSlash,                 // phòng khi thiếu slash
-                "/Resources/" + noSlash,       // /Resources/anim2/E9_000.png
+                path,
+                "/" + noSlash,
+                "/Resources/" + noSlash,
                 "Resources/" + noSlash
         };
 

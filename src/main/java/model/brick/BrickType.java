@@ -20,7 +20,7 @@ public enum BrickType {
     private static final int HEIGHT = 16;
 
     private final int row;
-    private final int hitPoints;  // HP của loại gạch này
+    private final int hitPoints;
     private final BufferedImage[] frames = new BufferedImage[6];
 
     BrickType(int row, int hitPoints) {
@@ -35,8 +35,8 @@ public enum BrickType {
                 for (int i = 0; i < 6; i++) {
                     type.frames[i] = SpritesView.cutSprite(
                             sheet,
-                            i * WIDTH,         // cột = mức độ nứt
-                            type.row * HEIGHT,    // hàng = màu
+                            i * WIDTH,
+                            type.row * HEIGHT,
                             WIDTH,
                             HEIGHT
                     );
@@ -53,7 +53,10 @@ public enum BrickType {
      */
     public BufferedImage getFrame(int hpRemaining) {
         if (this == METAL) return frames[0];
-        int damage = hitPoints - hpRemaining; // số lần bị trúng.
+
+        /** số lần bị trúng. */
+        int damage = hitPoints - hpRemaining;
+
         int index = Math.min(damage, frames.length - 1);
         return frames[index];
     }

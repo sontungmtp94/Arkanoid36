@@ -16,18 +16,18 @@ import java.util.concurrent.*;
 public class SoundManager {
     private static final SoundManager Instance = new SoundManager();
 
-    // Volume mặc định (dB): 0.0 dB là nguyên bản, còn âm dB là nhỏ hơn.
+    // Volume mặc định (dB).
     private volatile float bgmGainDb = -6.0f;
     private volatile float sfxGainDb = -3.0f;
 
     private Clip currentBgm;
     private SoundId currentBgmId;
 
-    // Cache audio data, tránh mở sẵn Clip cho SFX (Chiếm line).
+    // Cache audio data, tránh mở sẵn Clip cho SFX.
     private final Map<SoundId, byte[]> audioCache = new ConcurrentHashMap<>();
     private final Map<SoundId, AudioFormat> formatCache = new ConcurrentHashMap<>();
 
-    // Để việc phát âm thanh cho luồng phụ, để luồng chính (EDT) xử lí game mượt, tránh bị đơ.
+    // Để việc phát âm thanh cho luồng phụ, tránh luồng chính quá tải.
     private final ExecutorService sfxPool = Executors.newCachedThreadPool(r -> {
         Thread t = new Thread(r, "SFX-Player");
         t.setDaemon(true);
@@ -40,10 +40,6 @@ public class SoundManager {
     public static SoundManager get(){
         return Instance;
     }
-
-    /*
-    -----------------API------------------
-     */
 
     // Phát BGM mới. Nếu đang có thì fade (crossfade) sang bài mới.
     public synchronized void playBgm(SoundId id, int fadeMs) {
@@ -87,6 +83,14 @@ public class SoundManager {
         sfxPool.execute(() -> {
             Clip c = createClip(id);
             if (c == null) return;
+
+            float gain = sfxGainDb;
+
+            // Tăng âm lượng cho SFX_HIT
+            if (id == SoundId.SFX_HIT) {
+                gain += 15.0f;
+            }
+
             setGain(c, sfxGainDb);
             c.start();
             // Đợi xong thì đóng để giải phóng line
@@ -118,10 +122,6 @@ public class SoundManager {
         audioCache.clear();
         formatCache.clear();
     }
-
-    /*
-    --------------------------------------------
-     */
 
     private Clip createClip(SoundId id) {
         try{

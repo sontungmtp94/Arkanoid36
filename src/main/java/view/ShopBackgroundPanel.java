@@ -37,12 +37,13 @@ public class ShopBackgroundPanel extends JPanel {
         this.game = game;
         setLayout(null);
 
-        // Load nền
         backgroundMenu = new ImageIcon(getClass().getResource("/images/utils/background_menu.png")).getImage();
 
-        // File riêng cho từng người chơi
-        String player = GameManager.playerName == null ? "default" : GameManager.playerName;
-        this.unlockFile = new File("unlocked_paddles_" + GameManager.getPlayerId() + ".txt");
+        /** File riêng cho từng người chơi */
+        String playerId = GameManager.getPlayerId();
+        File dir = new File("src/main/resources/players/" + playerId);
+        if (!dir.exists()) dir.mkdirs();
+        this.unlockFile = new File(dir, "shop_background.txt");
 
         loadUnlocked();
         initUI();
@@ -137,7 +138,7 @@ public class ShopBackgroundPanel extends JPanel {
                         return;
                     }
 
-                    // Nếu chưa mua
+                    /** Nếu chưa mua */
                     if (price == 0) {
                         unlocked.add(index);
                         saveUnlocked();
@@ -147,7 +148,7 @@ public class ShopBackgroundPanel extends JPanel {
                         return;
                     }
 
-                    // Nếu đủ điểm để mua
+                    /** Nếu đủ điểm để mua */
                     if (playerPoints >= price) {
                         int confirm = JOptionPane.showConfirmDialog(
                                 ShopBackgroundPanel.this,

@@ -49,10 +49,10 @@ public class LeaderBoard extends JPanel {
         if (full != null)
             boardImg = full; // Giữ nguyên tỉ lệ, vẽ giữa màn hình
 
-        // === Đọc file ===
+        //Đọc file
         loadLeaderboard();
 
-        // === Nút Main Menu ===
+        //Nút Main Menu
         JButton backBtn = new JButton("MENU");
         backBtn.setFont(new Font("Vermin Vibes 1989", Font.PLAIN, 36));
         backBtn.setFocusPainted(false);

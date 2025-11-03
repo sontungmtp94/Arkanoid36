@@ -17,7 +17,7 @@ public class Brick extends GameObject {
     /** Độ bền model.brick.Brick trong game. */
     private int hitPoints;
 
-    private boolean scored = false; // Biến kiểm tra đã được tính điểm chưa
+    private boolean scored = false;
 
     /**
      * Constructor cho model.brick.Brick.
@@ -32,7 +32,7 @@ public class Brick extends GameObject {
                  BrickType type) {
         super(x, y, width, height);
         this.type = type;
-        this.hitPoints = type.getHitPoints(); // Độ cứng lấy từ BrickType.
+        this.hitPoints = type.getHitPoints();
     }
 
     /** Cập nhật trạng thái của model.brick.Brick. */
@@ -50,12 +50,11 @@ public class Brick extends GameObject {
             return;
         }
 
-        // Giảm HP của gạch sau khi va chạm.
+        /** Giảm HP của gạch sau khi va chạm. */
         hitPoints -= damage;
 
         System.out.printf("[HIT] %s took %d damage → HP now %d%n", type, damage, hitPoints);
 
-        // Gạch sẽ vỡ khi HP <= 0
         if (hitPoints < 0) {
             hitPoints = 0;
         }
@@ -82,17 +81,17 @@ public class Brick extends GameObject {
     @Override
     public void render(Graphics2D g) {
         if (isDestroyed()) {
-            return; // Nếu gạch bị phá, xóa gạch.
+            return;
         }
 
-        // Lấy ảnh sprite tương ứng với hp hiện tại.
+        /** Lấy ảnh sprite tương ứng với hp hiện tại. */
         BufferedImage img = type.getFrame(hitPoints);  // Lấy frame theo HP còn lại
         if (img != null) {
             g.drawImage(img, x, y, width, height, null);
         }
     }
 
-    // Các getter và setter
+    /** Các getter và setter */
 
     public BrickType getType() {
         return type;

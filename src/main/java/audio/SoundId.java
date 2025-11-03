@@ -11,7 +11,6 @@ public enum SoundId {
     // Sound effects.
     SFX_CLICK("sounds/click.wav", false),
     SFX_HIT("sounds/hit_brick.wav", false),
-    SFX_POWERUP("sounds/powerup.wav", false),
     SFX_LOSE("sounds/lose.wav", false),
     SFX_WIN("sounds/win.wav", false);
 

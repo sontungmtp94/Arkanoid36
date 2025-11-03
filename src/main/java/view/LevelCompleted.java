@@ -19,9 +19,7 @@ import view.LeaderBoard;
 
 
 /**
- * Lớp LevelCompleted hiển thị thông báo "You Win", hướng dẫn next level/restart/main menu
- * và update thông tin người chơi.
- *
+ * Lớp LevelCompleted hiển thị thông báo "Level Completed" và hướng dẫn next level/ restart.
  */
 public class LevelCompleted extends JPanel {
     private final GameManager gameManager;
@@ -122,7 +120,7 @@ public class LevelCompleted extends JPanel {
             }
         }
 
-        // === Cập nhật file DataPlayer.txt ===
+        //Cập nhật file DataPlayer.txt
         LevelCompleted.updateDataPlayer();
     }
 
@@ -132,7 +130,7 @@ public class LevelCompleted extends JPanel {
         repaint();
         SoundManager.get().playSfx(SoundId.SFX_WIN);
 
-        // === In ra điểm và cập nhật leaderboard ===
+        //In ra điểm và cập nhật leaderboard
         System.out.println(GameManager.playerName + ": " + GameManager.getScore());
 
         try {

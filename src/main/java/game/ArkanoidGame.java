@@ -26,7 +26,6 @@ public class ArkanoidGame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // Mở màn hình chính
         changeState(GameState.MENU);
 
         setVisible(true);
@@ -44,12 +43,10 @@ public class ArkanoidGame extends JFrame {
     public void changeState(GameState newState) {
         this.currentState = newState;
 
-        // Gỡ panel cũ
         if (currentPanel != null) {
             getContentPane().remove(currentPanel);
         }
 
-        // Tạo panel mới dựa trên trạng thái
         switch (newState) {
             case MENU -> {
                 SoundManager.get().playBgm(SoundId.BGM_MENU, 1200);
@@ -92,7 +89,6 @@ public class ArkanoidGame extends JFrame {
             }
         }
 
-        // Gắn panel mới vào cửa sổ.
         currentPanel.setPreferredSize(new Dimension(WIDTH,HEIGHT));
         setContentPane(currentPanel);
         pack();

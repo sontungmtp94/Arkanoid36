@@ -37,9 +37,11 @@ public class ShopPaddlePanel extends JPanel {
 
         backgroundMenu = new ImageIcon(getClass().getResource("/images/utils/background_menu.png")).getImage();
 
-        // File riêng cho từng người chơi
-        String player = GameManager.playerName == null ? "default" : GameManager.playerName;
-        this.unlockFile = new File("unlocked_paddles_" + GameManager.getPlayerId() + ".txt");
+        /** File riêng cho từng người chơi */
+        String playerId = GameManager.getPlayerId();
+        File dir = new File("src/main/resources/players/" + playerId);
+        if (!dir.exists()) dir.mkdirs();
+        this.unlockFile = new File(dir, "shop_paddle.txt");
 
         loadUnlocked();
         initUI();
@@ -122,7 +124,7 @@ public class ShopPaddlePanel extends JPanel {
                     String playerName = GameManager.playerName;
                     int playerPoints = LeaderBoard.getScoreByName(playerName);
 
-                    // Nếu đã mở → chọn paddle
+                    // Nếu đã mở thì có thể chọn paddle
                     if (unlocked.contains(index)) {
                         PaddleAssets.setCurrentPaddle(paddles[index]);
                         saveCurrentPaddle(paddles[index]);
@@ -132,7 +134,7 @@ public class ShopPaddlePanel extends JPanel {
                         return;
                     }
 
-                    // Nếu miễn phí → mở luôn
+                    /** Nếu miễn phí có thể chọn luôn */
                     if (price == 0) {
                         unlocked.add(index);
                         saveUnlocked();
@@ -142,7 +144,7 @@ public class ShopPaddlePanel extends JPanel {
                         return;
                     }
 
-                    // Nếu đủ điểm để mua
+                    /** Nếu đủ điểm để mua */
                     if (playerPoints >= price) {
                         int confirm = JOptionPane.showConfirmDialog(
                                 ShopPaddlePanel.this,

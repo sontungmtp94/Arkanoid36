@@ -72,7 +72,7 @@ public class GameManager extends JPanel implements ActionListener {
         projectiles = new ArrayList<>();
         balls = new ArrayList<>();
         Ball ball = new Ball(panelWidth / 2, panelHeight / 2,
-                            Ball.getDefaultSize());
+                Ball.getDefaultSize());
         ball.setAndReloadSpritePath("images/balls/ball_default.png");
         ball.setDamage(1);
         balls.add(ball);
@@ -239,7 +239,7 @@ public class GameManager extends JPanel implements ActionListener {
         if (keyManager.isNextLevelPressed() && gameState == GameState.LEVEL_COMPLETED) nextLevel();
 
         if ((keyManager.isRestartPressed() && gameState == GameState.GAME_OVER)
-            || (keyManager.isRestartPressed() && gameState == GameState.LEVEL_COMPLETED)) {
+                || (keyManager.isRestartPressed() && gameState == GameState.LEVEL_COMPLETED)) {
             restartGame();
         }
     }
@@ -339,7 +339,7 @@ public class GameManager extends JPanel implements ActionListener {
         repaint();
     }
 
-    // Getter & Setter
+    /** Getter & Setter */
 
 
     public static int getFps() {
@@ -436,7 +436,7 @@ public class GameManager extends JPanel implements ActionListener {
                 e.printStackTrace();
             }
         }
-        // Mặc định nếu không có file
+
         return new NormalPaddle(Paddle.getDefaultX(), Paddle.getDefaultY(),
                 Paddle.getDefaultWidth(), Paddle.getDefaultHeight());
     }

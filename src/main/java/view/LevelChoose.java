@@ -22,7 +22,7 @@ public class LevelChoose extends JPanel {
     private Image levelImg1;
     private Image levelImg2;
     private Image levelHoverImg;
-    protected static int[] unlock = new int[20];
+    public static int[] unlock = new int[20];
 
     /**
      * Khởi tạo LevelChoose.
