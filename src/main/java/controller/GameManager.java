@@ -148,7 +148,7 @@ public class GameManager extends JPanel implements ActionListener {
             if (!keyManager.isLeftPressed() && !keyManager.isRightPressed()) {
                 paddle.stop();
             }
-
+            paddle.update();
             for (Ball b : balls) b.update();
 
             if (gameState == GameState.PLAYING) {
@@ -160,8 +160,6 @@ public class GameManager extends JPanel implements ActionListener {
                     paddle.castSkillC();
                 }
             }
-
-            paddle.update();
             updateProjectile();
         }
 
@@ -178,7 +176,7 @@ public class GameManager extends JPanel implements ActionListener {
             for (Brick brick : bricks) {
                 if (brick.isDestroyed() && !brick.isScored()) {
                     score += 10;
-                    PowerUp.createPowerUp(brick, 1);
+                    PowerUp.createPowerUp(brick, 0.2);
                     brick.setScored(true);
                 }
             }
@@ -261,8 +259,8 @@ public class GameManager extends JPanel implements ActionListener {
 
         for (Brick brick : bricks) brick.render(g2d);
         for (PowerUp pu : powerUps) pu.render(g2d);
-        for (Ball b : balls) b.render(g2d);
         paddle.render(g2d);
+        for (Ball b : balls) b.render(g2d);
         for (Projectile p : projectiles) p.render(g2d);
         // Phần thể hiện thông tin của 1 ván trò chơi.
         g.drawImage(GameInformation.getInformationBar(), 0, 610, panelWidth, 40, null);

@@ -192,10 +192,10 @@ public class PowerUp extends MovableObject {
                 for(Ball b : GameManager.balls) {
                     if (b.getDamage() == 1 && b.getHeight() == Ball.getDefaultSize()) {
                         b.setAndReloadSpritePath("/images/balls/ball_extended.png");
-                        int multi = 2;
-                        b.setDamage(b.getDamage() * multi);
-                        b.setHeight(Ball.getDefaultSize() * multi);
-                        b.setWidth(Ball.getDefaultSize() * multi);
+                        double multi = 1.5;
+                        b.setDamage(2);
+                        b.setHeight((int) (Ball.getDefaultSize() * multi));
+                        b.setWidth((int) (Ball.getDefaultSize() * multi));
                     }
                 }
                 countdown(3, 30, () -> {
@@ -205,14 +205,14 @@ public class PowerUp extends MovableObject {
                 break;
 
             case 4:
-                double multi = 2;
+                double multi = 0.5;
                 if (Math.abs(GameManager.getPaddle().getSpeed()) == GameManager.getPaddle().getDefaultSpeed()) {
                     GameManager.getPaddle().setSpeed(GameManager.getPaddle().getSpeed() * multi);
                 }
                 countdown(4, 30, () -> {
                     cancelEffect(4);
                 });
-                showMessage("Gấp đôi tốc độ Paddle");
+                showMessage("Giảm tốc độ Paddle");
                 break;
 
             case 5:
@@ -344,8 +344,8 @@ public class PowerUp extends MovableObject {
                 break;
 
             case 4:
-                if (Math.abs(GameManager.getPaddle().getSpeed()) > GameManager.getPaddle().getDefaultSpeed()) {
-                    GameManager.getPaddle().setSpeed((int) (GameManager.getPaddle().getSpeed() / 2));
+                if (Math.abs(GameManager.getPaddle().getSpeed()) < GameManager.getPaddle().getDefaultSpeed()) {
+                    GameManager.getPaddle().setSpeed((int) (GameManager.getPaddle().getSpeed() * 2));
                 }
                 break;
 
