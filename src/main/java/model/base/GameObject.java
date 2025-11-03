@@ -3,16 +3,16 @@ package model.base;
 import java.awt.*;
 
 public abstract class GameObject {
-    /** Tọa độ góc trên bên trái của GameObjext. */
+    /** Tọa độ góc trên bên trái của GameObject. */
     protected int x;
     protected int y;
 
-    /** Kích thước của model.base.GameObject. */
+    /** Kích thước của GameObject. */
     protected int width;
     protected int height;
 
     /**
-     * Constructor cho model.base.GameObject với vị trí và kích thước.
+     * Constructor cho GameObject với vị trí và kích thước.
      *
      * @param x      Tọa độ x, Chiều ngang từ Trái sang Phải
      * @param y      Tọa độ y, Chiều dọc từ Trên xuống Dưới
@@ -32,10 +32,7 @@ public abstract class GameObject {
     public abstract void update();
 
     /**
-     * Lấy vùng chiếm chỗ là Rectangle bao quanh đối tượng.
-     * Dùng để kiểm tra va chạm.
-     *
-     * @return Trả về vùng chiếm chỗ của đối tượng
+     * Lấy vùng bao quanh đối tượng. Dùng để kiểm tra va chạm.
      */
     public abstract Shape getBounds();
 

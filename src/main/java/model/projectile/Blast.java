@@ -16,11 +16,12 @@ public class Blast extends Projectile {
     private static final int DEFAULT_WIDTH = 50;
     private static final int DEFAULT_HEIGHT = 650;
     private static final int DAMAGE = 1;
-    private static final int LIFETIME = 250; // 0.25s
+    private static final int LIFETIME = 200;
     private static final String SPRITE_PATH = "images/paddles/galaxy/blast.png";
 
     private BufferedImage sprite;
     private long startTime;
+    private boolean dealtDamage = false;
     /**
      * Constructor cho Blast.
      *
@@ -34,18 +35,22 @@ public class Blast extends Projectile {
         startTime = System.currentTimeMillis();
     }
 
+    /** Gây sát thương 1 lần cho gạch. Tồn tại đến khi hết LIFETIME. */
     @Override
     public void update() {
         if (!active) {
             return;
         }
 
-        // Nếu Blast xuyên qua Brick thì gây sát thương.
-        Rectangle2D blastRect = (Rectangle2D) getBounds();
-        for (Brick b : GameManager.getBricks()) {
-            if (blastRect.intersects((Rectangle2D) b.getBounds())) {
-                b.takeHits(DAMAGE);
+        if (!dealtDamage) {
+            // Nếu Blast xuyên qua Brick thì gây sát thương.
+            Rectangle2D blastRect = (Rectangle2D) getBounds();
+            for (Brick b : GameManager.getBricks()) {
+                if (blastRect.intersects((Rectangle2D) b.getBounds())) {
+                    b.takeHits(DAMAGE);
+                }
             }
+            dealtDamage = true;
         }
 
         if (System.currentTimeMillis() - startTime > LIFETIME) {
@@ -63,7 +68,6 @@ public class Blast extends Projectile {
         if (!active) {
             return;
         }
-
         g.drawImage(sprite, getX(), getY(), DEFAULT_WIDTH, DEFAULT_HEIGHT, null);
     }
 

@@ -131,7 +131,7 @@ public class Ball extends MovableObject {
                         brick.takeHits(damage);
                         audio.SoundManager.get().playSfx(audio.SoundId.SFX_HIT);
                     } else {
-                        brick.takeHits(1);
+                        brick.takeHits(36);
                         audio.SoundManager.get().playSfx(audio.SoundId.SFX_HIT);
                     }
                     break;
@@ -162,10 +162,10 @@ public class Ball extends MovableObject {
                 // Đẩy ra khỏi 2 mép Paddle để tránh kẹt.
                 if (ballRect.getCenterX() < paddleRect.getCenterX()) {
                     // Đẩy sang trái.
-                    setX((int) (paddleRect.getX() - getWidth()));
+                    setX((int) (paddleRect.getX() - getWidth() - 1));
                 } else {
                     // Đẩy sang phải.
-                    setX((int) (paddleRect.getX() + paddleRect.getWidth()));
+                    setX((int) (paddleRect.getX() + paddleRect.getWidth() + 1));
                 }
 
                 setDx(-getDx()); // Ball bật ngược
