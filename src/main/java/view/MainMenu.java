@@ -35,8 +35,6 @@ public class MainMenu extends JPanel {
     private static final int ANIM_FPS = 12;
     private static final double ANIM_SCALE = 1.0;
 
-    private JTextField nameField;
-    private JButton editButton;
     private static final String PLAYER_FILE = "src/main/resources/DataPlayer.txt";
 
     public MainMenu(ArkanoidGame game) {
@@ -132,15 +130,25 @@ public class MainMenu extends JPanel {
         top.setOpaque(false);
 
         JLabel lblName = new JLabel("Player: " + loadPlayerName(PLAYER_FILE));
-        lblName.setFont(lblName.getFont().deriveFont(Font.BOLD, 24f));
+        lblName.setFont(new Font("Vermin Vibes 1989", Font.PLAIN, 34));
         lblName.setForeground(Color.WHITE);
 
         JButton btnPlay    = new JButton("PLAY");
         JButton btnLeaderBoard    = new JButton("LEADERBOARD");
-        JButton btnSetting = new JButton("SETTINGS");
         JButton btnShop    = new JButton("SHOP");
         JButton btnEdit = new JButton("Edit");
         JButton btnExit    = new JButton("EXIT");
+
+        try {
+            Font vermin = new Font("Vermin Vibes 1989", Font.PLAIN, 1);
+            btnPlay.setFont(vermin.deriveFont(Font.PLAIN, 64f));
+            btnLeaderBoard.setFont(vermin.deriveFont(Font.PLAIN, 55f));
+            btnShop.setFont(vermin.deriveFont(Font.PLAIN, 55f));
+            btnExit.setFont(vermin.deriveFont(Font.PLAIN, 55f));
+            btnEdit.setFont(vermin.deriveFont(Font.PLAIN, 45f));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         top.add(lblName);
         top.add(btnEdit);
@@ -148,11 +156,9 @@ public class MainMenu extends JPanel {
 
         styleButton(btnPlay);
         styleButton(btnLeaderBoard);
-        styleButton(btnSetting);
         styleButton(btnShop);
         styleButton(btnExit);
         styleButton(btnEdit); // tái dùng hàm styleButton
-        btnEdit.setFont(btnEdit.getFont().deriveFont(20f));
 
         // Gọi âm thanh Click.wav.
         btnPlay.addActionListener(e -> {
@@ -164,11 +170,6 @@ public class MainMenu extends JPanel {
         btnLeaderBoard.addActionListener(e -> {
             SoundManager.get().playSfx(SoundId.SFX_CLICK);
             game.changeState(GameState.LEADERBOARD);
-        });
-
-        btnSetting.addActionListener(e -> {
-            SoundManager.get().playSfx(SoundId.SFX_CLICK);
-            JOptionPane.showMessageDialog(this, "Setting (stub)");
         });
 
         btnShop.addActionListener(e -> {
@@ -191,7 +192,6 @@ public class MainMenu extends JPanel {
 
         left.add(btnPlay);    left.add(Box.createVerticalStrut(24));
         left.add(btnLeaderBoard);    left.add(Box.createVerticalStrut(24));
-        left.add(btnSetting); left.add(Box.createVerticalStrut(24));
         left.add(btnShop);    left.add(Box.createVerticalStrut(24));
         left.add(btnExit);
 
@@ -214,7 +214,6 @@ public class MainMenu extends JPanel {
 
     public void styleButton(JButton b) {
         b.setAlignmentX(Component.LEFT_ALIGNMENT);
-        b.setFont(b.getFont().deriveFont(Font.BOLD, 44f));
         b.setForeground(Color.WHITE);
         b.setFocusPainted(false);
         b.setContentAreaFilled(false);

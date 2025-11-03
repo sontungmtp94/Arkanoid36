@@ -35,7 +35,7 @@ public class LeaderBoard extends JPanel {
         setPreferredSize(new Dimension(width, height));
 
         // === Load nền và bảng điểm ===
-        BufferedImage bg = SpritesView.loadSprite("images/utils/background_menu.png");
+        BufferedImage bg = SpritesView.loadSprite("images/utils/background_game.png");
         BufferedImage full = SpritesView.loadSprite("images/utils/leaderboardBar.png");
 
         if (bg != null)

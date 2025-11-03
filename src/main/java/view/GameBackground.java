@@ -10,7 +10,7 @@ import java.io.IOException;
  */
 public class GameBackground {
 
-    private static String currentBackgroundPath = "/images/utils/background_game.png";
+    private static String currentBackgroundPath = "/images/utils/background_menu.png";
     private static BufferedImage currentBackground;
 
     static {
