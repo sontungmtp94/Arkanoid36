@@ -101,9 +101,9 @@ public abstract class Paddle extends MovableObject {
 
     /** Cập nhật sprite tương ứng khi Width thay đổi do Powerup. */
     public void updateSpriteByWidth() {
-        if (width == DEFAULT_WIDTH - 60) {
+        if (width < DEFAULT_WIDTH) {
             setAndLoadSprite(getPathShort());
-        } else if (width == DEFAULT_WIDTH + 60) {
+        } else if (width > DEFAULT_WIDTH) {
             setAndLoadSprite(getPathLong());
         } else {
             setAndLoadSprite(getPathDefault());

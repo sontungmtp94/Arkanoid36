@@ -17,6 +17,7 @@ import model.brick.Brick;
 import model.paddle.Paddle;
 
 public class PowerUp extends MovableObject {
+    private static final int PADDLE_WIDTH_CHANGE = 60;
     private int id;
     public static int numsOfPU = 12;
     private String[] FILE_IMAGES = new String[numsOfPU];
@@ -166,9 +167,8 @@ public class PowerUp extends MovableObject {
             case 1:
                 showMessage("Tăng chiều dài Paddle");
 
-                if (GameManager.paddle.getWidth() < Paddle.getDefaultWidth() + 60) {
-                    GameManager.paddle.setWidth(GameManager.paddle.getWidth() + 60);
-                    GameManager.paddle.setAndLoadSprite("images/paddles/galaxy/GalaxyPaddle_long.png");
+                if (GameManager.paddle.getWidth() < Paddle.getDefaultWidth() + PADDLE_WIDTH_CHANGE) {
+                    GameManager.paddle.setWidth(GameManager.paddle.getWidth() + PADDLE_WIDTH_CHANGE);
                 }
                 GameManager.paddle.updateSpriteByWidth();
                 if (timers.containsKey(5) && timers.get(5) != null) {
@@ -216,9 +216,8 @@ public class PowerUp extends MovableObject {
                 break;
 
             case 5:
-                if (GameManager.paddle.getWidth() > Paddle.getDefaultWidth() - 60) {
-                    GameManager.paddle.setWidth(GameManager.paddle.getWidth() - 60);
-                    GameManager.paddle.setAndLoadSprite("images/paddles/galaxy/GalaxyPaddle_short.png");
+                if (GameManager.paddle.getWidth() > Paddle.getDefaultWidth() - PADDLE_WIDTH_CHANGE) {
+                    GameManager.paddle.setWidth(GameManager.paddle.getWidth() - PADDLE_WIDTH_CHANGE);
                 }
                 GameManager.paddle.updateSpriteByWidth();
                 if (timers.containsKey(1) && timers.get(1) != null) {
@@ -332,7 +331,7 @@ public class PowerUp extends MovableObject {
             case 1:
             case 5: // Paddle quay về chiều dài ban đầu
                 GameManager.getPaddle().setWidth(Paddle.getDefaultWidth());
-                GameManager.paddle.setAndLoadSprite("images/paddles/galaxy/GalaxyPaddle_default.png");
+                GameManager.paddle.updateSpriteByWidth();
                 break;
 
             case 3: // Bóng to

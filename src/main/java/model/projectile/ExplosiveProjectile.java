@@ -20,7 +20,7 @@ public abstract class ExplosiveProjectile extends Projectile {
     protected final int damage;
 
     protected boolean deployed = false;
-    private static final double DEPLOYING_SPEED = 25.0;
+    private static final double DEPLOYING_SPEED = 20.0;
 
     protected boolean exploded = false;
     protected long deployedTime;

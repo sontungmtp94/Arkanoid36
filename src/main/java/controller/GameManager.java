@@ -178,7 +178,7 @@ public class GameManager extends JPanel implements ActionListener {
             for (Brick brick : bricks) {
                 if (brick.isDestroyed() && !brick.isScored()) {
                     score += 10;
-                    PowerUp.createPowerUp(brick, 0.2);
+                    PowerUp.createPowerUp(brick, 1);
                     brick.setScored(true);
                 }
             }
