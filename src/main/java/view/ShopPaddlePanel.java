@@ -21,9 +21,9 @@ public class ShopPaddlePanel extends JPanel {
     private final ArkanoidGame game;
 
     private final String[] paddles = {
-            "/images/paddles/normal/NormalPaddle_short.png",
             "/images/paddles/normal/NormalPaddle_default.png",
-            "/images/paddles/normal/NormalPaddle_long.png"
+            "/images/paddles/bomber/BomberPaddle_default.png",
+            "/images/paddles/galaxy/GalaxyPaddle_default.png"
     };
 
     private final Set<Integer> unlocked = new HashSet<>();
@@ -39,7 +39,7 @@ public class ShopPaddlePanel extends JPanel {
 
         // File riêng cho từng người chơi
         String player = GameManager.playerName == null ? "default" : GameManager.playerName;
-        this.unlockFile = new File("unlocked_backgrounds_" + player + ".txt");
+        this.unlockFile = new File("unlocked_paddles_" + GameManager.getPlayerId() + ".txt");
 
         loadUnlocked();
         initUI();
@@ -125,6 +125,7 @@ public class ShopPaddlePanel extends JPanel {
                     // Nếu đã mở → chọn paddle
                     if (unlocked.contains(index)) {
                         PaddleAssets.setCurrentPaddle(paddles[index]);
+                        saveCurrentPaddle(paddles[index]);
                         JOptionPane.showMessageDialog(ShopPaddlePanel.this,
                                 "Paddle selected!");
                         game.changeState(GameState.SHOP);
@@ -193,6 +194,15 @@ public class ShopPaddlePanel extends JPanel {
             Graphics2D g2 = (Graphics2D) g;
             g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
             g2.drawImage(backgroundMenu, 0, 0, getWidth(), getHeight(), this);
+        }
+    }
+
+    /** Lưu paddle hiện tại đang chọn */
+    private void saveCurrentPaddle(String path) {
+        try (PrintWriter pw = new PrintWriter(new FileWriter("current_paddle.txt"))) {
+            pw.println(path);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

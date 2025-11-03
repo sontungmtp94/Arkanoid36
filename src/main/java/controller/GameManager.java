@@ -16,6 +16,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -49,6 +50,14 @@ public class GameManager extends JPanel implements ActionListener {
 
     /** Khởi tạo paddle, bóng, gạch,... */
     public void initGameObjects() {
+
+        File f = new File("current_paddle.txt");
+        if (!f.exists()) {
+            try (PrintWriter pw = new PrintWriter(f)) {
+                pw.println("/images/paddles/normal/NormalPaddle_default.png");
+            } catch (Exception ignored) {}
+        }
+
         loadPlayerName();
         gameBackground = new GameBackground();
         if (playerName == null || playerName.isEmpty()) {
@@ -57,8 +66,8 @@ public class GameManager extends JPanel implements ActionListener {
         mapManager = new MapManager();
         bricks = mapManager.loadMap(currentLevel);
 
-        paddle = new BomberPaddle(Paddle.getDefaultX(), Paddle.getDefaultY(),
-                Paddle.getDefaultWidth(), Paddle.getDefaultHeight());
+        paddle = loadCurrentPaddle();
+
         projectiles = new ArrayList<>();
         balls = new ArrayList<>();
         Ball ball = new Ball(panelWidth / 2, panelHeight / 2,
@@ -365,4 +374,54 @@ public class GameManager extends JPanel implements ActionListener {
             e.printStackTrace();
         }
     }
+
+    /** Đọc paddle hiện tại đang chọn từ file lưu */
+    private static Paddle loadCurrentPaddle() {
+        File f = new File("current_paddle.txt");
+        if (f.exists()) {
+            try (Scanner sc = new Scanner(f)) {
+                if (sc.hasNextLine()) {
+                    String path = sc.nextLine().trim();
+                    if (path.contains("bomber")) {
+                        return new BomberPaddle(Paddle.getDefaultX(), Paddle.getDefaultY(),
+                                Paddle.getDefaultWidth(), Paddle.getDefaultHeight());
+                    } else if (path.contains("galaxy")) {
+                        return new GalaxyPaddle(Paddle.getDefaultX(), Paddle.getDefaultY(),
+                                Paddle.getDefaultWidth(), Paddle.getDefaultHeight());
+                    } else {
+                        return new NormalPaddle(Paddle.getDefaultX(), Paddle.getDefaultY(),
+                                Paddle.getDefaultWidth(), Paddle.getDefaultHeight());
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        // Mặc định nếu không có file
+        return new NormalPaddle(Paddle.getDefaultX(), Paddle.getDefaultY(),
+                Paddle.getDefaultWidth(), Paddle.getDefaultHeight());
+    }
+
+    /** Sinh và lưu ID người chơi */
+    public static String getPlayerId() {
+        File file = new File("player_id.txt");
+        try {
+            if (!file.exists()) {
+                String id = "player_" + System.currentTimeMillis();
+                try (PrintWriter pw = new PrintWriter(file)) {
+                    pw.println(id);
+                }
+                return id;
+            } else {
+                try (Scanner sc = new Scanner(file)) {
+                    return sc.hasNextLine() ? sc.nextLine().trim() : "player_default";
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "player_default";
+        }
+    }
 }
+
+

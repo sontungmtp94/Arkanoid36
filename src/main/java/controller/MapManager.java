@@ -139,11 +139,11 @@ public class MapManager {
 
     private BrickType getTypeByHP(int hp) {
         return switch (hp) {
-            case 1 -> BrickType.ORANGE;
-            case 2 -> BrickType.YELLOW;
+            case 1 -> BrickType.CYAN;
+            case 2 -> BrickType.BLUE;
             case 3 -> BrickType.PURPLE;
-            case 4 -> BrickType.BLUE;
-            case 5 -> BrickType.CYAN;
+            case 4 -> BrickType.YELLOW;
+            case 5 -> BrickType.ORANGE;
             case 6 -> BrickType.RED;
             default -> BrickType.METAL;
         };

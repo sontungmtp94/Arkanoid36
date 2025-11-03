@@ -9,11 +9,11 @@ import java.awt.image.BufferedImage;
  */
 public enum BrickType {
     RED(0, 6),
-    CYAN(1, 5),
-    BLUE(2, 4),
+    ORANGE(1, 5),
+    YELLOW(2, 4),
     PURPLE(3, 3),
-    YELLOW(4, 2),
-    ORANGE(5, 1),
+    BLUE(4, 2),
+    CYAN(5, 1),
     METAL(6, 100);
 
     private static final int WIDTH = 32;

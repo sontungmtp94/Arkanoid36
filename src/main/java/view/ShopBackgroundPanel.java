@@ -42,7 +42,7 @@ public class ShopBackgroundPanel extends JPanel {
 
         // File riêng cho từng người chơi
         String player = GameManager.playerName == null ? "default" : GameManager.playerName;
-        this.unlockFile = new File("unlocked_backgrounds_" + player + ".txt");
+        this.unlockFile = new File("unlocked_paddles_" + GameManager.getPlayerId() + ".txt");
 
         loadUnlocked();
         initUI();
