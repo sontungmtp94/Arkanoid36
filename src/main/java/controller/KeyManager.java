@@ -3,6 +3,11 @@ package controller;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+/**
+ * Quản lý toàn bộ logic nhập phím của game.
+ *
+ */
+
 public class KeyManager implements KeyListener {
 
     private boolean upPressed;

@@ -1,5 +1,10 @@
 package controller;
 
+/**
+ * Enum lưu trạng thái hiện tại của game.
+ *
+ */
+
 public enum GameState {
     MENU,
     LEADERBOARD,

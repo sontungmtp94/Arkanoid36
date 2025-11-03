@@ -19,7 +19,9 @@ import view.LeaderBoard;
 
 
 /**
- * Lớp LevelCompleted hiển thị thông báo "Level Completed" và hướng dẫn next level/ restart.
+ * Lớp LevelCompleted hiển thị thông báo "You Win", hướng dẫn next level/restart/main menu
+ * và update thông tin người chơi.
+ *
  */
 public class LevelCompleted extends JPanel {
     private final GameManager gameManager;
@@ -70,7 +72,7 @@ public class LevelCompleted extends JPanel {
             gameManager.restartGame();
         });
 
-        nextLevelButton.addActionListener(e -> {            SoundManager.get().playSfx(SoundId.SFX_CLICK);
+        nextLevelButton.addActionListener(e -> {SoundManager.get().playSfx(SoundId.SFX_CLICK);
             SoundManager.get().playSfx(SoundId.SFX_CLICK);
             gameManager.nextLevel();
         });

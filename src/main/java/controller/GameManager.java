@@ -22,8 +22,9 @@ import java.util.Scanner;
 
 /**
  * Quản lý toàn bộ logic, hiển thị và vòng lặp chính của game Arkanoid.
- * Kế thừa JPanel, triển khai ActionListener và KeyListener.
+ * Kế thừa JPanel, triển khai ActionListener.
  */
+
 public class GameManager extends JPanel implements ActionListener {
     private static final int FPS = 60;
 
@@ -43,9 +44,9 @@ public class GameManager extends JPanel implements ActionListener {
     private GameBackground gameBackground; // Nền game
     protected static int score, lives; // Điểm, mạng, điểm cao
     public static KeyManager keyManager; // Quản lý phím
-    private GameOver gameOver;
-    private LevelCompleted levelCompleted;
-    private Paused paused;
+    private GameOver gameOver; // Panel gameOver
+    private LevelCompleted levelCompleted; // Panel hoàn thành ván
+    private Paused paused; // Panel tạm dừng
     private final ArkanoidGame game;
 
     /** Khởi tạo paddle, bóng, gạch,... */
@@ -260,27 +261,37 @@ public class GameManager extends JPanel implements ActionListener {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(gameBackground.getBackground(), 0, 0, panelWidth, panelHeight, null);
+        g.drawImage(gameBackground.getBackground(), 0, 0,
+                panelWidth, panelHeight, null);
 
+        // Thêm khử răng cưa cho text.
         Graphics2D g2d = (Graphics2D) g;
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
+        // Vẽ các entities.
         for (Brick brick : bricks) brick.render(g2d);
         for (PowerUp pu : powerUps) pu.render(g2d);
         paddle.render(g2d);
         for (Ball b : balls) b.render(g2d);
         for (Projectile p : projectiles) p.render(g2d);
+
+
         // Phần thể hiện thông tin của 1 ván trò chơi.
-        g.drawImage(GameInformation.getInformationBar(), 0, 610, panelWidth, 40, null);
+        g.drawImage(GameInformation.getInformationBar(), 0, 610,
+                panelWidth, 40, null);
         g2d.setColor(Color.WHITE);
         g2d.setFont(new Font("Vermin Vibes 1989", Font.PLAIN, 36));
         g2d.drawString(String.valueOf(score), 105, 637);
         for (int i = 0; i < 5; i++) {
             if (i <= (lives - 1)) {
-                g.drawImage(GameInformation.getHeart(true), 319 + 30 * i, 616, 28, 25, null);
+                g.drawImage(GameInformation.getHeart(true), 319 + 30 * i
+                        , 616, 28, 25, null);
             } else {
-                g.drawImage(GameInformation.getHeart(false), 319 + 30 * i, 616, 28, 25, null);
+                g.drawImage(GameInformation.getHeart(false), 319 + 30 * i
+                        , 616, 28, 25, null);
             }
         }
         String inforLevel = String.valueOf(currentLevel) + " / 20";
@@ -303,7 +314,8 @@ public class GameManager extends JPanel implements ActionListener {
             int centerY = 500;
 
             // Tính độ mờ dần theo thời gian
-            float alpha = 1.0f - (float)(System.currentTimeMillis() - PowerUp.messageStartTime) / PowerUp.MESSAGE_DURATION_MS;
+            float alpha = 1.0f - (float)(System.currentTimeMillis()
+                    - PowerUp.messageStartTime) / PowerUp.MESSAGE_DURATION_MS;
             alpha = Math.max(0f, alpha);
 
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
@@ -342,23 +354,50 @@ public class GameManager extends JPanel implements ActionListener {
         return panelHeight;
     }
 
-    public static int getLives() { return lives; }
-    public static void setLives(int lives) { GameManager.lives = lives; }
-    public static int getScore() { return score; }
-    public static void setScore(int score) { GameManager.score = score; }
-    public static Paddle getPaddle() { return paddle; }
-    public static void setPaddle(Paddle paddle) { GameManager.paddle = paddle; }
-    public static GameState getGameState() { return gameState; }
-    public static ArrayList<Brick> getBricks() { return bricks; }
+    public static int getLives() {
+        return lives;
+    }
+
+    public static void setLives(int lives) {
+        GameManager.lives = lives;
+    }
+
+    public static int getScore() {
+        return score;
+    }
+
+    public static void setScore(int score) {
+        GameManager.score = score;
+    }
+
+    public static Paddle getPaddle() {
+        return paddle;
+    }
+
+    public static void setPaddle(Paddle paddle) {
+        GameManager.paddle = paddle;
+    }
+
+    public static GameState getGameState() {
+        return gameState;
+    }
+
+    public static ArrayList<Brick> getBricks() {
+        return bricks;
+    }
+
     public static int getCurrentLevel() {
         return currentLevel;
     }
+
     public static void setCurrentLevel(int lv) {
         currentLevel = lv;
     }
+
     public static ArrayList<Projectile> getProjectiles() {
         return projectiles;
     }
+
     public static void loadPlayerName() {
         try {
             File file = new File("src/main/resources/DataPlayer.txt");
