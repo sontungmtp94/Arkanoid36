@@ -24,7 +24,7 @@ public class Ball extends MovableObject {
     private static final int DEFAULT_SIZE = 20;
 
     /** Lượng sát thương mặc định của Ball. */
-    private static final int DEFAULT_DAMAGE = 5;
+    private static final int DEFAULT_DAMAGE = 1;
 
     /** Tốc độ mặc định của Ball theo 2 chiều. */
     private static final double DEFAULT_SPEED = 6.0;
