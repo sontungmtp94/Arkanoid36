@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 public class Ball extends MovableObject {
     /** Kích thước mặc định của Ball. */
-    private static final int DEFAULT_SIZE = 20;
+    private static final int DEFAULT_SIZE = 15;
 
     /** Lượng sát thương mặc định của Ball. */
     private static final int DEFAULT_DAMAGE = 5;
