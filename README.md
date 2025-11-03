@@ -2,7 +2,7 @@
 
 A OOP Project From UET-VNU.
 
-![Architecture](![Ảnh từ Google Drive](https://drive.google.com/uc?export=view&id=195lOVHdfb6AfRINbqNoH2rTF7ljN7pl6)
+![Thiết kế game](https://drive.google.com/uc?export=view&id=195lOVHdfb6AfRINbqNoH2rTF7ljN7pl6)
 
 | Contributor            | Main Responsibilities                                                                                                                  |
 | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
