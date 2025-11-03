@@ -21,10 +21,10 @@ import java.util.ArrayList;
 
 public class Ball extends MovableObject {
     /** Kích thước mặc định của Ball. */
-    private static final int DEFAULT_SIZE = 20;
+    private static final int DEFAULT_SIZE = 15;
 
     /** Lượng sát thương mặc định của Ball. */
-    private static final int DEFAULT_DAMAGE = 1;
+    private static final int DEFAULT_DAMAGE = 5;
 
     /** Tốc độ mặc định của Ball theo 2 chiều. */
     private static final double DEFAULT_SPEED = 6.0;
@@ -55,10 +55,6 @@ public class Ball extends MovableObject {
     private Paddle paddle;
     private ArrayList<Brick> bricks;
     private boolean bounceBrick = true;
-
-
-    /** Chia nhỏ di chuyển thành các steps nhỏ hơn. **/
-    private static final int MAX_MOVE_STEPS = 20;
 
     /**
      * Constructor cho Ball.
@@ -98,27 +94,9 @@ public class Ball extends MovableObject {
             }
         }
 
-        // Cập nhật vị trí khi di chuyển sử dụng CCD bằng cách chia steps.
-        double totalDx = getDx();
-        double totalDy = getDy();
-        double distance = Math.sqrt(totalDx * totalDx + totalDy * totalDy);
-
-        int steps = (int) Math.ceil(distance / 2.0);
-        steps = Math.min(steps, MAX_MOVE_STEPS);
-
-        double stepDx = totalDx / steps;
-        double stepDy = totalDy / steps;
-
-        double posX = getX();
-        double posY = getY();
-
-        for (int i = 0; i < steps; i++) {
-            posX += stepDx;
-            posY += stepDy;
-            setX((int) posX);
-            setY((int) posY);
-        }
-
+        // Cập nhật vị trí khi di chuyển
+        setX(getX() + (int) getDx());
+        setY(getY() + (int) getDy());
 
         // Va chạm với trần.
         if (getY() <= 0) {
@@ -153,7 +131,7 @@ public class Ball extends MovableObject {
                         brick.takeHits(damage);
                         audio.SoundManager.get().playSfx(audio.SoundId.SFX_HIT);
                     } else {
-                        brick.takeHits(36);
+                        brick.takeHits(1);
                         audio.SoundManager.get().playSfx(audio.SoundId.SFX_HIT);
                     }
                     break;
@@ -181,25 +159,16 @@ public class Ball extends MovableObject {
 
             // Va vào cạnh bên của Paddle.
             if (overlapX < overlapY) {
-                double speed = Math.sqrt(getDx() * getDx() + getDy() * getDy());
-                double angle = Math.toRadians(45); // góc bật 45 độ
-                if (ballRect.getCenterX() < paddleRect.getCenterX()) {
-                    // Bật chéo sang trái
-                    setDx(-speed * Math.cos(angle));
-                    setDy(-speed * Math.sin(angle));
-                } else {
-                    // Bật chéo sang phải
-                    setDx(speed * Math.cos(angle));
-                    setDy(-speed * Math.sin(angle));
-                }
                 // Đẩy ra khỏi 2 mép Paddle để tránh kẹt.
                 if (ballRect.getCenterX() < paddleRect.getCenterX()) {
                     // Đẩy sang trái.
-                    setX((int) (paddleRect.getX() - getWidth() - 1));
+                    setX((int) (paddleRect.getX() - getWidth()));
                 } else {
                     // Đẩy sang phải.
-                    setX((int) (paddleRect.getX() + paddleRect.getWidth() + 1));
+                    setX((int) (paddleRect.getX() + paddleRect.getWidth()));
                 }
+
+                setDx(-getDx()); // Ball bật ngược
             }
 
             // Va vào mặt trên của Paddle.
