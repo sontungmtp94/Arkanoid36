@@ -28,11 +28,14 @@ public class ShopPaddlePanel extends JPanel {
 
     private final Set<Integer> unlocked = new HashSet<>();
     private final File unlockFile;
+    private Image backgroundMenu;
 
     public ShopPaddlePanel(ArkanoidGame game) {
         this.game = game;
         setLayout(null);
         setBackground(Color.BLACK);
+
+        backgroundMenu = new ImageIcon(getClass().getResource("/images/utils/background_menu.png")).getImage();
 
         // File riêng cho từng người chơi
         String player = GameManager.playerName == null ? "default" : GameManager.playerName;
@@ -71,24 +74,33 @@ public class ShopPaddlePanel extends JPanel {
 
         String player = GameManager.playerName;
         JLabel lblPoints = new JLabel("Your Points: " + LeaderBoard.getScoreByName(player));
-        lblPoints.setFont(new Font("IntelOne Display Bold", Font.PLAIN, 22));
+        lblPoints.setFont(new Font("Vermin Vibes 1989", Font.PLAIN, 22));
         lblPoints.setForeground(Color.YELLOW);
         lblPoints.setBounds(40, 90, 400, 30);
         add(lblPoints);
 
-        JPanel grid = new JPanel(new GridLayout(1, 3, 40, 20));
-        grid.setBounds(150, 200, 900, 200);
+        JPanel grid = new JPanel(new GridLayout(1, 3, 15, 10)); // nhỏ gap lại cho cân ảnh
+        grid.setBounds(150, 200, 900, 150);
         grid.setOpaque(false);
         add(grid);
 
         for (int i = 0; i < paddles.length; i++) {
             final int index = i;
             ImageIcon icon = new ImageIcon(getClass().getResource(paddles[i]));
-            Image scaled = icon.getImage().getScaledInstance(240, 60, Image.SCALE_SMOOTH);
+            Image img = icon.getImage();
 
-            JLabel label = new JLabel(new ImageIcon(scaled));
-            label.setHorizontalAlignment(SwingConstants.CENTER);
-            label.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
+            JPanel label = new JPanel() {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    Graphics2D g2 = (Graphics2D) g;
+                    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                            RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                    g2.drawImage(img, -1, -1, getWidth() + 2, getHeight() + 2, this); // phủ kín viền
+                }
+            };
+            label.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+            label.setOpaque(true);
 
             int price = (i == 0) ? 0 : 100;
             String text = unlocked.contains(i)
@@ -97,7 +109,7 @@ public class ShopPaddlePanel extends JPanel {
 
             JLabel lblPrice = new JLabel(text, SwingConstants.CENTER);
             lblPrice.setForeground(Color.WHITE);
-            lblPrice.setFont(new Font("Arial", Font.PLAIN, 16));
+            lblPrice.setFont(new Font("Vermin Vibes 1989", Font.PLAIN, 18));
 
             JPanel item = new JPanel(new BorderLayout());
             item.setOpaque(false);
@@ -172,4 +184,16 @@ public class ShopPaddlePanel extends JPanel {
         btnBack.addActionListener(e -> game.changeState(GameState.SHOP));
         add(btnBack);
     }
+
+    /** Vẽ nền background_menu.png */
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (backgroundMenu != null) {
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g2.drawImage(backgroundMenu, 0, 0, getWidth(), getHeight(), this);
+        }
+    }
 }
+

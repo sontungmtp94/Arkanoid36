@@ -14,9 +14,8 @@ import java.util.Set;
 
 /**
  * Cửa hàng background: người chơi dùng điểm để mở khóa background.
- * Hai background đầu (2 & 3) là miễn phí.
+ * Hai background đầu là miễn phí.
  */
-
 public class ShopBackgroundPanel extends JPanel {
     private final ArkanoidGame game;
     private final String[] backgrounds = {
@@ -32,12 +31,14 @@ public class ShopBackgroundPanel extends JPanel {
 
     private final Set<Integer> unlocked = new HashSet<>();
     private final File unlockFile;
-
+    private final Image backgroundMenu;
 
     public ShopBackgroundPanel(ArkanoidGame game) {
         this.game = game;
         setLayout(null);
-        setBackground(Color.BLACK);
+
+        // Load nền
+        backgroundMenu = new ImageIcon(getClass().getResource("/images/utils/background_menu.png")).getImage();
 
         // File riêng cho từng người chơi
         String player = GameManager.playerName == null ? "default" : GameManager.playerName;
@@ -49,8 +50,8 @@ public class ShopBackgroundPanel extends JPanel {
 
     /** Đọc danh sách background đã mở từ file */
     private void loadUnlocked() {
-        unlocked.add(0); // background2
-        unlocked.add(1); // background3 (free)
+        unlocked.add(0);
+        unlocked.add(1);
         if (unlockFile.exists()) {
             try (BufferedReader br = new BufferedReader(new FileReader(unlockFile))) {
                 String line;
@@ -76,13 +77,13 @@ public class ShopBackgroundPanel extends JPanel {
         add(lblTitle);
 
         String player = GameManager.playerName;
-        JLabel lblPoints = new JLabel("Your Points: " + LeaderBoard.getScoreByName(player));
-        lblPoints.setFont(new Font("IntelOne Display Bold", Font.PLAIN, 22));
+        JLabel lblPoints = new JLabel("YOUR POINTS: " + LeaderBoard.getScoreByName(player));
+        lblPoints.setFont(new Font("Vermin Vibes 1989", Font.PLAIN, 26));
         lblPoints.setForeground(Color.YELLOW);
-        lblPoints.setBounds(40, 85, 400, 30);
+        lblPoints.setBounds(40, 90, 500, 30);
         add(lblPoints);
 
-        JPanel grid = new JPanel(new GridLayout(2, 4, 20, 20));
+        JPanel grid = new JPanel(new GridLayout(2, 4, 8, 8));
         grid.setBounds(100, 130, 1000, 400);
         grid.setOpaque(false);
         add(grid);
@@ -90,20 +91,29 @@ public class ShopBackgroundPanel extends JPanel {
         for (int i = 0; i < backgrounds.length; i++) {
             final int index = i;
             ImageIcon icon = new ImageIcon(getClass().getResource(backgrounds[i]));
-            Image scaled = icon.getImage().getScaledInstance(240, 130, Image.SCALE_SMOOTH);
+            Image img = icon.getImage();
 
-            JLabel label = new JLabel(new ImageIcon(scaled));
-            label.setHorizontalAlignment(SwingConstants.CENTER);
-            label.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
+            JPanel label = new JPanel() {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    Graphics2D g2 = (Graphics2D) g;
+                    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                            RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                    g2.drawImage(img, -1, -1, getWidth() + 2, getHeight() + 2, this); // phủ tràn viền
+                }
+            };
+            label.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+            label.setOpaque(true);
 
             int price = (i < 2) ? 0 : 50 + (i - 2) * 20;
             String text = unlocked.contains(i)
-                    ? "Unlocked"
-                    : (i < 2 ? "Free" : "Price: " + price);
+                    ? "UNLOCKED"
+                    : (i < 2 ? "FREE" : "PRICE: " + price);
 
             JLabel lblPrice = new JLabel(text, SwingConstants.CENTER);
             lblPrice.setForeground(Color.WHITE);
-            lblPrice.setFont(new Font("Arial", Font.PLAIN, 16));
+            lblPrice.setFont(new Font("Vermin Vibes 1989", Font.PLAIN, 20));
 
             JPanel item = new JPanel(new BorderLayout());
             item.setOpaque(false);
@@ -118,8 +128,11 @@ public class ShopBackgroundPanel extends JPanel {
 
                     if (unlocked.contains(index)) {
                         GameBackground.setCurrentBackground(backgrounds[index]);
-                        JOptionPane.showMessageDialog(ShopBackgroundPanel.this,
-                                "Background selected!");
+                        JOptionPane.showMessageDialog(
+                                ShopBackgroundPanel.this,
+                                "BACKGROUND SELECTED!",
+                                "SHOP",
+                                JOptionPane.INFORMATION_MESSAGE);
                         game.changeState(GameState.SHOP);
                         return;
                     }
@@ -128,9 +141,9 @@ public class ShopBackgroundPanel extends JPanel {
                     if (price == 0) {
                         unlocked.add(index);
                         saveUnlocked();
-                        lblPrice.setText("Unlocked");
+                        lblPrice.setText("UNLOCKED");
                         JOptionPane.showMessageDialog(ShopBackgroundPanel.this,
-                                "Background unlocked (Free)!");
+                                "BACKGROUND UNLOCKED (FREE)!");
                         return;
                     }
 
@@ -138,22 +151,22 @@ public class ShopBackgroundPanel extends JPanel {
                     if (playerPoints >= price) {
                         int confirm = JOptionPane.showConfirmDialog(
                                 ShopBackgroundPanel.this,
-                                "Buy this background for " + price + " points?",
-                                "Confirm Purchase",
+                                "BUY THIS BACKGROUND FOR " + price + " POINTS?",
+                                "CONFIRM PURCHASE",
                                 JOptionPane.YES_NO_OPTION);
 
                         if (confirm == JOptionPane.YES_OPTION) {
                             LeaderBoard.addScore(playerName, -price);
                             unlocked.add(index);
                             saveUnlocked();
-                            lblPrice.setText("Unlocked");
-                            lblPoints.setText("Your Points: " + LeaderBoard.getScoreByName(playerName));
+                            lblPrice.setText("UNLOCKED");
+                            lblPoints.setText("YOUR POINTS: " + LeaderBoard.getScoreByName(playerName));
                             JOptionPane.showMessageDialog(ShopBackgroundPanel.this,
-                                    "Purchased successfully!");
+                                    "PURCHASED SUCCESSFULLY!");
                         }
                     } else {
                         JOptionPane.showMessageDialog(ShopBackgroundPanel.this,
-                                "Not enough points!");
+                                "NOT ENOUGH POINTS!");
                     }
                 }
 
@@ -173,8 +186,25 @@ public class ShopBackgroundPanel extends JPanel {
 
         JButton btnBack = new JButton("BACK");
         btnBack.setFont(new Font("Vermin Vibes 1989", Font.PLAIN, 32));
-        btnBack.setBounds(500, 560, 180, 60);
+        btnBack.setBounds(500, 565, 180, 60);
+        btnBack.setForeground(Color.WHITE);
+        btnBack.setFocusPainted(false);
+        btnBack.setContentAreaFilled(false);
+        btnBack.setBorderPainted(true);
+        btnBack.setOpaque(false);
+        btnBack.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btnBack.addActionListener(e -> game.changeState(GameState.SHOP));
         add(btnBack);
+    }
+
+    /** Vẽ nền background_menu.png */
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (backgroundMenu != null) {
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g2.drawImage(backgroundMenu, 0, 0, getWidth(), getHeight(), this);
+        }
     }
 }
