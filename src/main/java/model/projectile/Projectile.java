@@ -2,6 +2,9 @@ package model.projectile;
 
 import model.base.MovableObject;
 
+/**
+ * Lớp trừu tượng Projecttile phục vụ cho các skill của các paddle đặc biệt.
+ */
 public abstract class Projectile extends MovableObject {
     protected boolean active = false; // Biến kiểm tra được kích hoạt chưa
 

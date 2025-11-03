@@ -2,6 +2,9 @@ package model.paddle;
 
 import static view.SpritesView.loadSprite;
 
+/**
+ * NormalPaddle: Paddle mặc định của game.
+ */
 public class NormalPaddle extends Paddle {
     // 3 path đến 3 sprites của NormalPaddle.
     private final String PATH_SHORT =

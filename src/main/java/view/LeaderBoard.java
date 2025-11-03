@@ -24,9 +24,14 @@ public class LeaderBoard extends JPanel {
     private static final ArrayList<String> names = new ArrayList<>();
     private static final ArrayList<Integer> scores = new ArrayList<>();
 
-    /** Đường dẫn ghi được */
+    /**
+     * Đường dẫn đến file lưu thông tin bảng xếp hạng.
+     */
     private static final File SAVE_FILE = new File("src/main/resources/LeaderBoard.txt");
 
+    /**
+     * Khởi tạo LeaderBoard.
+     */
     public LeaderBoard(int width, int height, ArkanoidGame game) {
         this.game = game;
 
@@ -61,7 +66,9 @@ public class LeaderBoard extends JPanel {
         add(backBtn);
     }
 
-    /** Đọc dữ liệu LeaderBoard.txt từ thư mục resources */
+    /**
+     * Đọc dữ liệu LeaderBoard.txt từ thư mục resources.
+     */
     protected static void loadLeaderboard() {
         names.clear();
         scores.clear();
@@ -91,7 +98,9 @@ public class LeaderBoard extends JPanel {
         }
     }
 
-    /** Cập nhật leaderboard khi người chơi có điểm cao hơn */
+    /**
+     * Cập nhật leaderboard khi người chơi có điểm cao hơn.
+     */
     public static void updateLeaderboard(String playerName, int newScore) {
         loadLeaderboard();
 
@@ -114,7 +123,9 @@ public class LeaderBoard extends JPanel {
         System.out.println("Update leaderboard thành công cho " + playerName + "!");
     }
 
-    /** Trả về điểm hiện tại của player */
+    /**
+     * Trả về điểm hiện tại của player.
+     */
     public static int getScoreByName(String playerName) {
         loadLeaderboard();
         for (int i = 0; i < names.size(); i++) {
@@ -125,7 +136,9 @@ public class LeaderBoard extends JPanel {
         return 0;
     }
 
-    /** Cộng/trừ điểm cho player (dùng trong shop) */
+    /**
+     * Cộng/trừ điểm cho player (dùng trong shop).
+     */
     public static void addScore(String playerName, int delta) {
         loadLeaderboard();
         boolean found = false;
@@ -144,7 +157,9 @@ public class LeaderBoard extends JPanel {
         saveLeaderboard();
     }
 
-    /** Ghi lại danh sách điểm vào file */
+    /**
+     * Ghi lại danh sách điểm vào file
+     */
     private static void saveLeaderboard() {
         try (PrintWriter pw = new PrintWriter(SAVE_FILE, StandardCharsets.UTF_8)) {
             for (int i = 0; i < Math.min(10, names.size()); i++) {
@@ -155,7 +170,9 @@ public class LeaderBoard extends JPanel {
         }
     }
 
-    /** Sắp xếp giảm dần theo điểm */
+    /**
+     * Sắp xếp giảm dần theo điểm
+     */
     private static void sortLeaderboard() {
         for (int i = 0; i < scores.size() - 1; i++) {
             for (int j = i + 1; j < scores.size(); j++) {
@@ -172,6 +189,9 @@ public class LeaderBoard extends JPanel {
         }
     }
 
+    /**
+     * Hàm vẽ giao diện bảng xếp hạng.
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
