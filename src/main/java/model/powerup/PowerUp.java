@@ -16,6 +16,9 @@ import controller.GameManager;
 import model.brick.Brick;
 import model.paddle.Paddle;
 
+/**
+ * Định nghĩa lớp PowerUp.
+ */
 public class PowerUp extends MovableObject {
     private static final int PADDLE_WIDTH_CHANGE = 60;
     private int id;
@@ -23,7 +26,6 @@ public class PowerUp extends MovableObject {
     private String[] FILE_IMAGES = new String[numsOfPU];
     private BufferedImage image;
 
-    // === Biến static để quản lý hiệu ứng Paddle mở rộng ===
     private static Map<Integer, Timer> timers = new HashMap<>();
     private static Map<Integer, Integer> remainingTimes = new HashMap<>(); // giây còn lại
 
@@ -31,6 +33,9 @@ public class PowerUp extends MovableObject {
     public static long messageStartTime = 0;
     public static final int MESSAGE_DURATION_MS = 2000; // hiển thị 2 giây
 
+    /**
+     * Hàm tải hình ảnh.
+     */
     private void loadImage() {
         try {
             image = ImageIO.read(getClass().getResourceAsStream(FILE_IMAGES[id]));
@@ -42,6 +47,9 @@ public class PowerUp extends MovableObject {
         }
     }
 
+    /**
+     * Hàm chạy lời nhắn.
+     */
     public static String getActiveMessage() {
         if (activeMessage == null) return null;
         long now = System.currentTimeMillis();
@@ -51,11 +59,17 @@ public class PowerUp extends MovableObject {
         return activeMessage;
     }
 
+    /**
+     * Hàm hiện tin nhắn.
+     */
     private static void showMessage(String text) {
         activeMessage = text;
         messageStartTime = System.currentTimeMillis();
     }
 
+    /**
+     * Khởi tạo PowerUp.
+     */
     public PowerUp(int x, int y, int w, int h, int id) {
         super(x, y, w, h);
         setDx(0);
@@ -67,18 +81,31 @@ public class PowerUp extends MovableObject {
         }
         loadImage();
     }
+
+    /**
+     * getter Id.
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * setter Id.
+     */
     public void setId(int id) {
         this.id = id;
     }
 
+    /**
+     * hàm xác định điều kiện tồn tại trong ván game.
+     */
     public boolean alive() {
         return getY() < 1200 ? true : false;
     }
 
+    /**
+     * hàm xuất hiện powerUp mới trong game (khi phá được gạch sẽ có xác suất là probality).
+     */
     public static void createPowerUp(Brick brick, double probability) {
         if (Math.random() < probability) {
             int idPower = (int) (Math.random() * numsOfPU);
@@ -89,6 +116,9 @@ public class PowerUp extends MovableObject {
         }
     }
 
+    /**
+     * hàm cập nhật tọa độ.
+     */
     @Override
     public void update() {
         setX(getX() + (int)getDx());
@@ -107,11 +137,17 @@ public class PowerUp extends MovableObject {
         }
     }
 
+    /**
+     * hàm lấy shape bao quanh phục vụ cho việc tương tác với Paddle.
+     */
     @Override
     public Shape getBounds() {
         return new Rectangle2D.Double(x, y, width, height);
     }
 
+    /**
+     * hàm vẽ icon powerUp.
+     */
     @Override
     public void render(Graphics2D g) {
         if (alive()) {
@@ -124,6 +160,9 @@ public class PowerUp extends MovableObject {
         }
     }
 
+    /**
+     * hàm đếm ngược thời gian (phục vụ cho các powerUp cần tính thời gian).
+     */
     public void countdown(int id, int duration, Runnable onFinish) {
         // Nếu đã có timer cho ID này, reset lại thời gian
         if (timers.containsKey(id) && timers.get(id) != null) {
@@ -157,6 +196,9 @@ public class PowerUp extends MovableObject {
         System.out.println("▶ Bắt đầu đếm PowerUp ID " + id + " (" + duration + "s)");
     }
 
+    /**
+     * hàm áp dụng hiệu ứng PowerUp.
+     */
     public void applyEffect(int id) {
         switch (id) {
             case 0:
@@ -309,7 +351,9 @@ public class PowerUp extends MovableObject {
         }
     }
 
-    /** Hàm gọi khi bóng rơi hoặc Game Over để hủy hiệu ứng */
+    /**
+     * hàm hủy hiệu ứng PowerUp.
+     */
     public static void cancelEffect(int id) {
         if (!remainingTimes.containsKey(id)) return;
 
@@ -373,7 +417,9 @@ public class PowerUp extends MovableObject {
     }
 
 
-    /** Hàm gọi khi bóng rơi hoặc Game Over để hủy hiệu ứng */
+    /**
+     * Hàm hủy tất cả các hiệu ứng.
+     */
     public static void cancelAllEffects() {
 //        for (Integer id : remainingTimes.keySet()) {
 //            if(timers.containsKey(id) && timers.get(id) != null) {
@@ -388,10 +434,16 @@ public class PowerUp extends MovableObject {
         System.out.println("Hủy toàn bộ hiệu ứng PowerUp.");
     }
 
+    /**
+     * hàm lấy danh sách số thời gian còn lại của powerUp.
+     */
     public static Map<Integer, Integer> getRemainingTimes() {
         return remainingTimes;
     }
 
+    /**
+     * hàm lấy danh sách Timers của powerUp.
+     */
     public static Map<Integer, Timer> getTimers() {
         return timers;
     }

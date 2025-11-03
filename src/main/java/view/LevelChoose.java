@@ -13,7 +13,7 @@ import java.io.File;
 import java.util.Scanner;
 
 /**
- * Màn hình chọn level: có nền background_menu.png, 20 nút levelbar.png, text, hover và click highlight.
+ * Màn hình chọn level.
  */
 public class LevelChoose extends JPanel {
     private final ArkanoidGame game;
@@ -24,6 +24,9 @@ public class LevelChoose extends JPanel {
     private Image levelHoverImg;
     protected static int[] unlock = new int[20];
 
+    /**
+     * Khởi tạo LevelChoose.
+     */
     public LevelChoose(int width, int height, ArkanoidGame game) {
         this.game = game;
 
@@ -153,7 +156,9 @@ public class LevelChoose extends JPanel {
         add(backBtn);
     }
 
-    /** Vẽ nền full cửa sổ */
+    /**
+     * Vẽ nền full cửa sổ.
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -165,7 +170,9 @@ public class LevelChoose extends JPanel {
         }
     }
 
-    /** Tăng độ sáng ảnh (hover) */
+    /**
+     * Tăng độ sáng ảnh (hover).
+     */
     private BufferedImage brighten(BufferedImage src, float factor) {
         BufferedImage img = new BufferedImage(src.getWidth(), src.getHeight(), BufferedImage.TYPE_INT_ARGB);
         for (int y = 0; y < src.getHeight(); y++) {
@@ -181,7 +188,9 @@ public class LevelChoose extends JPanel {
         return img;
     }
 
-    /** Làm nổi bật nút được chọn */
+    /**
+     * Làm nổi bật nút được chọn.
+     */
     private void highlightSelected(int selectedLevel) {
         for (Component c : getComponents()) {
             if (c instanceof JButton btn && btn.getText().matches("\\d+")) {

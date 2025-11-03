@@ -1,5 +1,8 @@
 package audio;
 
+/**
+ * SoundID để kiểm soát nhạc nền và sfx.
+ */
 public enum SoundId {
     // Bg music.
     BGM_MENU("sounds/bg_menu.wav", true),

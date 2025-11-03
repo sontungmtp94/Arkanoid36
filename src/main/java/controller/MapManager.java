@@ -34,6 +34,7 @@ public class MapManager {
     private int spaceX = WIDTH + 5;
     private int spaceY = HEIGHT + 5;
 
+    // số map trong game và số string chứa đường dẫn tới file txt tạo map gạch.
     private static final int numOfMaps = 20;
     private String[] pathFiles = new String[numOfMaps];
 
@@ -91,6 +92,9 @@ public class MapManager {
         }
     }
 
+    /**
+     * Đọc map gạch từ file txt.
+     */
     public void mapTxt(int id) {
         ArrayList<Brick> map = new ArrayList<>();
         File file = new File(pathFiles[id - 1]);
@@ -137,6 +141,9 @@ public class MapManager {
     }
 }
 
+    /**
+     * Chọn loại gạch theo các ký tự trong file (0: không có, 1-6: Gạch 1-6 máu, mặc định: Gạch k phá được).
+     */
     private BrickType getTypeByHP(int hp) {
         return switch (hp) {
             case 1 -> BrickType.CYAN;

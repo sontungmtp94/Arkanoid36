@@ -23,7 +23,9 @@ public class PowerUpView {
         loadIcons();
     }
 
-    /** Nạp sẵn toàn bộ ảnh PowerUp */
+    /**
+     * Nạp sẵn toàn bộ ảnh PowerUp.
+     */
     private void loadIcons() {
         icons = new BufferedImage[PowerUp.numsOfPU];
         for (int i = 0; i < PowerUp.numsOfPU; i++) {
@@ -37,7 +39,7 @@ public class PowerUpView {
     }
 
     /**
-     * Gọi trong GameManager.paintComponent()
+     * Hàm vẽ icon đếm ngược.
      */
     public void draw(Graphics2D g, int panelWidth, int panelHeight) {
         Map<Integer, Integer> remaining = PowerUp.getRemainingTimes();
@@ -58,7 +60,7 @@ public class PowerUpView {
     }
 
     /**
-     * Vẽ từng icon kèm "cánh quạt" thời gian
+     * Vẽ từng icon kèm "cánh quạt" thời gian.
      */
     private void drawIcon(Graphics2D g, BufferedImage img, int x, int y, int id, int remain) {
         int total = guessTotalDuration(id);
@@ -96,7 +98,9 @@ public class PowerUpView {
         g.drawString(sec, tx, ty);
     }
 
-    /** Ước lượng thời gian tổng theo ID (nếu không có dữ liệu thực tế) */
+    /**
+     * Ước lượng thời gian tổng theo ID (nếu không có dữ liệu thực tế)
+     */
     private int guessTotalDuration(int id) {
         switch (id) {
             case 1: case 3: case 4: case 5: return 30;
