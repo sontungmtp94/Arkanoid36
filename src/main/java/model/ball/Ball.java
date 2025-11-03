@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 public class Ball extends MovableObject {
     /** Kích thước mặc định của Ball. */
-    private static final int DEFAULT_SIZE = 15;
+    private static final int DEFAULT_SIZE = 20;
 
     /** Lượng sát thương mặc định của Ball. */
     private static final int DEFAULT_DAMAGE = 1;
@@ -58,7 +58,7 @@ public class Ball extends MovableObject {
 
 
     /** Chia nhỏ di chuyển thành các steps nhỏ hơn. **/
-    private static final int MAX_MOVE_STEPS = 4;
+    private static final int MAX_MOVE_STEPS = 20;
 
     /**
      * Constructor cho Ball.
@@ -103,7 +103,7 @@ public class Ball extends MovableObject {
         double totalDy = getDy();
         double distance = Math.sqrt(totalDx * totalDx + totalDy * totalDy);
 
-        int steps = (int) Math.ceil(distance / 5.0);
+        int steps = (int) Math.ceil(distance / 2.0);
         steps = Math.min(steps, MAX_MOVE_STEPS);
 
         double stepDx = totalDx / steps;
@@ -181,16 +181,25 @@ public class Ball extends MovableObject {
 
             // Va vào cạnh bên của Paddle.
             if (overlapX < overlapY) {
+                double speed = Math.sqrt(getDx() * getDx() + getDy() * getDy());
+                double angle = Math.toRadians(45); // góc bật 45 độ
+                if (ballRect.getCenterX() < paddleRect.getCenterX()) {
+                    // Bật chéo sang trái
+                    setDx(-speed * Math.cos(angle));
+                    setDy(-speed * Math.sin(angle));
+                } else {
+                    // Bật chéo sang phải
+                    setDx(speed * Math.cos(angle));
+                    setDy(-speed * Math.sin(angle));
+                }
                 // Đẩy ra khỏi 2 mép Paddle để tránh kẹt.
                 if (ballRect.getCenterX() < paddleRect.getCenterX()) {
                     // Đẩy sang trái.
-                    setX((int) (paddleRect.getX() - getWidth()));
+                    setX((int) (paddleRect.getX() - getWidth() - 1));
                 } else {
                     // Đẩy sang phải.
-                    setX((int) (paddleRect.getX() + paddleRect.getWidth()));
+                    setX((int) (paddleRect.getX() + paddleRect.getWidth() + 1));
                 }
-
-                setDx(-getDx()); // Ball bật ngược
             }
 
             // Va vào mặt trên của Paddle.
