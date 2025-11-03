@@ -114,8 +114,10 @@ public class LevelCompleted extends JPanel {
 
     public static void unlockNewLevel() {
         // Mở khóa màn tiếp theo.
-        if (LevelChoose.unlock[GameManager.getCurrentLevel()] == 0 && GameManager.getCurrentLevel() < 20) {
-            LevelChoose.unlock[GameManager.getCurrentLevel()] = 1;
+        if(GameManager.getCurrentLevel() < 20) {
+            if (LevelChoose.unlock[GameManager.getCurrentLevel()] == 0) {
+                LevelChoose.unlock[GameManager.getCurrentLevel()] = 1;
+            }
         }
 
         // === Cập nhật file DataPlayer.txt ===
