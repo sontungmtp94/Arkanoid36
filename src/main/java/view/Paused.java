@@ -11,8 +11,9 @@ import audio.SoundId;
 
 
 /**
- * Lớp GameOver hiển thị thông báo "Game Over" và hướng dẫn restart.
+ * Lớp GameOver hiển thị thông báo "Paused" và hướng dẫn restart/main menu.
  */
+
 public class Paused extends JPanel {
     private final GameManager gameManager;
 
