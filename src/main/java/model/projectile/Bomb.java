@@ -18,11 +18,11 @@ public class Bomb extends ExplosiveProjectile {
     private static final int DAMAGE = 1;
 
     private static final String PATH_NORMAL = "images/paddles/bomber/bomb.png";
-    private static final String PATH_GRAY = "images/paddles/bomber/bomb_deploying.png";
+    private static final String PATH_GRAY = "images/paddles/bomber"
+                                            + "/bomb_deploying.png";
 
     private BufferedImage spriteNormal;
     private BufferedImage spriteGray;
-    private boolean playingExplosion = false;
 
     /**
      * Constructor cho Bomb.
@@ -36,20 +36,25 @@ public class Bomb extends ExplosiveProjectile {
         spriteGray = loadSprite(PATH_GRAY);
     }
 
+    /** Trả về vùng bao quanh thân của Bomb, dùng cho nổ dây chuyền. */
     @Override
     public Shape getBounds() {
         return new Ellipse2D.Double(x, y + (height - width), width, width);
     }
 
+    /** Trả về vùng bao quanh vùng nổ. */
     public Ellipse2D getExplosionBounds() {
         return new Ellipse2D.Double(x + width / 2.0 - explosionRadius,
-                                    y + (height - width) + width / 2.0 - explosionRadius,
-                                    explosionRadius * 2.0, explosionRadius * 2.0);
+                                    y + (height - width) + width / 2.0
+                                        - explosionRadius,
+                                    explosionRadius * 2.0,
+                                    explosionRadius * 2.0);
     }
 
+    /** Render sprite của vụ nổ và bomb. */
     @Override
     public void render(Graphics2D g) {
-        if (!active && playingExplosion) {
+        if (!active) {
             return;
         }
 

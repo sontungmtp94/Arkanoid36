@@ -12,21 +12,19 @@ import static view.SpritesView.loadSprite;
  * Kỹ năng C: Đặt 1 nuke, nổ phạm vi lớn, sát thương lớn.
  */
 public class BomberPaddle extends Paddle {
-    private final int X_COOLDOWN = 200; //10000
+    private final int X_COOLDOWN = 10000;
     private final int X_MAX_STACK = 5;
-    private final int C_COOLDOWN = 200; //30000
-
-    private boolean skillXOn = false;
-    private int stackX = X_MAX_STACK;
-    private long cooldownTimerX = 0;
-
-    private boolean skillCOn = false;
-    private int cooldownTimerC = 0;
-
+    private final int C_COOLDOWN = 50000;
     // 3 path đến 3 sprites của BomberPaddle.
     private final String PATH_DEFAULT = "images/paddles/bomber/BomberPaddle_default.png";
     private final String PATH_SHORT = "images/paddles/bomber/BomberPaddle_short.png";
     private final String PATH_LONG = "images/paddles/bomber/BomberPaddle_long.png";
+
+    private boolean skillXOn = false;
+    private int stackX = X_MAX_STACK;
+    private long cooldownTimerX = 0;
+    private boolean skillCOn = false;
+    private int cooldownTimerC = 0;
 
     /**
      * Constructor cho BomberPaddle.
@@ -42,9 +40,10 @@ public class BomberPaddle extends Paddle {
         sprite = loadSprite(spritePath);
     }
 
+    /** Kích hoạt kỹ năng X, tạo một bomb và giảm 1 stack hiện tại. */
     @Override
     public void castSkillX() {
-        if (stackX <= 0 || skillXOn || skillCOn) {
+        if (stackX < 1 || skillXOn || skillCOn) {
             return;
         }
 
@@ -54,9 +53,9 @@ public class BomberPaddle extends Paddle {
         int bombY = y - Bomb.getDefaultHeight();
         Bomb bomb = new Bomb(bombX, bombY);
         GameManager.addProjectile(bomb);
-        System.out.println(stackX + " bombs left");
     }
 
+    /** Kích hoạt kỹ năng C, tạo một nuke. */
     @Override
     public void castSkillC() {
         if (cooldownTimerC > 0 || skillCOn || skillXOn) {
@@ -70,13 +69,16 @@ public class BomberPaddle extends Paddle {
         GameManager.addProjectile(nuke);
     }
 
+    /** Xử lý cooldown kỹ năng X và C. */
     @Override
     public void update() {
         super.update();
 
         // Nếu không còn bomb đang deploy thì mới reset skillXOn
         if (skillXOn && GameManager.getProjectiles()
-                                   .stream().noneMatch(p -> p instanceof Bomb && !((Bomb)p).isDeployed())) {
+                                   .stream()
+                                   .noneMatch(p -> p instanceof Bomb
+                                              && !((Bomb)p).isDeployed())) {
             skillXOn = false;
             cooldownTimerX = X_COOLDOWN;
         }
@@ -93,7 +95,9 @@ public class BomberPaddle extends Paddle {
 
         // Nếu không còn nuke đang deploy thì mới reset skillCOn
         if (skillCOn && GameManager.getProjectiles()
-                                   .stream().noneMatch(p -> p instanceof Nuke && !((Nuke)p).isDeployed())) {
+                                   .stream()
+                                   .noneMatch(p -> p instanceof Nuke
+                                              && !((Nuke)p).isDeployed())) {
             skillCOn = false;
             cooldownTimerC = C_COOLDOWN;
         }
@@ -108,12 +112,12 @@ public class BomberPaddle extends Paddle {
         }
     }
 
+    /** Reset skill X và C. */
     @Override
     public void resetPaddle() {
         super.resetPaddle();
         skillXOn = false;
         skillCOn = false;
-        sprite = loadSprite(PATH_DEFAULT);
     }
 
     @Override

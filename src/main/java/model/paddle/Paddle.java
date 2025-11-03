@@ -79,6 +79,7 @@ public abstract class Paddle extends MovableObject {
         }
     }
 
+    /** Trả về vùng bao quanh Paddle là hình chữ nhật. */
     @Override
     public Shape getBounds() {
         return new Rectangle(x, y, width, height);
@@ -91,6 +92,7 @@ public abstract class Paddle extends MovableObject {
         width = DEFAULT_WIDTH;
         height = DEFAULT_HEIGHT;
         speed = DEFAULT_SPEED;
+        sprite = loadSprite(getPathDefault());
     }
 
     /** Thực hiện kỹ năng bị động. */
@@ -109,10 +111,6 @@ public abstract class Paddle extends MovableObject {
             setAndLoadSprite(getPathDefault());
         }
     }
-
-    public abstract String getPathShort();
-    public abstract String getPathLong();
-    public abstract String getPathDefault();
 
     /**
      * Render Paddle lên màn hình.
@@ -165,7 +163,7 @@ public abstract class Paddle extends MovableObject {
         return movingAllowed;
     }
 
-    public void setMovingAllowed(boolean movingAllowed) {
-        this.movingAllowed = movingAllowed;
-    }
+    public abstract String getPathShort();
+    public abstract String getPathLong();
+    public abstract String getPathDefault();
 }

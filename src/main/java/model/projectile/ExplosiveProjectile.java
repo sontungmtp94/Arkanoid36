@@ -3,6 +3,7 @@ package model.projectile;
 import controller.GameManager;
 import game.ArkanoidGame;
 import model.brick.Brick;
+import view.GameInformation;
 
 import java.awt.*;
 import java.awt.geom.Area;
@@ -16,21 +17,29 @@ import static view.SpritesView.loadSprite;
  * Xử lý đặt, nổ, gây sát thương và nổ dây chuyền.
  */
 public abstract class ExplosiveProjectile extends Projectile {
+    private static final double DEPLOYING_SPEED = 20.0;
+    protected final int EXPLODE_DURATION = 250;
+    protected final int EXPLODE_DELAY = 2000;
+    protected static final String PATH_EXPLOSION = "images/paddles/bomber/explosion.png";
+
     protected final int explosionRadius;
     protected final int damage;
-
     protected boolean deployed = false;
-    private static final double DEPLOYING_SPEED = 20.0;
-
     protected boolean exploded = false;
     protected long deployedTime;
     protected long explosionStartTime;
-    protected final int EXPLODE_DURATION = 250;
-    protected final int EXPLODE_DELAY = 2000;
-
-    protected static final String PATH_EXPLOSION = "images/paddles/bomber/explosion.png";
     protected BufferedImage explosion;
 
+    /**
+     * Constructor cho ExplosiveProjectile.
+     *
+     * @param x               Tọa độ x
+     * @param y               Tọa độ y
+     * @param width           Chiều rộng
+     * @param height          Chiều cao
+     * @param explosionRadius Bán kính nổ
+     * @param damage          Sát thương
+     */
     public ExplosiveProjectile(int x, int y, int width, int height,
                                int explosionRadius, int damage) {
         super(x, y, width, height);
@@ -51,7 +60,7 @@ public abstract class ExplosiveProjectile extends Projectile {
             if (System.currentTimeMillis() - explosionStartTime > EXPLODE_DURATION) {
                 active = false;
             }
-            return; // vẫn render animation
+            return;
         }
 
         // Chưa đặt xuống, di chuyển để đặt.
@@ -81,8 +90,10 @@ public abstract class ExplosiveProjectile extends Projectile {
 
             if (y < 0) {
                 y = 0;
-            } else if (y + height > ArkanoidGame.getGameHeight() - 1) {
-                y = ArkanoidGame.getGameHeight() - height - 1;
+            } else if (y + height > ArkanoidGame.getGameHeight() - 1
+                                    - GameInformation.getBarHeight()) {
+                y = ArkanoidGame.getGameHeight() - height - 1
+                    - GameInformation.getBarHeight();
             }
 
             // Đặt xuống.
@@ -92,6 +103,7 @@ public abstract class ExplosiveProjectile extends Projectile {
             }
         } else {
             if (System.currentTimeMillis() - deployedTime > EXPLODE_DELAY) {
+                // Hết thời gian delay nổ thì nổ.
                 explode();
             }
         }

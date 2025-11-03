@@ -13,23 +13,22 @@ import static view.SpritesView.loadSprite;
  * Kỹ năng C: Bắn blast lên trên, gây sát thương cho gạch trong phạm vi.
  */
 public class GalaxyPaddle extends Paddle {
-    private final int X_DURATION = 3000; //3000
-    private final int X_COOLDOWN = 200; //20000
+    private final int X_DURATION = 3000;
+    private final int X_COOLDOWN = 20000;
     private final double X_SPEED_BOOST = 1.3;
-    private boolean skillXOn = false;
-    private int remainingDurationX = X_DURATION;
-    private int cooldownTimerX = 0;
-
-    private final int C_COOLDOWN = 200; //20000
+    private final int C_COOLDOWN = 200;
     private final int C_FREEZE_TIME = Blast.getLifeTime();
-    private boolean skillCOn = false;
-    private int cooldownTimerC = 0;
-    private long startTimeC;
-
     // 3 path đến 3 sprites của GalaxyPaddle.
     private final String PATH_DEFAULT = "images/paddles/galaxy/GalaxyPaddle_default.png";
     private final String PATH_SHORT = "images/paddles/galaxy/GalaxyPaddle_short.png";
     private final String PATH_LONG = "images/paddles/galaxy/GalaxyPaddle_long.png";
+
+    private boolean skillXOn = false;
+    private int remainingDurationX = X_DURATION;
+    private int cooldownTimerX = 0;
+    private boolean skillCOn = false;
+    private int cooldownTimerC = 0;
+    private long startTimeC;
 
     /**
      * Constructor cho GalaxyPaddle.
@@ -45,6 +44,9 @@ public class GalaxyPaddle extends Paddle {
         sprite = loadSprite(spritePath);
     }
 
+    /**
+     * Kích hoạt kỹ năng X, tăng tốc cho GalaxyPaddle.
+     */
     @Override
     public void castSkillX() {
         if (skillXOn || cooldownTimerX > 0) {
@@ -56,6 +58,7 @@ public class GalaxyPaddle extends Paddle {
         setSpeed(speed * X_SPEED_BOOST);
     }
 
+    /** Kích hoạt kỹ năng C, bắn một Blast lên gây sát thương cho gạch. */
     @Override
     public void castSkillC() {
         if (skillCOn || cooldownTimerC > 0) {
@@ -72,6 +75,7 @@ public class GalaxyPaddle extends Paddle {
         movingAllowed = false;
     }
 
+    /** Xử lý cooldown kỹ năng X và C. */
     @Override
     public void update() {
         super.update();
@@ -143,13 +147,13 @@ public class GalaxyPaddle extends Paddle {
         }
     }
 
+    /** Reset duration của X, skill X và C. */
     @Override
     public void resetPaddle() {
         super.resetPaddle();
         skillXOn = false;
         remainingDurationX = X_DURATION;
         skillCOn = false;
-        sprite = loadSprite(PATH_DEFAULT);
     }
 
     @Override

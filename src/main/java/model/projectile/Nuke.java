@@ -13,7 +13,7 @@ import static view.SpritesView.loadSprite;
  */
 public class Nuke extends ExplosiveProjectile {
     private static final int DEFAULT_SIZE = 60;
-    private static final int EXPLOSION_RADIUS = 90;
+    private static final int EXPLOSION_RADIUS = 180;
     private static final int DAMAGE = 3;
 
     private static final String PATH_NORMAL = "images/paddles/bomber/nuke.png";
@@ -34,15 +34,18 @@ public class Nuke extends ExplosiveProjectile {
         spriteGray = loadSprite(PATH_GRAY);
     }
 
+    /** Trả về vùng bao quanh Nuke. */
     @Override
     public Shape getBounds() {
         return new Ellipse2D.Double(x, y, width, height);
     }
 
+    /** Trả về vùng bao quanh vùng nổ. */
     public Ellipse2D getExplosionBounds() {
         return new Ellipse2D.Double(x + width / 2.0 - explosionRadius,
                                     y + height / 2.0 - explosionRadius,
-                                    explosionRadius * 2.0, explosionRadius * 2.0);
+                                    explosionRadius * 2.0,
+                                    explosionRadius * 2.0);
     }
 
     @Override
