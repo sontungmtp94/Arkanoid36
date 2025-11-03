@@ -3,6 +3,7 @@
 A OOP Project From UET-VNU.
 
 ![Thiết kế game](https://drive.google.com/uc?export=view&id=195lOVHdfb6AfRINbqNoH2rTF7ljN7pl6)
+Link demo: https://drive.google.com/drive/folders/1V_FcBBGB97-qP5ZejwTYmctJtghyw5Qi?usp=drive_link
 
 | Contributor            | Main Responsibilities                                                                                                                  |
 | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
